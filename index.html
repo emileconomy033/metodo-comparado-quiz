@@ -360,12 +360,12 @@ $('finish').onclick=async()=>{try{if(isHost&&room.status==='live'&&confirm('¿Ce
 $('copyLink').onclick=async()=>{try{await navigator.clipboard.writeText(link());alertText('Enlace copiado.')}catch{alertText('Selecciona y copia el enlace visible.')}};
 $('downloadQR').onclick=()=>{const img=$('qr').querySelector('canvas');const picture=$('qr').querySelector('img');const url=img?.toDataURL('image/png')||picture?.src;if(!url)return alertText('No hay un QR disponible.',true);const a=document.createElement('a');a.href=url;a.download=`QR-metodo-comparado-${roomId}.png`;a.click()};
 function csvCell(s){return '"'+String(s??'').replace(/"/g,'""').replace(/^[=+@\-\t\r]/,'\'$&')+'"'}
-function exportCsv(){if(!isHost)return;const rows=[['sala','modo','participante','pais_declarado','pregunta','tema','respuesta','alternativa','correcta','acierto','fecha_iso']];votes.forEach((records,i)=>records.forEach(v=>{const p=people.find(x=>x.uid===v.uid);rows.push([roomId,room.mode,p?.name||'',p?.country||'',i+1,QUIZ[i].topic,v.choice+1,'ABCD'[v.choice],'ABCD'[QUIZ[i].correct],v.choice===QUIZ[i].correct?1:0,v.submittedAt?.toDate?.().toISOString()||''])}));const csv='\ufeff'+rows.map(r=>r.map(csvCell).join(';')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download=`resultados-metodo-comparado-${roomId}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000)}
+function exportCsv(){if(!isHost)return;if(simulationMode){alertText('No se exportan datos ficticios como resultados reales.',true);return}const rows=[['sala','modo','participante','pais_declarado','pregunta','tema','respuesta','alternativa','correcta','acierto','fecha_iso']];votes.forEach((records,i)=>records.forEach(v=>{const p=people.find(x=>x.uid===v.uid);rows.push([roomId,room.mode,p?.name||'',p?.country||'',i+1,QUIZ[i].topic,v.choice+1,'ABCD'[v.choice],'ABCD'[QUIZ[i].correct],v.choice===QUIZ[i].correct?1:0,v.submittedAt?.toDate?.().toISOString()||''])}));const csv='\ufeff'+rows.map(r=>r.map(csvCell).join(';')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download=`resultados-metodo-comparado-${roomId}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000)}
 
 /* Análisis descriptivo: sin atribuir dominio conceptual a partir de una sola respuesta. */
 function renderLearningSummary(){
  const out=$('finalLearning');if(!out||!isHost)return;out.replaceChildren();
- const title=add('h3','Síntesis de aprendizajes del grupo');out.append(title);
+ const title=add('h3',simulationMode?'Síntesis simulada (datos ficticios)':'Síntesis de aprendizajes del grupo');out.append(title);
  const intro=add('p','Interpretación descriptiva basada únicamente en respuestas registradas. Los porcentajes no equivalen por sí solos a dominio del concepto.','small');out.append(intro);
  const rows=QUIZ.map((q,i)=>({i,n:votes[i].length,correct:correctFor(i),rate:votes[i].length?correctFor(i)/votes[i].length:null}));
  const answered=rows.filter(x=>x.n>0);if(!answered.length){out.append(add('p','Todavía no hay respuestas para elaborar conclusiones.'));return}
@@ -416,5 +416,33 @@ document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement
 window.addEventListener('offline',()=>alertText('Sin conexión: verifica tu internet. Los cambios pendientes pueden no haberse sincronizado.',true));
 window.addEventListener('online',()=>alertText('Conexión restablecida. Verifica que tus respuestas estén registradas.'));
 
+
+$('teacherSimulation').onclick=()=>{
+ if(!isHost||simulationMode)return;
+ // Modo sin escrituras remotas: conserva el enlace real para regresar después.
+ simulationMode=true;unsubscribe();roomId='SIMULADO';activateQuizVersion(2);
+ room={owner:uid,quizVersion:2,sessionKind:'practice',mode:'competition',status:'lobby',idx:-1,reveal:false,revealStage:0,questionTimes:[20,20,20,20,20,20],openedAt:null};
+ people=Array.from({length:24},(_,i)=>({uid:'sim'+(i+1),name:'Participante ficticio '+(i+1),country:''}));
+ votes=QUIZ.map((q,i)=>people.map((p,k)=>({uid:p.uid,choice:(k+i)%4,submittedAt:null})));
+ render();
+};
+$('exitSimulation').onclick=()=>{
+ simulationMode=false;room=null;roomId='';people=[];votes=Array.from({length:N},()=>[]);
+ section('create');alertText('Ensayo terminado. Los resultados ficticios no se guardaron en Firebase.');
+};
+$('printReport').onclick=()=>{
+ if(!isHost||simulationMode){alertText('El informe solo se habilita para sesiones reales.',true);return}
+ const date=new Date().toLocaleString('es-GT');
+ const escapeHtml=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const rows=QUIZ.map((q,i)=>{
+ const n=votes[i].length,k=correctFor(i),dist=q.a.map((a,j)=>'<li>'+escapeHtml('ABCD'[j]+'. '+a)+' — '+countFor(i,j)+' ('+fmtPercent(countFor(i,j),n)+')</li>').join('');
+ return '<section><h2>Pregunta '+(i+1)+' · '+escapeHtml(q.topic)+'</h2><p>'+escapeHtml(q.q)+'</p><p><b>Aciertos:</b> '+k+'/'+n+' ('+fmtPercent(k,n)+')</p><ul>'+dist+'</ul><p><b>Idea metodológica:</b> '+escapeHtml(PEDAGOGY[i].principle)+'</p><p><b>Transferencia:</b> '+escapeHtml(PEDAGOGY[i].transfer)+'</p></section>'
+ }).join('');
+ const report='<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Informe - '+escapeHtml(roomId)+'</title><style>body{font:14px Arial,sans-serif;max-width:790px;margin:35px auto;color:#20333c}h1,h2{font-family:Georgia,serif}h2{border-bottom:1px solid #bbb;padding-bottom:7px}section{page-break-inside:avoid;margin:24px 0}li{margin:6px 0}@media print{body{margin:0;max-width:none}}</style></head><body><h1>Informe académico · Método comparado</h1><p>Sala: '+escapeHtml(roomId)+' · '+escapeHtml(date)+' · '+people.length+' inscritos</p><p>Informe descriptivo: no atribuye dominio conceptual a partir de respuestas aisladas.</p>'+rows+'</body></html>';
+ const popup=window.open('','_blank');
+ if(!popup){alertText('Habilita ventanas emergentes para abrir el informe e imprimirlo como PDF.',true);return}
+ popup.document.open();popup.document.write(report);popup.document.close();
+ popup.focus();popup.print();
+};
 $('exportCSV').onclick=exportCsv;boot();
 </script></body></html>
