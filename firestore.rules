@@ -2,6 +2,20 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signed() { return request.auth != null; }
+    function moderator() {
+      return signed()
+        && request.auth.token.email == 'emil.economia@gmail.com'
+        && request.auth.token.firebase.sign_in_provider == 'password';
+    }
+    function validTimes(t) {
+      return t is list && t.size() == 6
+        && t[0] is int && t[0] >= 10 && t[0] <= 180
+        && t[1] is int && t[1] >= 10 && t[1] <= 180
+        && t[2] is int && t[2] >= 10 && t[2] <= 180
+        && t[3] is int && t[3] >= 10 && t[3] <= 180
+        && t[4] is int && t[4] >= 10 && t[4] <= 180
+        && t[5] is int && t[5] >= 10 && t[5] <= 180;
+    }
     function parent(id) { return get(/databases/$(database)/documents/rooms/$(id)); }
     function owner(id) { return signed() && parent(id).data.owner == request.auth.uid; }
     function participant(id) { return signed() && exists(/databases/$(database)/documents/rooms/$(id)/participants/$(request.auth.uid)); }
@@ -9,8 +23,9 @@ service cloud.firestore {
     match /rooms/{id} {
       allow get: if signed();
       allow list: if false;
-      allow create: if signed() && request.resource.data.keys().hasOnly(['owner','mode','sessionKind','status','idx','reveal','openedAt','createdAt'])
+      allow create: if moderator() && request.resource.data.keys().hasOnly(['owner','mode','sessionKind','questionTimes','status','idx','reveal','openedAt','createdAt'])
         && request.resource.data.owner == request.auth.uid && request.resource.data.mode in ['survey','competition'] && request.resource.data.sessionKind in ['practice','official']
+        && validTimes(request.resource.data.questionTimes)
         && request.resource.data.status == 'lobby' && request.resource.data.idx == -1 && request.resource.data.reveal == false;
       allow update: if owner(id) && request.resource.data.diff(resource.data).changedKeys().hasOnly(['status','idx','reveal','openedAt'])
         && request.resource.data.mode == resource.data.mode && request.resource.data.sessionKind == resource.data.sessionKind && request.resource.data.owner == resource.data.owner
@@ -42,7 +57,7 @@ service cloud.firestore {
           && parent(id).data.status == 'live'
           && ((parent(id).data.mode == 'survey' && int(qid) >= 0 && int(qid) < 6)
             || (parent(id).data.mode == 'competition' && int(qid) == parent(id).data.idx
-              && parent(id).data.reveal == false && request.time <= parent(id).data.openedAt + duration.value(40,'s')));
+              && parent(id).data.reveal == false && request.time <= parent(id).data.openedAt + duration.value(parent(id).data.get('questionTimes',[40,40,40,40,40,40])[int(qid)],'s')));
         allow update, delete: if false;
       }
     }
