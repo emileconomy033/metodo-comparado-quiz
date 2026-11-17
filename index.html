@@ -187,6 +187,58 @@ if(n<5)headline+=' Muestra pequeña: interpretar descriptivamente.';
 return {headline,focus};
 }
 function hasVoted(i){return votes[i].some(v=>v.uid===uid)}
+function isQuestionRevealed(i){
+ if(!room)return false;
+ if(room.status==='done')return true;
+ return room.mode==='competition'&&(i<room.idx||(i===room.idx&&room.reveal===true));
+}
+function scoreReleased(){
+ const evaluated=QUIZ.reduce((n,_,i)=>n+(isQuestionRevealed(i)?1:0),0);
+ const correct=QUIZ.reduce((n,q,i)=>n+(isQuestionRevealed(i)&&votes[i].some(v=>v.uid===uid&&v.choice===q.correct)?1:0),0);
+ return {evaluated,correct};
+}
+function updatePersonalScore(){
+ const {evaluated,correct}=scoreReleased();
+ const value='Aciertos: '+correct+'/'+N+(evaluated<N?' · '+evaluated+' evaluadas':'');
+ for(const id of ['competitionScore','revealScore','finalScore'])$(id).textContent=value;
+}
+let celebratedReveals=new Set();
+function celebrateCorrect(i){
+ const key=roomId+':'+i;
+ if(celebratedReveals.has(key))return;
+ celebratedReveals.add(key);
+ if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ document.querySelectorAll('.reveal-particle-layer,.reveal-shimmer').forEach(el=>el.remove());
+ const layer=add('div',undefined,'reveal-particle-layer'),flash=add('div',undefined,'reveal-shimmer');
+ flash.setAttribute('aria-hidden','true');layer.setAttribute('aria-hidden','true');
+ const colors=['#249e62','#63c888','#c8edbd','#f0d16a','#eaf8e8'];
+ for(let k=0;k<54;k++){
+  const particle=add('div',undefined,'reveal-particle');
+  particle.style.left=(Math.random()*100)+'vw';
+  particle.style.backgroundColor=colors[k%colors.length];
+  particle.style.borderRadius=k%4===0?'50%':'2px';
+  particle.style.setProperty('--delay',(Math.random()*.38)+'s');
+  particle.style.setProperty('--duration',(2+Math.random()*1.1)+'s');
+  particle.style.setProperty('--drift',((Math.random()-.5)*260)+'px');
+  particle.style.setProperty('--spin',((Math.random()-.5)*1300)+'deg');
+  layer.append(particle);
+ }
+ document.body.append(flash,layer);
+ setTimeout(()=>{layer.remove();flash.remove()},3900);
+}
+function drawPersonalReveal(){
+ const i=room.idx,box=$('personalReveal'),answer=votes[i].find(v=>v.uid===uid),q=QUIZ[i];
+ box.replaceChildren();
+ const correct=!!answer&&answer.choice===q.correct;
+ box.className='personal-reveal '+(answer?(correct?'is-correct':'is-incorrect'):'is-unanswered');
+ box.append(add('h3',answer?(correct?'¡Acertaste!':'Esta vez no fue la correcta'):'Sin respuesta registrada'));
+ box.append(add('p',answer?(correct?'¡Muy bien! Has identificado la mejor alternativa.':'Revisemos el razonamiento y el concepto que debemos reforzar.'):'Se agotó el tiempo o no se registró una selección.'));
+ if(answer)box.append(add('p','Tu respuesta: '+ 'ABCD'[answer.choice]+'. '+q.a[answer.choice],'your-choice'));
+ box.append(add('p','Respuesta correcta: '+'ABCD'[q.correct]+'. '+q.a[q.correct],'choice-answer'));
+ box.append(add('p','Principio metodológico: '+PEDAGOGY[i].principle,'reveal-principle'));
+ if(answer&&!correct&&PEDAGOGY[i].mis[answer.choice])box.append(add('p','¿Por qué no?: '+PEDAGOGY[i].mis[answer.choice],'reveal-principle'));
+ if(correct)celebrateCorrect(i);
+}
 function scoreFor(pid){return QUIZ.reduce((total,q,i)=>total+(votes[i].some(v=>v.uid===pid&&v.choice===q.correct)?1:0),0)}
 function rankings(){return people.map(p=>({...p,score:scoreFor(p.uid)})).sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name,'es'))}
 function rowMetric(n,label){const box=add('div',undefined,'metric');box.append(add('b',String(n)),add('span',label));return box}
@@ -201,10 +253,10 @@ const counts={};people.forEach(p=>{if(p.country)counts[p.country]=(counts[p.coun
 function optionButtons(target,i,locked,allowSubmit){const el=$(target);el.replaceChildren();QUIZ[i].a.forEach((text,j)=>{const b=add('button',undefined,'choice'+(votes[i].some(v=>v.uid===uid&&v.choice===j)?' selected':''));b.disabled=locked||pendingVotes.has(i);b.append(add('span','ABCD'[j],'letter'),add('span',text));b.onclick=()=>submit(i,j,allowSubmit);el.append(b)})}
 function renderParticipant(){if(isHost){$('participant').classList.add('hidden');return}$('participant').classList.remove('hidden');['waiting','survey','submittedPanel','competition','revealPanel','donePanel'].forEach(s=>$(s).classList.add('hidden'));
 if(room.status==='lobby'){$('waiting').classList.remove('hidden');$('waitTitle').textContent='Esperando al moderador…';$('waitText').textContent='Ya estás registrado. La actividad comenzará en cuanto se abra la sesión.';return}
-if(room.status==='done'){$('donePanel').classList.remove('hidden');$('myScore').textContent=`Tus aciertos: ${scoreFor(uid)} de ${N}.`;drawRankings();return}
+if(room.status==='done'){$('donePanel').classList.remove('hidden');updatePersonalScore();$('myScore').textContent=`Resultado final: ${scoreReleased().correct} respuestas correctas de ${N}.`;drawRankings();return}
 if(room.mode==='survey'){if(QUIZ.every((q,i)=>hasVoted(i))&&!reviewingSurvey){$('submittedPanel').classList.remove('hidden');$('submittedText').textContent='Se registraron tus '+N+' respuestas. Cuando el moderador cierre la sesión, podrás ver el resultado grupal y tu puntuación.';return}$('survey').classList.remove('hidden');$('surveyProgress').textContent=`Pregunta ${surveyAt+1} de ${N}`;$('surveyRecorded').textContent=`${QUIZ.filter((q,i)=>hasVoted(i)).length}/${N} respondidas`;$('surveyQuestion').textContent=QUIZ[surveyAt].q;optionButtons('surveyChoices',surveyAt,false,true);$('prevSurvey').disabled=surveyAt===0;$('nextSurvey').textContent=surveyAt===N-1?'Finalizar revisión':'Siguiente';return}
-if(room.reveal){$('revealPanel').classList.remove('hidden');$('revealTitle').textContent=`Explicación · pregunta ${room.idx+1}`;$('revealChart').replaceChildren();$('revealChart').append(add('p',`Respuesta correcta: ${'ABCD'[QUIZ[room.idx].correct]}. ${QUIZ[room.idx].a[QUIZ[room.idx].correct]}`));$('revealExplanation').textContent='Principio metodológico: '+PEDAGOGY[room.idx].principle;return}
-$('competition').classList.remove('hidden');$('compProgress').textContent=`Pregunta ${room.idx+1}/${N}`;$('compQuestion').textContent=QUIZ[room.idx].q;const rem=remaining();$('clock').textContent=rem+' s';optionButtons('compChoices',room.idx,rem===0,true);$('compFeedback').textContent=hasVoted(room.idx)?'Respuesta guardada. Puedes cambiarla mientras quede tiempo; se conservará la última elección.':rem===0?'Tiempo agotado. Espera al moderador.':'Selecciona una sola respuesta.'}
+if(room.reveal){$('revealPanel').classList.remove('hidden');updatePersonalScore();drawPersonalReveal();$('revealTitle').textContent=`Explicación · pregunta ${room.idx+1}`;$('revealChart').replaceChildren();$('revealChart').append(add('p',`Respuesta correcta: ${'ABCD'[QUIZ[room.idx].correct]}. ${QUIZ[room.idx].a[QUIZ[room.idx].correct]}`));$('revealExplanation').textContent='Principio metodológico: '+PEDAGOGY[room.idx].principle;return}
+$('competition').classList.remove('hidden');updatePersonalScore();$('compProgress').textContent=`Pregunta ${room.idx+1}/${N}`;$('compQuestion').textContent=QUIZ[room.idx].q;const rem=remaining();$('clock').textContent=rem+' s';optionButtons('compChoices',room.idx,rem===0,true);$('compFeedback').textContent=hasVoted(room.idx)?'Respuesta guardada. Puedes cambiarla mientras quede tiempo; se conservará la última elección.':rem===0?'Tiempo agotado. Espera al moderador.':'Selecciona una sola respuesta.'}
 function drawRankings(){const el=$('ranking');el.replaceChildren();el.append(add('h3','Tus resultados'));el.append(add('p','La comparación de resultados de todo el grupo se realiza con el moderador. Los nombres y las respuestas individuales de los compañeros permanecen privados.'))}
 function drawQR(){if($('qr').dataset.code===roomId)return;$('qr').replaceChildren();$('qr').dataset.code=roomId;if(window.QRCode)new QRCode($('qr'),{text:link(),width:160,height:160,correctLevel:QRCode.CorrectLevel.M});else $('qr').textContent='QR no disponible: comparte el enlace';$('joinUrl').href=link();$('joinUrl').textContent=link()}
 function render(){if(!room)return;section(...(isHost?(projecting?['projection']:['host']):['participant']));clearInterval(ticker);if(isHost){drawQR();renderHost();if(projecting)renderProjection()}else{renderParticipant()}if(room.status==='live'&&room.mode==='competition'&&!room.reveal){ticker=setInterval(()=>{if(isHost)return;const rem=remaining();$('clock').textContent=rem+' s';if(!rem){clearInterval(ticker);renderParticipant()}},1000)}}
