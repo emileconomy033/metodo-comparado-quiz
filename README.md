@@ -62,3 +62,32 @@ Se comprobaron estáticamente los seis ítems y la sintaxis del JavaScript. No s
 - La celebración respeta `prefers-reduced-motion` y no se repite por cada actualización de Firestore durante la misma sesión/pregunta.
 - La proyección del moderador mantiene los resultados agregados y las explicaciones, sin efectos personales.
 - No se modifican preguntas, claves ni reglas de Firestore en esta actualización.
+
+## Versión 6 — secuencia de revelación y auditoría de sesgos
+
+**Solo las salas nuevas** usan `quizVersion: 2`. Las salas históricas sin este campo siguen utilizando exactamente la clave y el orden previos para no reinterpretar votos almacenados.
+
+### Auditoría de opciones
+- Antes, las claves estaban en **B,C,B,B,C,D**: ninguna respuesta A; y la correcta destacaba por longitud en cinco de seis preguntas.
+- Ahora las claves de nuevas sesiones están distribuidas **A,C,D,B,A,D** (A=2, B=1, C=1, D=2), manteniendo una única opción defendible por pregunta.
+- Se abreviaron y equilibraron las alternativas. Los tests verifican seis preguntas, cuatro opciones y diferencias de longitud no mayores de 24 caracteres dentro de una misma pregunta.
+- Es una auditoría **editorial y estructural**, no una validación psicométrica. Las preguntas deben seguir revisándose presencialmente para detectar pistas semánticas, negaciones extremas y ambigüedades.
+
+### Tres etapas del moderador en modo competencia
+1. **Mostrar distribución**: se cierran los votos y se presentan cantidades y porcentajes sin revelar qué respuesta es correcta.
+2. **Revelar respuesta**: clave, celebración individual y contador de aciertos.
+3. **Explicar el concepto**: explicación pedagógica antes de permitir avanzar.
+
+El gráfico no muestra la proporción de aciertos antes de revelar la solución. Las reglas de Firestore bloquean modificaciones desde la primera etapa.
+
+### Práctica, informes y recuperación
+- **Ensayar con datos ficticios** desde «Nueva sesión», sin crear sala ni guardar respuestas en Firebase. No puede exportarse CSV de simulación. La pantalla marca expresamente el ensayo.
+- **Informe PDF** abre un documento en una pestaña aparte; usar «Imprimir → Guardar como PDF». Incluye resultados de cada pregunta, distribución y lecciones; no genera un PDF en servidor.
+- Firestore es el registro persistente de votos reales; el moderador también puede exportar CSV. No se implementa copia automática de datos identificativos en el dispositivo.
+- El temporizador estima la diferencia horaria mediante una respuesta HTTP del sitio; **la validación decisiva del plazo es la regla de Firestore con `request.time`**. Si el sitio no ofrece fecha de respuesta, se usa el reloj local como aproximación.
+
+### Despliegue obligatorio
+**Volver a publicar el archivo `firestore.rules` en Firebase Console.** Las nuevas salas tienen los campos `quizVersion` y `revealStage`. El repositorio y GitHub Pages no aplican automáticamente los cambios en permisos.
+
+### Prueba pendiente
+Realizar un ensayo completo con computadora y al menos dos celulares (preferiblemente varias conexiones), incluir votos corregidos, límite de tiempo, los tres momentos, salida y recuperación del moderador, proyección e informe PDF. Las comprobaciones sintácticas no sustituyen una prueba integral con Firebase real.
