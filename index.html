@@ -117,7 +117,38 @@ function voteRef(i){return rref().collection('answers').doc(String(i)).collectio
 function link(){const u=new URL(location.href);u.searchParams.set('room',roomId);return u.toString()}
 function savedRooms(){try{return JSON.parse(localStorage.getItem('comparisonOwnedRooms')||'[]')}catch{return []}}
 function saveOwnedRoom(id){localStorage.setItem('comparisonOwnedRooms',JSON.stringify([...new Set([...savedRooms(),id])].slice(-12)))}
-async function showOwnedRooms(){const ids=savedRooms();const box=$('ownedList');box.replaceChildren();if(!ids.length){$('mySessions').classList.add('hidden');return} $('mySessions').classList.remove('hidden');for(const id of ids.slice().reverse()){const b=add('button','Abrir sala '+id,'btn secondary');b.style.margin='5px';b.onclick=async()=>{try{const doc=await db.collection('rooms').doc(id).get();if(!doc.exists||doc.data().owner!==uid)throw Error('Esta sala ya no es accesible desde esta sesión de navegador.');roomId=id;isHost=true;unsubscribe();subscribe();const u=new URL(location.href);u.searchParams.set('room',id);history.replaceState(null,'',u.toString())}catch(e){alertText(e.message,true)}};box.append(b)}}
+async function showOwnedRooms(){
+const ids=savedRooms(),box=$('ownedList');box.replaceChildren();
+if(!ids.length){$('mySessions').classList.add('hidden');return}
+$('mySessions').classList.remove('hidden');
+for(const id of ids.slice().reverse()){
+ const b=add('button','Abrir sala '+id,'btn secondary');b.style.margin='5px';
+ b.onclick=async()=>{
+ try{
+  const options=[{db:anonDb,uid:anonUid}];
+  const mod=await initModeratorAuth();
+  if(mod?.currentUser?.email===MODERATOR_EMAIL)options.push({db:moderatorDb,uid:mod.currentUser.uid});
+  for(const opt of options){
+   const doc=await opt.db.collection('rooms').doc(id).get();
+   if(doc.exists&&doc.data().owner===opt.uid){
+    unsubscribe();db=opt.db;uid=opt.uid;roomId=id;isHost=true;people=[];votes=Array.from({length:N},()=>[]);subscribe();
+    const u=new URL(location.href);u.searchParams.set('room',id);history.replaceState(null,'',u.toString());return
+   }
+  }
+  throw Error('Esta sala no pertenece a las identidades actualmente disponibles en este navegador.')
+ }catch(e){alertText(e.message,true)}
+ };box.append(b)
+}
+}
+async function initModeratorAuth(){
+if(!moderatorAuth){
+ const cfg=firebase.app().options;
+ if(!firebase.apps.some(a=>a.name==='moderator'))firebase.initializeApp(cfg,'moderator');
+ const app=firebase.app('moderator');moderatorAuth=app.auth();moderatorDb=app.firestore();
+}
+await new Promise(resolve=>{const un=moderatorAuth.onAuthStateChanged(()=>{un();resolve()},()=>resolve())});
+return moderatorAuth;
+}
 function fmtPercent(n,d){return d?((100*n/d).toFixed(1).replace('.',',')+' %'):'0,0 %'}
 function add(tag,txt,cls){const el=document.createElement(tag);if(txt!==undefined)el.textContent=txt;if(cls)el.className=cls;return el}
 function countFor(i,j){return votes[i].filter(v=>v.choice===j).length}
@@ -177,10 +208,18 @@ $('competition').classList.remove('hidden');$('compProgress').textContent=`Pregu
 function drawRankings(){const el=$('ranking');el.replaceChildren();el.append(add('h3','Tus resultados'));el.append(add('p','La comparación de resultados de todo el grupo se realiza con el moderador. Los nombres y las respuestas individuales de los compañeros permanecen privados.'))}
 function drawQR(){if($('qr').dataset.code===roomId)return;$('qr').replaceChildren();$('qr').dataset.code=roomId;if(window.QRCode)new QRCode($('qr'),{text:link(),width:160,height:160,correctLevel:QRCode.CorrectLevel.M});else $('qr').textContent='QR no disponible: comparte el enlace';$('joinUrl').href=link();$('joinUrl').textContent=link()}
 function render(){if(!room)return;section(...(isHost?(projecting?['projection']:['host']):['participant']));clearInterval(ticker);if(isHost){drawQR();renderHost();if(projecting)renderProjection()}else{renderParticipant()}if(room.status==='live'&&room.mode==='competition'&&!room.reveal){ticker=setInterval(()=>{if(isHost)return;const rem=remaining();$('clock').textContent=rem+' s';if(!rem){clearInterval(ticker);renderParticipant()}},1000)}}
-async function init(cfg){if(!window.firebase)throw Error('No se pudo cargar Firebase. Comprueba tu conexión a internet.');if(!cfg||!cfg.apiKey||!cfg.projectId||!cfg.appId)throw Error('Faltan apiKey, projectId o appId en la configuración.');if(!firebase.apps.length)firebase.initializeApp(cfg);db=firebase.firestore();await firebase.auth().signInAnonymously();uid=firebase.auth().currentUser.uid;anonDb=db;anonUid=uid;authReady=true;const requested=code(new URLSearchParams(location.search).get('room'));if(requested)$('roomCode').value=requested;section('home');await showOwnedRooms();const prior=savedRooms();if(requested){try{const doc=await db.collection('rooms').doc(requested).get();if(doc.exists&&doc.data().owner===uid){roomId=requested;isHost=true;subscribe();return}if(doc.exists){const mine=await db.collection('rooms').doc(requested).collection('participants').doc(uid).get();if(mine.exists){roomId=requested;myName=mine.data().name;myCountry=mine.data().country||'';isHost=false;subscribe();return}}}catch(e){console.warn('No se pudo recuperar la sala automáticamente',e)}}}
+async function init(cfg){if(!window.firebase)throw Error('No se pudo cargar Firebase. Comprueba tu conexión a internet.');if(!cfg||!cfg.apiKey||!cfg.projectId||!cfg.appId)throw Error('Faltan apiKey, projectId o appId en la configuración.');if(!firebase.apps.length)firebase.initializeApp(cfg);db=firebase.firestore();await firebase.auth().signInAnonymously();uid=firebase.auth().currentUser.uid;anonDb=db;anonUid=uid;authReady=true;const requested=code(new URLSearchParams(location.search).get('room'));if(requested)$('roomCode').value=requested;section('home');await showOwnedRooms();const prior=savedRooms();if(requested){try{
+const doc=await anonDb.collection('rooms').doc(requested).get();
+if(doc.exists&&doc.data().owner===anonUid){roomId=requested;isHost=true;subscribe();return}
+if(doc.exists){const mine=await anonDb.collection('rooms').doc(requested).collection('participants').doc(anonUid).get();if(mine.exists){roomId=requested;myName=mine.data().name;myCountry=mine.data().country||'';isHost=false;subscribe();return}}
+const mod=await initModeratorAuth();
+if(mod.currentUser?.email===MODERATOR_EMAIL&&doc.exists&&doc.data().owner===mod.currentUser.uid){
+db=moderatorDb;uid=mod.currentUser.uid;roomId=requested;isHost=true;people=[];votes=Array.from({length:N},()=>[]);subscribe();return
+}
+}catch(e){console.warn('No se pudo recuperar la sala automáticamente',e)}}}
 async function boot(){try{let cfg=window.FIREBASE_CONFIG;if(!cfg){const s=localStorage.getItem('comparisonFirebaseConfig');if(s)cfg=JSON.parse(s)}if(cfg)await init(cfg);else section('setup')}catch(e){section('setup');alertText('Error de conexión: '+e.message,true)}}
 $('saveConfig').onclick=async()=>{try{const c=JSON.parse($('configInput').value);localStorage.setItem('comparisonFirebaseConfig',JSON.stringify(c));await init(c)}catch(e){alertText(e.message,true)}};
-$('showCreate').onclick=async()=>{try{const cfg=firebase.app().options;if(!firebase.apps.some(a=>a.name==='moderator'))firebase.initializeApp(cfg,'moderator');const modApp=firebase.app('moderator');moderatorAuth=modApp.auth();moderatorDb=modApp.firestore();if(moderatorAuth.currentUser?.email===MODERATOR_EMAIL){enterModerator();return}section('moderatorLogin')}catch(e){alertText('No se pudo abrir el acceso del moderador: '+e.message,true)}};
+$('showCreate').onclick=async()=>{try{await initModeratorAuth();if(moderatorAuth.currentUser?.email===MODERATOR_EMAIL){enterModerator();return}section('moderatorLogin')}catch(e){alertText('No se pudo abrir el acceso del moderador: '+e.message,true)}};
 $('moderatorBack').onclick=()=>section('home');
 function enterModerator(){if(!moderatorAuth?.currentUser||moderatorAuth.currentUser.email!==MODERATOR_EMAIL)throw Error('La cuenta no está autorizada.');unsubscribe();db=moderatorDb;uid=moderatorAuth.currentUser.uid;room=null;roomId='';isHost=false;people=[];votes=Array.from({length:N},()=>[]);section('create');$('moderatorPassword').value='';alertText('Acceso del moderador autorizado.')}
 $('moderatorEnter').onclick=async()=>{const pwd=$('moderatorPassword').value;if(!pwd)return alertText('Escribe la contraseña del moderador.',true);$('moderatorEnter').disabled=true;try{await moderatorAuth.signInWithEmailAndPassword(MODERATOR_EMAIL,pwd);enterModerator()}catch(e){alertText('No se pudo autenticar. Comprueba la contraseña y el usuario registrado en Firebase.',true)}finally{$('moderatorEnter').disabled=false}};
