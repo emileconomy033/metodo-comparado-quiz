@@ -146,7 +146,7 @@ const ORDER_V2=[[1,0,2,3],[0,1,2,3],[0,2,3,1],[0,1,2,3],[2,0,1,3],[0,1,2,3]];
 const TEXT_V2=[
  ['Comparten una propiedad relevante con significado equivalente.','Son comparables únicamente cuando sus rasgos son idénticos.','Pertenecen al mismo país y comparten instituciones.','Presentan valores semejantes en todos los indicadores.'],
  ['Los sistemas diferentes impiden comparar el gasto como porcentaje del PIB.','El mismo nombre del indicador garantiza equivalencia entre países.','Pueden compararse si el indicador es equivalente y se examina el contexto.','Los niveles de gasto deben ser parecidos para que exista comparabilidad.'],
- ['Sí, todo aumento de casos conduce al alargamiento conceptual.','Sí, las categorías científicas deben ser completamente invariables.','No, aumentar los casos basta para validar cualquier redefinición.','No necesariamente, si justifica el nivel de abstracción elegido.'],
+ ['Sí, todo aumento de casos conduce al alargamiento conceptual.','Sí, las categorías científicas deben ser completamente invariables.','No, aumentar los casos basta para validar cualquier redefinición.','No, si justifica la abstracción y mantiene una definición coherente.'],
  ['El segundo hospital espera el doble porque los minutos son comparables.','No, porque los tiempos corresponden a eventos diferentes.','El primer hospital es más eficiente porque muestra menos minutos.','Los resultados son comparables porque ambos están medidos en minutos.'],
  ['Es una hipótesis que requiere examinar explicaciones alternativas.','El modelo de fila única demuestra una reducción causal de la espera.','Dos casos no permiten proponer ninguna hipótesis metodológica.','Los mismos recursos implican que los otros factores son equivalentes.'],
  ['Los recordatorios son necesarios y suficientes para alcanzar ese resultado.','Las diferencias territoriales impiden toda comparación entre casos.','El resultado compartido demuestra que el presupuesto no influye.','Las condiciones comunes sugieren hipótesis que requieren contrastación.']
@@ -469,10 +469,14 @@ $('printReport').onclick=()=>{
  const date=new Date().toLocaleString('es-GT');
  const escapeHtml=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const rows=QUIZ.map((q,i)=>{
- const n=votes[i].length,k=correctFor(i),dist=q.a.map((a,j)=>'<li>'+escapeHtml('ABCD'[j]+'. '+a)+' — '+countFor(i,j)+' ('+fmtPercent(countFor(i,j),n)+')</li>').join('');
- return '<section><h2>Pregunta '+(i+1)+' · '+escapeHtml(q.topic)+'</h2><p>'+escapeHtml(q.q)+'</p><p><b>Aciertos:</b> '+k+'/'+n+' ('+fmtPercent(k,n)+')</p><ul>'+dist+'</ul><p><b>Idea metodológica:</b> '+escapeHtml(PEDAGOGY[i].principle)+'</p><p><b>Transferencia:</b> '+escapeHtml(PEDAGOGY[i].transfer)+'</p></section>'
+ const n=votes[i].length,k=correctFor(i),dist=q.a.map((a,j)=>{
+ const count=countFor(i,j),pct=n?100*count/n:0;
+ const correct=j===q.correct?' respuesta-correcta':'';
+ return '<div class="response'+correct+'"><div>'+escapeHtml('ABCD'[j]+'. '+a)+' — <b>'+count+' ('+fmtPercent(count,n)+')</b></div><div class="track"><div class="fill" style="width:'+pct+'%"></div></div></div>'
  }).join('');
- const report='<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Informe - '+escapeHtml(roomId)+'</title><style>body{font:14px Arial,sans-serif;max-width:790px;margin:35px auto;color:#20333c}h1,h2{font-family:Georgia,serif}h2{border-bottom:1px solid #bbb;padding-bottom:7px}section{page-break-inside:avoid;margin:24px 0}li{margin:6px 0}@media print{body{margin:0;max-width:none}}</style></head><body><h1>Informe académico · Método comparado</h1><p>Sala: '+escapeHtml(roomId)+' · '+escapeHtml(date)+' · '+people.length+' inscritos</p><p>Informe descriptivo: no atribuye dominio conceptual a partir de respuestas aisladas.</p>'+rows+'</body></html>';
+ return '<section><h2>Pregunta '+(i+1)+' · '+escapeHtml(q.topic)+'</h2><p>'+escapeHtml(q.q)+'</p><p><b>Aciertos:</b> '+k+'/'+n+' ('+fmtPercent(k,n)+')</p>'+dist+'<p><b>Idea metodológica:</b> '+escapeHtml(PEDAGOGY[i].principle)+'</p><p><b>Transferencia:</b> '+escapeHtml(PEDAGOGY[i].transfer)+'</p></section>'
+ }).join('');
+ const report='<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Informe - '+escapeHtml(roomId)+'</title><style>body{font:14px Arial,sans-serif;max-width:790px;margin:35px auto;color:#20333c}h1,h2{font-family:Georgia,serif}h2{border-bottom:1px solid #bbb;padding-bottom:7px}section{page-break-inside:avoid;margin:24px 0}li{margin:6px 0}.response{margin:12px 0}.response .track{height:14px;background:#e8eeee;border-radius:3px;margin-top:5px}.response .fill{height:100%;background:#8aa2a0;border-radius:3px}.response.respuesta-correcta .fill{background:#267b60}.response.respuesta-correcta{border-left:3px solid #267b60;padding-left:8px}@media print{body{margin:0;max-width:none}}</style></head><body><h1>Informe académico · Método comparado</h1><p>Sala: '+escapeHtml(roomId)+' · '+escapeHtml(date)+' · '+people.length+' inscritos</p><p>Informe descriptivo: no atribuye dominio conceptual a partir de respuestas aisladas.</p>'+rows+'</body></html>';
  const popup=window.open('','_blank');
  if(!popup){alertText('Habilita ventanas emergentes para abrir el informe e imprimirlo como PDF.',true);return}
  popup.document.open();popup.document.write(report);popup.document.close();
