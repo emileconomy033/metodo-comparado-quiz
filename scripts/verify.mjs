@@ -48,4 +48,13 @@ assert(html.includes("No fue posible ingresar ('+stage+')"),'Sin diagnóstico de
 assert(rules.includes('request.resource.data.diff(resource.data).affectedKeys().hasOnly'), 'Falta controlar qué campos se pueden modificar');
 assert(rules.includes('allow update: if signed() && request.auth.uid == pid && participant(id)'),'Solo el votante puede corregir su respuesta');
 assert(html.includes('Actividad académica del Grupo 1.</footer>'));
-console.log('OK: currículo, moderación, tiempos, privacidad y corrección de votos.');
+for(const id of ['competitionScore','revealScore','finalScore','personalReveal'])assert(html.includes('id="'+id+'"'),'Falta elemento de retroalimentación: '+id);
+assert(html.includes('class="icap-logo"'),'Falta el logo ICAP');
+assert(html.includes('function scoreReleased()'));
+assert(html.includes('function celebrateCorrect(i)'));
+assert(html.includes('function drawPersonalReveal()'));
+assert(html.includes('celebratedReveals.has(key)'),'La celebración no debe repetirse cada vez que llega una actualización');
+assert(html.includes('prefers-reduced-motion'),'Las animaciones deben respetar movimiento reducido');
+assert(html.includes("isQuestionRevealed(i)"),'Solo puntuar respuestas reveladas');
+assert(html.includes('¿Por qué no?: '),'Se requiere retroalimentación por distractor seleccionado');
+console.log('OK: currículo, moderación, tiempos, privacidad, corrección de votos, logo, celebración y puntuación progresiva.');
