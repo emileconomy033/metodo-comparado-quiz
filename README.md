@@ -26,3 +26,16 @@ Encuesta interactiva de seis preguntas para el Taller de Métodos y Técnicas de
 
 ## Seguridad y privacidad
 Los nombres y países declarados son datos introducidos voluntariamente. Evita solicitar información sensible y utiliza nombres de prueba durante los ensayos. El panel no dispone de autenticación administrativa permanente: el moderador es la sesión anónima que creó cada sala. No publiques reglas Firestore permisivas del tipo `allow read, write: if true`.
+
+## Panel docente y uso de resultados (versión 4)
+- El moderador puede entrar en **Modo proyección**, navegar por las seis preguntas y mostrar una síntesis final.
+- Durante la votación, la proyección oculta la clave y el análisis de errores. En encuesta libre se revelan al cerrar; en competencia, después de revelar cada pregunta.
+- Cada distractor elegido se explica conceptualmente, no solo en relación con el ejemplo. La síntesis final utiliza las tasas de acierto y la distribución de respuestas reales. **No infiere automáticamente dominio individual**.
+- Participantes: pantalla de finalización individual, posibilidad de revisar las respuestas registradas y retorno al resultado personal después del cierre. El panel grupal se visualiza en la pantalla del moderador.
+- Recuperación: volver al enlace de la misma sala con el **mismo navegador, perfil y almacenamiento de Firebase** permite recuperar el rol propio. No existe recuperación segura desde otro dispositivo con autenticación anónima; no borres cookies ni datos del sitio durante la actividad.
+
+## Actualización de reglas obligatoria
+La versión 4 **requiere publicar nuevamente** el archivo `firestore.rules` en Firebase Console → Firestore Database → Rules. Esta versión restringe la lista de inscritos y la lectura de votos individuales: solo el moderador ve todas las identidades y respuestas; cada participante ve su propio registro y votos. **Subir el archivo a GitHub no despliega automáticamente las reglas a Firebase**.
+
+## Validación
+Se comprobaron estáticamente los seis ítems y la sintaxis del JavaScript. No se han ejecutado pruebas automáticas de integración contra Firestore real; se debe crear una sala de ensayo, ingresar desde otro dispositivo, completar la votación, recuperar la sesión y comprobar el CSV y la proyección. El plan gratuito de Firebase tiene cuotas; evita organizar múltiples sesiones simultáneas de gran volumen sin comprobarlas.
