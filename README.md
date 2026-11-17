@@ -54,3 +54,11 @@ Se comprobaron estáticamente los seis ítems y la sintaxis del JavaScript. No s
 - Si falla el ingreso, el aviso indica la etapa (consulta de sala, consulta del registro o inscripción), para identificar el permiso involucrado sin abrir indiscriminadamente Firestore.
 - **Publicar las reglas actualizadas en Firebase Console es obligatorio** para permitir la actualización de votos. El archivo en GitHub es solo la versión de referencia.
 - Se retiró el aviso informativo largo del pie de página a solicitud del moderador. Los controles de privacidad (reglas de Firebase, ausencia de listados individuales para participantes) siguen activos.
+
+## Identidad visual y retroalimentación por pregunta
+- Encabezado académico con logo del ICAP, adaptable a móvil. La imagen se carga desde una URL externa de recursos de identidad institucional; si esa fuente dejara de funcionar, debe sustituirse por un archivo local.
+- En competencia, al pulsar **Revelar respuesta**, cada participante recibe retroalimentación individual: **acierto** con confeti verde y destello breve; **respuesta incorrecta** con un mensaje ámbar discreto y explicación conceptual; **sin respuesta** con mensaje neutral. Siempre se presenta la opción correcta.
+- El contador **Aciertos: X/6** muestra solo las preguntas que ya se hayan revelado. Antes del cierre de encuesta libre no se muestra puntuación.
+- La celebración respeta `prefers-reduced-motion` y no se repite por cada actualización de Firestore durante la misma sesión/pregunta.
+- La proyección del moderador mantiene los resultados agregados y las explicaciones, sin efectos personales.
+- No se modifican preguntas, claves ni reglas de Firestore en esta actualización.
