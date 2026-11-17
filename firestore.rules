@@ -17,7 +17,10 @@ service cloud.firestore {
         && request.resource.data.status in ['lobby','live','done'] && request.resource.data.idx >= -1 && request.resource.data.idx < 6;
       allow delete: if false;
       match /participants/{pid} {
-        allow get, list: if approvedRoom(id);
+        // El usuario puede consultar su propio documento, incluso antes de crearlo.
+        // La lista completa queda restringida a miembros de la sala.
+        allow get: if approvedRoom(id) || (signed() && request.auth.uid == pid);
+        allow list: if approvedRoom(id);
         allow create: if signed() && request.auth.uid == pid && parent(id).data.status != 'done'
           && request.resource.data.keys().hasOnly(['name','country','joinedAt'])
           && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 35
