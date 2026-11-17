@@ -91,3 +91,9 @@ El gráfico no muestra la proporción de aciertos antes de revelar la solución.
 
 ### Prueba pendiente
 Realizar un ensayo completo con computadora y al menos dos celulares (preferiblemente varias conexiones), incluir votos corregidos, límite de tiempo, los tres momentos, salida y recuperación del moderador, proyección e informe PDF. Las comprobaciones sintácticas no sustituyen una prueba integral con Firebase real.
+
+### Minicomprobación de transferencia
+En nuevas salas de competencia, después de **Explicar el concepto**, cada participante recibe una pregunta opcional sobre otro caso con tres opciones y retroalimentación. Las seis minicomprobaciones se resuelven **solo en el navegador**; no forman parte de la puntuación `X/6` ni alteran las preguntas de la clase.
+
+### Informe visual
+El informe imprimible incluye barras horizontales por opción, porcentajes y una breve interpretación de cada pregunta. El usuario puede elegir «Guardar como PDF» en el cuadro de impresión del navegador. No se envían los datos a un servicio externo de PDF.
