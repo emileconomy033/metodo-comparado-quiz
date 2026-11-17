@@ -19,19 +19,22 @@ service cloud.firestore {
       match /participants/{pid} {
         // El usuario puede consultar su propio documento, incluso antes de crearlo.
         // La lista completa queda restringida a miembros de la sala.
-        allow get: if approvedRoom(id) || (signed() && request.auth.uid == pid);
-        allow list: if approvedRoom(id);
+        allow get: if owner(id) || (signed() && request.auth.uid == pid);
+        allow list: if owner(id);
         allow create: if signed() && request.auth.uid == pid && parent(id).data.status != 'done'
           && request.resource.data.keys().hasOnly(['name','country','joinedAt'])
           && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 35
-          && request.resource.data.country is string && request.resource.data.country.size() <= 40;
+          && request.resource.data.country is string && request.resource.data.country.size() <= 40
+          && request.resource.data.joinedAt == request.time;
         allow update, delete: if false;
       }
       match /answers/{qid}/votes/{pid} {
         // Participantes solo pueden consultar votos cuando ya se revelaron, o al cerrar.
         // En encuesta, los resultados individuales quedan reservados al moderador hasta el cierre.
-        allow get: if owner(id) || (signed() && request.auth.uid == pid && participant(id)) || (participant(id) && (parent(id).data.status == 'done' || (parent(id).data.mode == 'competition' && parent(id).data.reveal == true && int(qid) == parent(id).data.idx)));
-        allow list: if owner(id) || (participant(id) && (parent(id).data.status == 'done' || (parent(id).data.mode == 'competition' && parent(id).data.reveal == true && int(qid) == parent(id).data.idx)));
+        // La lectura de votos identificables está reservada al moderador y a su autor.
+        // Las visualizaciones grupales se proyectan desde la pantalla del moderador.
+        allow get: if owner(id) || (signed() && request.auth.uid == pid && participant(id));
+        allow list: if owner(id);
         allow create: if signed() && request.auth.uid == pid && participant(id)
           && request.resource.data.keys().hasOnly(['choice','submittedAt'])
           && request.resource.data.choice is int && request.resource.data.choice >= 0 && request.resource.data.choice < 4
