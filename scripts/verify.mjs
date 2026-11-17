@@ -57,4 +57,27 @@ assert(html.includes('celebratedReveals.has(key)'),'La celebración no debe repe
 assert(html.includes('prefers-reduced-motion'),'Las animaciones deben respetar movimiento reducido');
 assert(html.includes("isQuestionRevealed(i)"),'Solo puntuar respuestas reveladas');
 assert(html.includes('¿Por qué no?: '),'Se requiere retroalimentación por distractor seleccionado');
-console.log('OK: currículo, moderación, tiempos, privacidad, corrección de votos, logo, celebración y puntuación progresiva.');
+const newQuiz = runInNewContext(inline[1].slice(start,stop)+';activateQuizVersion(2);globalThis.newData={QUIZ,PEDAGOGY}',{}).newData;
+const keyPositions=newQuiz.QUIZ.map(q=>q.correct);
+assert.deepEqual(Array.from(keyPositions),[0,2,3,1,0,3],'Distribución de claves A,C,D,B,A,D');
+for(let i=0;i<6;i++){
+ const q=newQuiz.QUIZ[i],p=newQuiz.PEDAGOGY[i];
+ assert.equal(q.a.length,4);
+ assert.equal(p.mis.length,4);
+ assert(q.a.every(x=>x.length>=45&&x.length<=90),'Longitud poco comparable: P'+(i+1));
+ const min=Math.min(...q.a.map(x=>x.length)),max=Math.max(...q.a.map(x=>x.length));
+ assert(max-min<=24,'Diferencias de longitud demasiado grandes: P'+(i+1));
+ assert(p.mis.every((x,j)=>j===q.correct||typeof x==='string'&&x.length>15));
+}
+assert(html.includes('quizVersion:2,revealStage:0'),'Las salas nuevas requieren una versión curricular explícita');
+assert(html.includes('function activateQuizVersion(v)'),'La versión anterior debe conservarse');
+assert(rules.includes('request.resource.data.quizVersion == 2'));
+assert(rules.includes("request.resource.data.revealStage == 0"));
+assert(rules.includes("parent(id).data.get('revealStage',0) == 0"),'El voto debe cerrarse al mostrar la distribución');
+assert(html.includes('function stageNow()'),'Faltan etapas de revelación');
+assert(html.includes("if(!showAnswer)donut.style.background"),'Posible filtración gráfica de la tasa de acierto');
+assert(html.includes('SIMULACIÓN DOCENTE · DATOS FICTICIOS'));
+assert(html.includes('function renderLearningSummary()'));
+assert(html.includes("'printReport'"));
+assert(html.includes('if(simulationMode){alertText('),'No exportar CSV ficticio');
+console.log('OK: seis preguntas, sesgo de longitud/posición, versiones históricas, revelación, privacidad, simulación e informe.');
