@@ -48,3 +48,9 @@ Se comprobaron estáticamente los seis ítems y la sintaxis del JavaScript. No s
 - **Es imprescindible publicar nuevamente `firestore.rules`** desde Firebase Console. A partir de estas reglas, solo la cuenta autenticada por correo/contraseña permitida puede **crear salas nuevas**. Las salas preexistentes de moderadores anónimos conservan el permiso de administración para el mismo UID original.
 - El moderador recupera su rol en el mismo navegador siempre que mantenga iniciada su sesión Firebase; se mantiene el acceso a salas antiguas creadas con la identidad anónima previa. Si cambia de navegador, deberá entrar como moderador con la contraseña y conservar el enlace de la sala.
 - **No compartir la contraseña con participantes.** El QR solo abre la pantalla pública para ingresar al cuestionario.
+
+## Ajuste de respuestas y diagnóstico de inscripción (noviembre 2026)
+- Mientras la encuesta permanezca abierta, cada participante puede cambiar su selección tantas veces como necesite. En competencia, los cambios están permitidos **solo en la pregunta vigente y mientras quede tiempo**; el último voto confirmado por Firestore reemplaza al anterior. No hay tres intentos: no se penaliza tocar una opción por accidente.
+- Si falla el ingreso, el aviso indica la etapa (consulta de sala, consulta del registro o inscripción), para identificar el permiso involucrado sin abrir indiscriminadamente Firestore.
+- **Publicar las reglas actualizadas en Firebase Console es obligatorio** para permitir la actualización de votos. El archivo en GitHub es solo la versión de referencia.
+- Se retiró el aviso informativo largo del pie de página a solicitud del moderador. Los controles de privacidad (reglas de Firebase, ausencia de listados individuales para participantes) siguen activos.
