@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {Script, runInNewContext} from 'node:vm';
+const html=readFileSync('index.html','utf8');
+const rules=readFileSync('firestore.rules','utf8');
+const config=readFileSync('firebase-config.js','utf8');
+const inline=html.match(/<script>\s*([\s\S]*?)\s*<\/script>/);
+assert(inline,'No existe el script principal');
+new Script(inline[1],{filename:'index.html'});
+new Script(config,{filename:'firebase-config.js'});
+const start=inline[1].indexOf('const QUIZ=');
+const stop=inline[1].indexOf('const $=',start);
+assert(start>=0&&stop>start,'No se encontró el contenido curricular');
+const data=runInNewContext(inline[1].slice(start,stop)+';globalThis.data={QUIZ,PEDAGOGY}',{}).data;
+assert.equal(data.QUIZ.length,6,'Deben mantenerse seis preguntas');
+assert.equal(data.PEDAGOGY.length,6,'Debe existir interpretación para cada pregunta');
+for(let i=0;i<6;i++){
+ const q=data.QUIZ[i],p=data.PEDAGOGY[i];
+ assert.equal(q.a.length,4,'Opciones incorrectas en P'+(i+1));
+ assert(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<4);
+ assert.equal(p.mis.length,4,'Faltan distractores en P'+(i+1));
+ for(let j=0;j<4;j++)if(j!==q.correct)assert(p.mis[j]?.trim(),'Sin interpretación de distractor P'+(i+1)+'-'+j);
+ assert(q.why&&p.principle&&p.transfer&&p.question);
+}
+for(const id of ['projectionButton','projectChart','finalLearning','submittedPanel','projectExit'])assert(html.includes('id="'+id+'"'),'Falta '+id);
+assert(html.includes('function renderLearningSummary('));
+assert(html.includes('function renderProjection('));
+assert(html.includes('function interpret('));
+assert(html.includes('function watchSharedVotes(){'));
+assert(!html.includes("collection('participants').onSnapshot(s=>{people=s.docs")||html.includes("if(isHost)stops.push(rref().collection('participants')"),'Lista de participantes sin restricción de host');
+assert.equal((rules.match(/allow list: if owner\(id\);/g)||[]).length,2,'Las listas sensibles deben pertenecer al moderador');
+assert(rules.includes('allow get: if owner(id) || (signed() && request.auth.uid == pid && participant(id));'));
+assert(!rules.includes('if true;'),'Reglas permisivas');
+assert(rules.includes("sessionKind in ['practice','official']"));
+console.log('OK: sintaxis, seis preguntas, 18 distractores, vistas y controles de privacidad.');
