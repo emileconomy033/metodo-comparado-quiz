@@ -42,4 +42,10 @@ assert(rules.includes('allow create: if moderator()'),'La creación debe exigir 
 assert(rules.includes("sign_in_provider == 'password'"));
 assert(rules.includes('validTimes(request.resource.data.questionTimes)'));
 assert(rules.includes("duration.value(parent(id).data.get('questionTimes'"),'Reglas sin temporizador por pregunta');
-console.log('OK: seis preguntas, 18 distractores, acceso Firebase de moderador, temporizadores configurables y privacidad.');
+assert(html.includes('const pendingVotes=new Set()'));
+assert(html.includes('b.disabled=locked||pendingVotes.has(i)'),'Los votos anteriores no deben bloquear las opciones');
+assert(html.includes("No fue posible ingresar ('+stage+')"),'Sin diagnóstico de etapa al ingresar');
+assert(rules.includes('request.resource.data.diff(resource.data).affectedKeys().hasOnly'), 'Falta controlar qué campos se pueden modificar');
+assert(rules.includes('allow update: if signed() && request.auth.uid == pid && participant(id)'),'Solo el votante puede corregir su respuesta');
+assert(html.includes('Actividad académica del Grupo 1.</footer>'));
+console.log('OK: currículo, moderación, tiempos, privacidad y corrección de votos.');
