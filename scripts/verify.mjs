@@ -32,4 +32,14 @@ assert.equal((rules.match(/allow list: if owner\(id\);/g)||[]).length,2,'Las lis
 assert(rules.includes('allow get: if owner(id) || (signed() && request.auth.uid == pid && participant(id));'));
 assert(!rules.includes('if true;'),'Reglas permisivas');
 assert(rules.includes("sessionKind in ['practice','official']"));
-console.log('OK: sintaxis, seis preguntas, 18 distractores, vistas y controles de privacidad.');
+assert(html.includes('id="moderatorLogin"'));
+assert(html.includes('id="durationFields"'));
+assert(html.includes('signInWithEmailAndPassword('));
+assert(!html.includes('123Moderador'),'Nunca incluir contraseña en el código público');
+assert(html.includes("questionTimes:$('mode').value==='competition'?times:Array(N).fill(DEFAULT_SECONDS)"));
+assert(html.includes('function questionSeconds(i)'));
+assert(rules.includes('allow create: if moderator()'),'La creación debe exigir moderador autenticado');
+assert(rules.includes("sign_in_provider == 'password'"));
+assert(rules.includes('validTimes(request.resource.data.questionTimes)'));
+assert(rules.includes("duration.value(parent(id).data.get('questionTimes'"),'Reglas sin temporizador por pregunta');
+console.log('OK: seis preguntas, 18 distractores, acceso Firebase de moderador, temporizadores configurables y privacidad.');
