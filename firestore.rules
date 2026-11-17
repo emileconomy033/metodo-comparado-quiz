@@ -58,7 +58,19 @@ service cloud.firestore {
           && ((parent(id).data.mode == 'survey' && int(qid) >= 0 && int(qid) < 6)
             || (parent(id).data.mode == 'competition' && int(qid) == parent(id).data.idx
               && parent(id).data.reveal == false && request.time <= parent(id).data.openedAt + duration.value(parent(id).data.get('questionTimes',[40,40,40,40,40,40])[int(qid)],'s')));
-        allow update, delete: if false;
+        // Puede corregirse la opción propia mientras la pregunta permanezca abierta.
+        // La última escritura aceptada por el servidor es la respuesta definitiva.
+        allow update: if signed() && request.auth.uid == pid && participant(id)
+          && request.resource.data.keys().hasOnly(['choice','submittedAt'])
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['choice','submittedAt'])
+          && request.resource.data.choice is int && request.resource.data.choice >= 0 && request.resource.data.choice < 4
+          && request.resource.data.submittedAt == request.time
+          && parent(id).data.status == 'live'
+          && ((parent(id).data.mode == 'survey' && int(qid) >= 0 && int(qid) < 6)
+            || (parent(id).data.mode == 'competition' && int(qid) == parent(id).data.idx
+              && parent(id).data.reveal == false
+              && request.time <= parent(id).data.openedAt + duration.value(parent(id).data.get('questionTimes',[40,40,40,40,40,40])[int(qid)],'s')));
+        allow delete: if false;
       }
     }
   }
