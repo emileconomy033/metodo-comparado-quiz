@@ -480,7 +480,19 @@ async function init(cfg){if(!window.firebase)throw Error('No se pudo cargar Fire
   }catch(e){alertText('No se pudo validar la sala vigente en Firebase: '+e.message,true)}
  }
  if(requested)$('roomCode').value=requested;
- section('home');await showOwnedRooms();
+ const openingPublicView=new URLSearchParams(location.search).get('view')==='projection';
+ if(openingPublicView){
+  section('projection');
+  $('projectHeading').textContent='¿Realmente sabemos comparar?';
+  $('projectStage').textContent='Conectando';
+  $('projectChart').replaceChildren(add('p','Conectando con la sala…','project-hidden'));
+ }else section('home');
+ if(!openingPublicView)await showOwnedRooms();
+ if(openingPublicView&&!roomVerified){
+  $('projectStage').textContent='Sin conexión';
+  $('projectChart').replaceChildren(add('p','No se pudo verificar la sala vigente. Abre de nuevo esta pantalla desde el panel del expositor.','project-hidden'));
+  return;
+ }
  if(requested&&roomVerified){try{
 const wantsPublicProjection=new URLSearchParams(location.search).get('view')==='projection';
 if(wantsPublicProjection){
