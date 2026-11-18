@@ -162,3 +162,24 @@ Las nuevas reglas incluyen `match /roomDirectory/{key}` y `activeRoom(id)`. **Es
 Después de publicar, ingresar con el usuario propietario y pulsar **Crear o recuperar sala única** para activar el directorio. No compartir un QR hasta verificar que el panel muestra la sala vigente. Los códigos antiguos quedan históricos y no deben volver a utilizarse para nuevas actividades. **No se han borrado las salas anteriores**.
 
 Las comprobaciones automáticas validan la estructura del directorio y las condiciones de bloqueo; todavía es imprescindible probar con Firebase real la creación/recuperación, acceso de dos celulares, corrección del voto, finalización, limpieza y nueva inscripción con el mismo QR.
+
+## Auditoría correctiva: inscripción visible y avance dirigido (18 noviembre 2026)
+
+**Incidencias observadas:** participantes a veces no aparecían en la lista del moderador pese a entrar desde móvil; el celular podía avanzar libremente.
+
+**Causa confirmada del avance libre:** el formulario elegía `survey` por defecto, y la sala central conservaba esa modalidad aunque se reutilizara el mismo QR.
+
+**Reparaciones:**
+- Nuevas salas de cuatro preguntas **exclusivamente en modo competencia**, sin selector de encuesta libre.
+- Si la sala única existente es versión 3 y está en espera, el propietario puede recuperarla y pasarla a competencia con **el mismo código/QR**. Si está en curso, primero debe finalizarse y limpiarse; al limpiar, regresa a espera con modo competencia.
+- Las reglas actualizadas de Firestore impiden crear salas nuevas de cuatro preguntas en modo libre y rechazan votos de respuesta libre para esas salas. La lectura y corrección de respuestas sigue limitada a la pregunta que abrió el moderador y al plazo vigente.
+- El panel del moderador enseña una lista nominal de **participantes registrados** y un estado de sincronización. Además de los listeners, incorpora **Actualizar participantes** y una comprobación automática con lectura del servidor cada 12 segundos durante la actividad.
+- Un contador de Firestore no demuestra presencia física o conexión activa: refleja **registros confirmados**, no usuarios conectados en ese instante.
+- «Sala lista y disponible» se muestra únicamente con sala en espera, modo competencia y conteos sin votos/participantes verificados. El botón Iniciar se deshabilita si los listeners aún no han sincronizado.
+- Nueva versión del enlace de participación: `v=2026-11-18-comp-dirigida2`.
+
+**Despliegue imprescindible:** copiar `firestore.rules` a Firebase Console → Firestore Rules → Publish. El cambio en el repositorio no modifica automáticamente las reglas públicas.
+
+**Validación efectuada:** comprobaciones de sintaxis y pruebas estáticas del repositorio. **No se ha probado una votación real en el Firebase del usuario**, por lo que debe realizarse una prueba con moderador y al menos un celular.
+
+**Prueba mínima:** recuperar sala; comprobar que el panel indique **Competencia**; ingresar con nombre desde celular; verificar que aparezca en el listado; iniciar P1 desde PC; comprobar que no existen botones Anterior/Siguiente en el celular; revelar y avanzar desde PC; verificar que el celular cambia de pregunta únicamente después del avance.
