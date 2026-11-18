@@ -404,7 +404,24 @@ $('competition').classList.remove('hidden');updatePersonalScore();$('compProgres
 function drawRankings(){const el=$('ranking');el.replaceChildren();el.append(add('h3','Tus resultados'));el.append(add('p','La comparación de resultados de todo el grupo se realiza con el moderador. Los nombres y las respuestas individuales de los compañeros permanecen privados.'))}
 function drawQR(){if(simulationMode){$('qr').replaceChildren();$('qr').append(add('p','Sin QR: simulación local'));$('qr').dataset.code='';$('joinUrl').removeAttribute('href');$('joinUrl').textContent='No se comparte un enlace durante el ensayo';return}if($('qr').dataset.code===roomId)return;$('qr').replaceChildren();$('qr').dataset.code=roomId;if(window.QRCode)new QRCode($('qr'),{text:link(),width:160,height:160,correctLevel:QRCode.CorrectLevel.M});else $('qr').textContent='QR no disponible: comparte el enlace';$('joinUrl').href=link();$('joinUrl').textContent=link()}
 function render(){if(!room)return;section(...(isHost?(projecting?['projection']:['host']):['participant']));clearInterval(ticker);if(isHost){drawQR();renderHost();if(projecting)renderProjection()}else{renderParticipant()}if(room.status==='live'&&room.mode==='competition'&&!room.reveal&&stageNow()===0){ticker=setInterval(()=>{if(isHost)return;if(!timingReady()){$('clock').textContent='Preparando…';return}const rem=remaining();$('clock').textContent=rem+' s';if(rem<=1){clearInterval(ticker);renderParticipant()}},1000)}}
-async function init(cfg){if(!window.firebase)throw Error('No se pudo cargar Firebase. Comprueba tu conexión a internet.');if(!cfg||!cfg.apiKey||!cfg.projectId||!cfg.appId)throw Error('Faltan apiKey, projectId o appId en la configuración.');if(!firebase.apps.length)firebase.initializeApp(cfg);db=firebase.firestore();await firebase.auth().signInAnonymously();uid=firebase.auth().currentUser.uid;anonDb=db;anonUid=uid;authReady=true;synchronizeClock();const requested=code(new URLSearchParams(location.search).get('room'));if(requested)$('roomCode').value=requested;section('home');await showOwnedRooms();const prior=savedRooms();if(requested){try{
+async function init(cfg){if(!window.firebase)throw Error('No se pudo cargar Firebase. Comprueba tu conexión a internet.');if(!cfg||!cfg.apiKey||!cfg.projectId||!cfg.appId)throw Error('Faltan apiKey, projectId o appId en la configuración.');if(!firebase.apps.length)firebase.initializeApp(cfg);db=firebase.firestore();await firebase.auth().signInAnonymously();uid=firebase.auth().currentUser.uid;anonDb=db;anonUid=uid;authReady=true;synchronizeClock();let requested=code(new URLSearchParams(location.search).get('room'));
+ let roomVerified=false;
+ if(requested){
+  try{
+   const active=await fetchActiveRoomId();
+   if(!active){alertText('El moderador aún no ha activado la sala única. No ingreses con un QR antiguo.',true)}
+   else{
+    if(active!==requested){
+     const previous=requested;requested=active;setRoomLocation(active);
+     alertText('El código '+previous+' ya no está vigente. Se actualizó al código de la sala única: '+active+'.');
+    }
+    roomVerified=true;
+   }
+  }catch(e){alertText('No se pudo validar la sala vigente en Firebase: '+e.message,true)}
+ }
+ if(requested)$('roomCode').value=requested;
+ section('home');await showOwnedRooms();
+ if(requested&&roomVerified){try{
 const doc=await anonDb.collection('rooms').doc(requested).get();
 if(doc.exists&&doc.data().owner===anonUid){roomId=requested;isHost=true;projecting=new URLSearchParams(location.search).get('view')==='projection';subscribe();return}
 if(doc.exists){const mine=await anonDb.collection('rooms').doc(requested).collection('participants').doc(anonUid).get();if(mine.exists){roomId=requested;myName=mine.data().name;myCountry=mine.data().country||'';isHost=false;subscribe();return}}
@@ -545,6 +562,18 @@ function unsubscribe(){stops.forEach(fn=>fn());stops=[];dataStops.forEach(fn=>fn
 function watchSharedVotes(){sharedVoteStops.forEach(fn=>fn());sharedVoteStops=[];/* Los resultados individuales de terceros nunca se consultan desde el navegador participante. */}
 function subscribe(){
  unsubscribe();loadedPeople=false;loadedVotes=new Set();sharedVoteStops.forEach(fn=>fn());sharedVoteStops=[];
+ if(!isHost){
+  stops.push(anonDb.doc(ACTIVE_ROOM_PATH).onSnapshot(snapshot=>{
+   if(!snapshot.exists)return;
+   const current=code(snapshot.data().roomId);
+   if(current&&roomId&&current!==roomId){
+    const old=roomId;unsubscribe();room=null;isHost=false;roomId='';votes=Array.from({length:N},()=>[]);
+    $('roomCode').value=current;setRoomLocation(current);section('home');
+    alertText('Tu sala '+old+' dejó de estar vigente. El código actual es '+current+'. Ingresa de nuevo para evitar registrar votos en la sala anterior.',true);
+   }
+  },e=>alertText('No se pudo validar la sala vigente: '+e.message,true)));
+ }
+
  let observedVersion=null;
  stops.push(rref().onSnapshot(snapshot=>{
   if(!snapshot.exists){alertText('Sala no encontrada.',true);return}
