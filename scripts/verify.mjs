@@ -175,4 +175,12 @@ assert(source.includes("name:'Participante ficticio '+(i+1),country:'',ready:tru
 assert(rules.includes("request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ready','readyAt'])"),'Las reglas permiten editar otros datos del participante');
 assert(rules.includes("resource.data.get('ready',false) == false"),'No se comprueba la primera confirmación');
 assert(rules.includes("request.resource.data.readyAt == request.time"),'No se vincula la confirmación a la hora del servidor');
-console.log('OK: sala única y competencia dirigida con confirmación individual y conteo dinámico de preparados.');
+assert(html.includes('id="showCreate">Acceso para expositores</button>'),'Debe haber una entrada inequívoca para ambos expositores');
+assert(html.includes('<h2>Mi sala · propietario</h2>'),'El propietario debe tener su propia ruta');
+assert(html.includes('<h2>Entrar a la sala existente</h2>'),'El invitado debe identificar la sala existente');
+assert(html.includes('Abrir mi sala · crear solo si no existe'),'La acción del propietario debe distinguir recuperación y creación');
+assert(source.includes("fetchActiveRoomId().then(id=>"),'El invitado debe recuperar automáticamente el código vigente');
+assert(source.includes("activeId&&activeId!==codeValue"),'El invitado no puede acceder a una sala obsoleta');
+assert(source.includes("people=[];votes=Array.from({length:N},()=>[]);subscribe()"),'El segundo expositor necesita listeners compatibles con cuatro preguntas');
+assert(!html.includes('Soy moderador: crear sesión'),'No debe persistir el texto ambiguo anterior');
+console.log('OK: roles de expositores separados, sala única, asistencia y competencia dirigida.');
