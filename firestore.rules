@@ -17,6 +17,10 @@ service cloud.firestore {
         && (version != 2 || (t[4] is int && t[4] >= 10 && t[4] <= 180
           && t[5] is int && t[5] >= 10 && t[5] <= 180));
     }
+    function activeRoom(id) {
+      return exists(/databases/$(database)/documents/roomDirectory/current)
+        && get(/databases/$(database)/documents/roomDirectory/current).data.roomId == id;
+    }
     function parent(id) { return get(/databases/$(database)/documents/rooms/$(id)); }
     function owner(id) { return signed() && parent(id).data.owner == request.auth.uid; }
     function participant(id) { return signed() && exists(/databases/$(database)/documents/rooms/$(id)/participants/$(request.auth.uid)); }
@@ -27,6 +31,20 @@ service cloud.firestore {
     }
     function presenter(id) { return owner(id) || coPresenter(id); }
     function approvedRoom(id) { return presenter(id) || participant(id); }
+    match /roomDirectory/{key} {
+      allow get: if key == 'current' && signed();
+      allow list: if false;
+      // A single permanent room, controlled by the authenticated account owner.
+      allow create, update: if key == 'current' && moderator()
+        && request.resource.data.keys().hasOnly(['roomId','updatedAt'])
+        && request.resource.data.roomId is string
+        && request.resource.data.roomId.size() >= 6
+        && request.resource.data.roomId.size() <= 8
+        && request.resource.data.updatedAt == request.time
+        && getAfter(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.owner == request.auth.uid
+        && getAfter(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.quizVersion == 3;
+      allow delete: if false;
+    }
     match /rooms/{id} {
       allow get: if signed();
       allow list: if false;
@@ -46,7 +64,7 @@ service cloud.firestore {
         // La lista completa queda restringida a miembros de la sala.
         allow get: if presenter(id) || (signed() && request.auth.uid == pid);
         allow list: if presenter(id);
-        allow create: if signed() && request.auth.uid == pid && parent(id).data.status != 'done'
+        allow create: if signed() && activeRoom(id) && request.auth.uid == pid && parent(id).data.status != 'done'
           && request.resource.data.keys().hasOnly(['name','country','joinedAt'])
           && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 35
           && request.resource.data.country is string && request.resource.data.country.size() <= 40
@@ -61,7 +79,7 @@ service cloud.firestore {
         // Las visualizaciones grupales se proyectan desde la pantalla del moderador.
         allow get: if presenter(id) || (signed() && request.auth.uid == pid && participant(id));
         allow list: if presenter(id);
-        allow create: if signed() && request.auth.uid == pid && participant(id)
+        allow create: if signed() && activeRoom(id) && request.auth.uid == pid && participant(id)
           && request.resource.data.keys().hasOnly(['choice','submittedAt'])
           && request.resource.data.choice is int && request.resource.data.choice >= 0 && request.resource.data.choice < 4
           && request.resource.data.submittedAt == request.time
@@ -71,7 +89,7 @@ service cloud.firestore {
               && parent(id).data.reveal == false && parent(id).data.get('revealStage',0) == 0 && request.time <= parent(id).data.openedAt + duration.value(parent(id).data.get('questionTimes',[40,40,40,40,40,40])[int(qid)],'s')));
         // Puede corregirse la opción propia mientras la pregunta permanezca abierta.
         // La última escritura aceptada por el servidor es la respuesta definitiva.
-        allow update: if signed() && request.auth.uid == pid && participant(id)
+        allow update: if signed() && activeRoom(id) && request.auth.uid == pid && participant(id)
           && request.resource.data.keys().hasOnly(['choice','submittedAt'])
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['choice','submittedAt'])
           && request.resource.data.choice is int && request.resource.data.choice >= 0 && request.resource.data.choice < 4
