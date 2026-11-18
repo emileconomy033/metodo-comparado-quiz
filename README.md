@@ -143,3 +143,22 @@ La sintaxis del JavaScript y las pruebas estáticas del repositorio comprueban v
 
 ### Correo del segundo expositor preconfigurado
 En nuevas salas **oficiales**, la aplicación intenta autorizar automáticamente `gramirezfunes@gmail.com` como segundo expositor. No se publica ni se crea ninguna contraseña: la cuenta debe crearse por separado en Firebase Authentication → Users con Email/Password. Si la invitación falla, el creador verá una advertencia y podrá reintentar con «Autorizar expositor». Las salas ya existentes no reciben esta autorización automáticamente; el propietario debe agregar ese correo desde su panel.
+
+## Refuerzo definitivo — sala vigente centralizada y QR único
+
+El registro compartido **`roomDirectory/current`** de Firebase determina qué sala es válida para todos los participantes. No depende de los datos locales de cada teléfono.
+
+- El propietario abre **Crear o recuperar sala única**. La aplicación busca primero el código central en Firebase, luego el código único del navegador. Solo crea una sala nueva si no encuentra una sala válida. El documento central se crea en la misma escritura por lotes que una sala nueva.
+- El QR de esa sala conserva su **código de sala**, incluso después de eliminar los votos de ensayo. El parámetro de versión del enlace puede cambiar para ayudar a evitar copias antiguas del HTML, sin cambiar el identificador de sala.
+- Si un asistente abre un enlace con código histórico, la aplicación consulta `roomDirectory/current`, actualiza el enlace a la sala válida y muestra un aviso. Antes de registrar un participante, siempre se comprueba el identificador central en el servidor.
+- Durante una participación activa, la aplicación observa el código central y retira de una sala antigua al dispositivo si cambia la sala vigente.
+- **Protección real desde el servidor:** las reglas para registrar participantes y crear/modificar votos exigen `activeRoom(id)`. Por tanto, un navegador con HTML antiguo tampoco puede **escribir** respuestas en salas anteriores una vez publicadas estas reglas.
+- En Inicio, el moderador verá únicamente **Mi sala única vigente**, no una lista de códigos antiguos. En el panel se muestra el estado **Sala lista y disponible** solo cuando la sala está en espera y los registros visibles se han sincronizado a cero.
+
+### Publicación obligatoria y migración
+
+Las nuevas reglas incluyen `match /roomDirectory/{key}` y `activeRoom(id)`. **Es obligatorio copiar la última versión del archivo `firestore.rules` del repositorio y publicarla en Firebase Console antes de utilizar la sala.** Las reglas anteriores no permiten escribir `roomDirectory/current`.
+
+Después de publicar, ingresar con el usuario propietario y pulsar **Crear o recuperar sala única** para activar el directorio. No compartir un QR hasta verificar que el panel muestra la sala vigente. Los códigos antiguos quedan históricos y no deben volver a utilizarse para nuevas actividades. **No se han borrado las salas anteriores**.
+
+Las comprobaciones automáticas validan la estructura del directorio y las condiciones de bloqueo; todavía es imprescindible probar con Firebase real la creación/recuperación, acceso de dos celulares, corrección del voto, finalización, limpieza y nueva inscripción con el mismo QR.
