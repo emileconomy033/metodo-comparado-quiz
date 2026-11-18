@@ -169,7 +169,7 @@ function activateQuizVersion(v){
  }
  if(typeof N!=='undefined')N=QUIZ.length;
 }
-const $=x=>document.getElementById(x);const IDs=['setup','home','create','moderatorLogin','presenterEntry','host','participant','mySessions','projection'];const ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const DEFAULT_SECONDS=40;const UNIQUE_ROOM_KEY='comparisonPermanentRoomId';let N=QUIZ.length;const MODERATOR_EMAIL='emil.economia@gmail.com';const DEFAULT_PRESENTER_EMAIL='gramirezfunes@gmail.com';const RELEASE_ID='2026-11-18-qa1';
+const $=x=>document.getElementById(x);const IDs=['setup','home','create','moderatorLogin','presenterEntry','host','participant','mySessions','projection'];const ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const DEFAULT_SECONDS=40;const UNIQUE_ROOM_KEY='comparisonPermanentRoomId';let N=QUIZ.length;const MODERATOR_EMAIL='emil.economia@gmail.com';const DEFAULT_PRESENTER_EMAIL='gramirezfunes@gmail.com';const RELEASE_ID='2026-11-18-sala-unica2';
 let db=null,uid='',anonDb=null,anonUid='',moderatorDb=null,moderatorAuth=null,roomId='',room=null,isHost=false,myName='',myCountry='',people=[],votes=Array.from({length:N},()=>[]),stops=[],activeTab=0,surveyAt=0,ticker=null,authReady=false,reviewingSurvey=false,projecting=false,projectAt=0,projectView='question';
 function section(...names){IDs.forEach(x=>$(x).classList.toggle('hidden',!names.includes(x)))}
 function alertText(s,isError=false){$('alert').replaceChildren();if(!s)return;const n=document.createElement('div');n.className='notice'+(isError?' error':'');n.textContent=s;$('alert').append(n)}
