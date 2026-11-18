@@ -377,8 +377,15 @@ const doc=await anonDb.collection('rooms').doc(requested).get();
 if(doc.exists&&doc.data().owner===anonUid){roomId=requested;isHost=true;subscribe();return}
 if(doc.exists){const mine=await anonDb.collection('rooms').doc(requested).collection('participants').doc(anonUid).get();if(mine.exists){roomId=requested;myName=mine.data().name;myCountry=mine.data().country||'';isHost=false;subscribe();return}}
 const mod=await initModeratorAuth();
-if(mod.currentUser?.email&&doc.exists&&doc.data().owner===mod.currentUser.uid){
-db=moderatorDb;uid=mod.currentUser.uid;roomId=requested;isHost=true;people=[];votes=Array.from({length:N},()=>[]);subscribe();return
+if(mod.currentUser?.email&&doc.exists){
+ let allowed=doc.data().owner===mod.currentUser.uid;
+ if(!allowed){
+  try{
+   const invitation=await moderatorDb.collection('rooms').doc(requested).collection('access').doc('presenter').get();
+   allowed=invitation.exists&&invitation.data().email===mod.currentUser.email.toLowerCase()
+  }catch{}
+ }
+ if(allowed){db=moderatorDb;uid=mod.currentUser.uid;roomId=requested;isHost=true;people=[];votes=Array.from({length:N},()=>[]);subscribe();return}
 }
 }catch(e){console.warn('No se pudo recuperar la sala automáticamente',e)}}}
 async function boot(){try{let cfg=window.FIREBASE_CONFIG;if(!cfg){const s=localStorage.getItem('comparisonFirebaseConfig');if(s)cfg=JSON.parse(s)}if(cfg)await init(cfg);else section('setup')}catch(e){section('setup');alertText('Error de conexión: '+e.message,true)}}
@@ -443,9 +450,43 @@ $('join').onclick=async()=>{
   const u=new URL(location.href);u.searchParams.set('room',roomId);history.replaceState(null,'',u.toString());
  }catch(e){alertText('No fue posible ingresar ('+stage+'): '+e.message,true)}
 };
-function unsubscribe(){stops.forEach(fn=>fn());stops=[]}let sharedVoteStops=[];
+let dataStops=[];
+function unsubscribe(){stops.forEach(fn=>fn());stops=[];dataStops.forEach(fn=>fn());dataStops=[]}let sharedVoteStops=[];
 function watchSharedVotes(){sharedVoteStops.forEach(fn=>fn());sharedVoteStops=[];/* Los resultados individuales de terceros nunca se consultan desde el navegador participante. */}
-function subscribe(){unsubscribe();sharedVoteStops.forEach(fn=>fn());sharedVoteStops=[];stops.push(rref().onSnapshot(s=>{if(!s.exists)return alertText('Sala no encontrada.',true);const old=room?.status+'-'+room?.idx+'-'+room?.reveal;room=s.data();activateQuizVersion(room.quizVersion);if(!isHost&&old!==room.status+'-'+room.idx+'-'+room.reveal)watchSharedVotes();render()},e=>alertText(e.message,true)));if(isHost)stops.push(rref().collection('participants').onSnapshot(s=>{people=s.docs.map(d=>({uid:d.id,...d.data()}));if(room)render()},e=>alertText(e.message,true)));QUIZ.forEach((q,i)=>{if(isHost){stops.push(rref().collection('answers').doc(String(i)).collection('votes').onSnapshot(s=>{votes[i]=s.docs.map(d=>({uid:d.id,...d.data()}));if(room)render()},e=>alertText(e.message,true)))}else{stops.push(voteRef(i).onSnapshot(s=>{const others=votes[i].filter(v=>v.uid!==uid);votes[i]=s.exists?[...others,{uid,...s.data()}]:others;if(room)render()},e=>alertText(e.message,true)))}})}
+function subscribe(){
+ unsubscribe();sharedVoteStops.forEach(fn=>fn());sharedVoteStops=[];
+ let observedVersion=null;
+ stops.push(rref().onSnapshot(snapshot=>{
+  if(!snapshot.exists){alertText('Sala no encontrada.',true);return}
+  const previous=room?.status+'-'+room?.idx+'-'+room?.reveal;
+  room=snapshot.data();
+  activateQuizVersion(room.quizVersion);
+  if(observedVersion!==room.quizVersion){
+   observedVersion=room.quizVersion;
+   dataStops.forEach(stop=>stop());dataStops=[];
+   people=[];votes=Array.from({length:N},()=>[]);
+   if(isHost){
+    dataStops.push(rref().collection('participants').onSnapshot(s=>{
+     people=s.docs.map(d=>({uid:d.id,...d.data()}));if(room)render()
+    },e=>alertText('Participantes: '+e.message,true)));
+   }
+   QUIZ.forEach((q,i)=>{
+    if(isHost){
+     dataStops.push(rref().collection('answers').doc(String(i)).collection('votes').onSnapshot(s=>{
+      votes[i]=s.docs.map(d=>({uid:d.id,...d.data()}));if(room)render()
+     },e=>alertText('Votos P'+(i+1)+': '+e.message,true)));
+    }else{
+     dataStops.push(voteRef(i).onSnapshot(s=>{
+      votes[i]=s.exists?[{uid,...s.data()}]:[];
+      if(room)render()
+     },e=>alertText('Mi voto P'+(i+1)+': '+e.message,true)));
+    }
+   });
+  }
+  if(!isHost&&previous!==room.status+'-'+room.idx+'-'+room.reveal)watchSharedVotes();
+  render();
+ },e=>alertText('Conexión de la sala: '+e.message,true)));
+}
 const pendingVotes=new Set();async function submit(i,choice){if(pendingVotes.has(i))return;pendingVotes.add(i);try{if(!room||room.status!=='live'||(room.mode==='competition'&&(room.idx!==i||room.reveal||stageNow()>0||remaining()<=0)))throw Error('Esta pregunta ya está cerrada.');const shouldAdvance=room.mode==='survey'&&i<N-1&&!hasVoted(i)&&!reviewingSurvey;await voteRef(i).set({choice,submittedAt:firebase.firestore.FieldValue.serverTimestamp()});if(shouldAdvance){surveyAt=i+1;renderParticipant()}else if(room.mode==='survey'&&QUIZ.every((q,k)=>k===i||hasVoted(k))&&i===N-1&&!reviewingSurvey){reviewingSurvey=false;renderParticipant()}else{renderParticipant()}}catch(e){alertText('No se pudo registrar la respuesta: '+e.message,true)}finally{pendingVotes.delete(i);if(room)renderParticipant()}}
 $('reviewSurvey').onclick=()=>{reviewingSurvey=true;surveyAt=0;renderParticipant()};
 $('prevSurvey').onclick=()=>{surveyAt=Math.max(0,surveyAt-1);renderParticipant()};$('nextSurvey').onclick=()=>{if(surveyAt===N-1&&QUIZ.every((q,i)=>hasVoted(i))){reviewingSurvey=false;renderParticipant()}else{surveyAt=(surveyAt+1)%N;renderParticipant()}};
