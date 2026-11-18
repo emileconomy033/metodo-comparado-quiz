@@ -348,7 +348,7 @@ function scoreFor(pid){return QUIZ.reduce((total,q,i)=>total+(votes[i].some(v=>v
 function rankings(){return people.map(p=>({...p,score:scoreFor(p.uid)})).sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name,'es'))}
 function rowMetric(n,label){const box=add('div',undefined,'metric');box.append(add('b',String(n)),add('span',label));return box}
 function renderHost(){if(!isHost)return;$('hostCode').textContent='Sala '+roomId;$('hostStatus').textContent=`${room.sessionKind==='official'?'OFICIAL':'ENSAYO'} · ${room.mode==='survey'?'Encuesta':'Competencia'} · ${room.status==='lobby'?'En espera':room.status==='done'?'Finalizada':'En curso'}`;
-$('hostHint').textContent=people.length+(simulationMode?' perfiles simulados. Datos ficticios.':' participantes inscritos. Actualización automática desde Firebase.');$('simulationWarning').classList.toggle('hidden',!simulationMode);$('completedActions').classList.toggle('hidden',room.status!=='done');$('teacherSimulation').style.display=simulationMode?'none':'inline-block';$('presenterAccess').classList.toggle('hidden',simulationMode||room.owner!==uid);$('resetOfficial').classList.toggle('hidden',simulationMode||room.sessionKind!=='official'||room.owner!==uid||room.status!=='done');$('exitSimulation').style.display=simulationMode?'inline-block':'none';
+$('hostHint').textContent=people.length+(simulationMode?' perfiles simulados. Datos ficticios.':' participantes inscritos. Actualización automática desde Firebase.');$('simulationWarning').classList.toggle('hidden',!simulationMode);$('completedActions').classList.toggle('hidden',room.status!=='done');$('teacherSimulation').style.display=simulationMode?'none':'inline-block';$('openAudienceWindow').disabled=simulationMode;$('presenterAccess').classList.toggle('hidden',simulationMode||room.owner!==uid);$('resetOfficial').classList.toggle('hidden',simulationMode||room.sessionKind!=='official'||room.owner!==uid||room.status!=='done');$('exitSimulation').style.display=simulationMode?'inline-block':'none';
 $('start').textContent=room.mode==='survey'?'Abrir encuesta':'Iniciar competencia';$('start').disabled=room.status!=='lobby';$('next').classList.toggle('hidden',room.mode==='survey'||room.idx>=N-1);$('reveal').classList.toggle('hidden',room.mode==='survey');$('next').disabled=room.status!=='live'||!room.reveal||room.idx>=N-1||(room.quizVersion>=2&&stageNow()<2);$('reveal').disabled=room.status!=='live'||(room.quizVersion!==2&&room.reveal)||(room.quizVersion>=2&&stageNow()>=3);$('reveal').textContent=room.quizVersion>=2?(stageNow()===0?'Mostrar distribución':stageNow()===1?'Revelar respuesta':'Ampliar explicación (opcional)'):'Revelar respuesta';$('stageGuide').textContent=room.mode!=='competition'?'':room.status==='done'?'Dinámica finalizada. Puedes revisar resultados o crear otra.':room.idx===N-1&&stageNow()>=2?'Última pregunta: pulsa «Cerrar y mostrar resultados».':stageNow()===0?'Paso 1: mostrar cómo respondió el grupo.':stageNow()===1?'Paso 2: revelar cuál era correcta.':'Ya puedes pulsar «Siguiente pregunta»; la explicación adicional es opcional.';$('finish').disabled=room.status==='done'||room.status==='lobby';
 const total=nAnswers(),correct=QUIZ.reduce((v,q,i)=>v+correctFor(i),0),submitted=people.filter(p=>QUIZ.every((q,i)=>votes[i].some(v=>v.uid===p.uid))).length;
 $('metrics').replaceChildren(rowMetric(people.length,'Participantes'),rowMetric(total,'Respuestas registradas'),rowMetric(fmtPercent(correct,total),'Porcentaje de aciertos'),rowMetric(submitted,'Cuestionarios completos'));
@@ -551,7 +551,17 @@ function renderProjection(){
  $('projectPrivacy').textContent='Visualización colectiva: sin nombres ni respuestas individuales';
  if(projectView==='summary'){
  if(room.status!=='done'){const box=add('div',undefined,'project-hidden');box.append(add('h3','La síntesis estará disponible al cerrar la sesión.'),add('p','Así evitamos proyectar conclusiones mientras todavía se recopilan respuestas.'));out.append(box);return}
- const original=$('finalLearning');if(original){out.append(original.cloneNode(true))}return
+ const meaningful=QUIZ.map((q,i)=>({i,n:votes[i]?.length||0,correct:correctFor(i)})).filter(x=>x.n>0);
+ const total=meaningful.reduce((a,x)=>a+x.n,0),hit=meaningful.reduce((a,x)=>a+x.correct,0);
+ const panel=add('div',undefined,'project-hidden');
+ panel.append(add('h3','¿Qué aprendimos como grupo?'));
+ if(!meaningful.length){panel.append(add('p','No se registraron respuestas para elaborar un balance.'));out.append(panel);return}
+ const difficult=[...meaningful].sort((a,b)=>a.correct/a.n-b.correct/b.n)[0];
+ panel.append(add('p',`Aciertos totales: ${fmtPercent(hit,total)} en ${total} respuestas registradas.`));
+ panel.append(add('p',`Mayor dificultad observada: pregunta ${difficult.i+1} — ${QUIZ[difficult.i].topic}.`));
+ panel.append(add('p','Idea para recordar: '+PEDAGOGY[difficult.i].principle));
+ panel.append(add('p','Estos resultados describen respuestas; no miden por sí solos el dominio individual de los conceptos.','small'));
+ out.append(panel);return
  }
  if(!projectReady(projectAt)){
  const q=QUIZ[projectAt],box=add('div',undefined,'project-hidden');box.append(add('div',`Pregunta ${projectAt+1}`,'kicker'),add('h3',q.q));
