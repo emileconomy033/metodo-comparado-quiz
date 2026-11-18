@@ -196,7 +196,7 @@ assert(!html.includes('id="projectionButton"'),'No deben existir dos métodos qu
 for(const id of ['projectHeading','projectStage','projectChart','projectIndicator'])assert(html.includes('id="'+id+'"'),'Pantalla pública incompleta: '+id);
 for(const id of ['projectPrev','projectNext','projectExit'])assert(!html.includes('id="'+id+'"'),'La proyección pública no debe tener navegación de moderador: '+id);
 assert(source.includes("room.status==='lobby'"),'Falta estado de espera público');
-assert(source.includes("new QRCode(qr,{text:link(),width:330,height:330"),'QR grande no se genera en la pantalla pública');
+assert(source.includes("new QRCode(cachedPublicQr,{text:link(),width:330,height:330"),'QR grande no se genera en la pantalla pública');
 assert(source.includes("room.status==='done'"),'No existe cierre público');
 assert(source.includes("'project-answers'"),'No se muestran alternativas durante pregunta activa');
 assert(source.includes("const i=Math.max(0,Math.min(N-1,room.idx)),stage=stageNow()"),'Proyección no sigue la pregunta activa');
