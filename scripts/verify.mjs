@@ -224,4 +224,5 @@ assert(source.includes("if(room?.publicView==='questions')setPublicView('welcome
 assert(source.includes("let publicIntroUntilWelcome=new URLSearchParams(location.search).get('intro')==='1'"),'No hay bloqueo preventivo contra revelar pregunta anterior');
 assert(source.includes("if(publicIntroUntilWelcome&&room.publicView!=='questions')publicIntroUntilWelcome=false"),'El bloqueo debe liberarse incluso para salas antiguas');
 assert(source.includes("const showWelcomeNow=publicIntroUntilWelcome||room.publicView!=='questions'||room.status==='lobby'"),'El QR no tiene prioridad mientras inicia la ventana pública');
-console.log('OK: pantalla pública empieza en portada incluso tras reapertura de una sesión en curso.');
+assert(source.includes("const change={status:'live',idx:room.mode==='survey'?-1:0,reveal:false,publicView:'questions'"),'Iniciar competencia debe cambiar automáticamente de QR a P1');
+console.log('OK: portada inicial, inscripción en vivo y transición automática a P1 al comenzar.');
