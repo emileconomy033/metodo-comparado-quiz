@@ -32,7 +32,7 @@ for(let i=0;i<4;i++){
   assert.equal(q.q,original.QUIZ[i].q,'No deben alterarse los enunciados de las cuatro preguntas');
 }
 assert(!html.includes('123Moderador'),'No incluir contraseñas en el repositorio');
-for(const id of ['moderatorEmail','moderatorPassword','presenterEntry','presenterRoomCode','presenterInviteEmail','savePresenter','removePresenter','hostNotesView','hostPublicView','projection','resetOfficial','newOfficial','newPractice'])
+for(const id of ['moderatorEmail','moderatorPassword','presenterEntry','presenterRoomCode','presenterInviteEmail','savePresenter','removePresenter','hostNotesView','hostPublicView','projection','resetOfficial'])
  assert(html.includes('id="'+id+'"'),'Falta control '+id);
 assert(source.includes('signInWithEmailAndPassword'));
 assert(source.includes('function normalizeExplanation('));
@@ -97,4 +97,22 @@ const expired=clockProbe({idx:0,questionTimes:[20,25,30,35],openedAt:{toMillis:(
 assert.equal(expired.remaining(),0,'El plazo debe bloquear al caducar');
 const clockCorrected=clockProbe({idx:1,questionTimes:[20,25,30,35],openedAt:{toMillis:()=>90000}},5000,100000);
 assert.equal(clockCorrected.remaining(),10,'El reloj debe utilizar el desfase estimado');
-console.log('OK: currículo, ingreso protegido, alertas contextuales, confirmación real de votos y pruebas funcionales del reloj.');
+// Single reusable official room and synchronized public/private reveal
+assert(!html.includes('id="sessionKind"'),'No deben existir las opciones ensayo separado/oficial');
+assert(!html.includes('id="newPractice"')&&!html.includes('id="newOfficial"'),'No deben proponerse salas separadas al terminar');
+assert(html.includes('id="roomReadiness"'),'Indicador de preparación ausente');
+assert(source.includes("const UNIQUE_ROOM_KEY='comparisonPermanentRoomId'"),'No existe la referencia persistente de sala única');
+assert(source.includes("localStorage.getItem(UNIQUE_ROOM_KEY)"),'El flujo debe intentar recuperar sala existente');
+assert(source.includes("localStorage.setItem(UNIQUE_ROOM_KEY,id)"),'Debe conservar el QR creado');
+assert(source.includes("sessionKind:'official'"),'Las salas nuevas deben ser de tipo oficial reutilizable');
+assert(source.includes("readyEl.textContent=simulationMode?"),'Indicador de sala lista no es dinámico');
+assert(source.includes("loadedPeople&&loadedVotes.size===N"),'Estado de limpieza sin esperar confirmación de listeners');
+assert(source.includes("room.status==='lobby'&&empty&&!cleanupInProgress"),'No indicar lista con registros pendientes');
+assert(source.includes("remainsPeople=await ref.collection('participants')"),'No se verifica la eliminación de participantes');
+assert(source.includes("const pending=await ref.collection('answers')"),'No se verifica la eliminación de votos');
+assert(source.includes("function chart(target,i,showAnswer,compact=false)"));
+assert(source.includes("'RESPUESTA CORRECTA'"),'La respuesta debe proyectarse visiblemente');
+assert(html.includes('answer-reveal-banner'),'Falta resalte de respuesta correcta en presentación');
+assert(source.includes("if(isHost&&room.idx>=0&&room.idx!==previousIdx)"),'Panel expositor no sigue el avance');
+assert(source.includes("room.idx===projectAt&&stageNow()>=2"),'La proyección puede revelar incorrectamente la clave de otra pregunta');
+console.log('OK: 4 preguntas, única sala/QR, estado de limpieza, revelación pública y privada, permisos y temporización.');
