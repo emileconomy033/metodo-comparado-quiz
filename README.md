@@ -140,3 +140,6 @@ Subir `firestore.rules` a GitHub **no publica esas reglas** en Firebase. Antes d
 
 ### Estado de pruebas
 La sintaxis del JavaScript y las pruebas estáticas del repositorio comprueban versiones del currículo, claves, estructura del panel y restricciones previstas. **No se ha validado el borrado, la invitación ni la seguridad con un emulador de Firestore o varios dispositivos reales.** Hacer una prueba final con ambos expositores y al menos dos celulares antes de usarlo en clase.
+
+### Correo del segundo expositor preconfigurado
+En nuevas salas **oficiales**, la aplicación intenta autorizar automáticamente `gramirezfunes@gmail.com` como segundo expositor. No se publica ni se crea ninguna contraseña: la cuenta debe crearse por separado en Firebase Authentication → Users con Email/Password. Si la invitación falla, el creador verá una advertencia y podrá reintentar con «Autorizar expositor». Las salas ya existentes no reciben esta autorización automáticamente; el propietario debe agregar ese correo desde su panel.
