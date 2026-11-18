@@ -825,12 +825,15 @@ function renderLearningSummary(){
 function stageNow(){return room?.revealStage??(room?.reveal?2:0)}
 function projectReady(i){return room.status==='done'||(room.mode==='competition'&&(room.idx>i||(room.idx===i&&stageNow()>=1)))}
 let cachedPublicQr=null,cachedPublicQrRoom='';
+let publicIntroUntilWelcome=new URLSearchParams(location.search).get('intro')==='1';
 function renderProjection(){
  if(!projecting||!room||!isHost)return;
  const out=$('projectChart');out.replaceChildren();
  $('projectSimulationWarning').classList.toggle('hidden',!simulationMode);
  $('projectPrivacy').textContent='';
- if(room.publicView!=='questions'||room.status==='lobby'){
+ const showWelcomeNow=publicIntroUntilWelcome||room.publicView!=='questions'||room.status==='lobby';
+ if(publicIntroUntilWelcome&&room.publicView==='welcome')publicIntroUntilWelcome=false;
+ if(showWelcomeNow){
   $('projectHeading').textContent='¿Realmente sabemos comparar?';
   $('projectStage').textContent='Sala de espera';
   $('projectIndicator').textContent='Sala '+roomId;
@@ -901,7 +904,7 @@ async function setPublicView(next){
 }
 $('showPublicWelcome').onclick=()=>setPublicView('welcome');
 $('showPublicQuestion').onclick=()=>setPublicView('questions');
-$('openAudienceWindow').onclick=()=>{if(!isHost||simulationMode)return;const url=new URL(location.href);url.searchParams.set('room',roomId);url.searchParams.set('view','projection');url.searchParams.set('v',RELEASE_ID);const popup=window.open(url.toString(),'comparisonPublicScreen');if(!popup)alertText('Chrome bloqueó la ventana pública. Permite las ventanas emergentes para este sitio.',true);else popup.focus()};
+$('openAudienceWindow').onclick=()=>{if(!isHost||simulationMode)return;const url=new URL(location.href);url.searchParams.set('room',roomId);url.searchParams.set('view','projection');url.searchParams.set('intro','1');url.searchParams.set('v',RELEASE_ID);if(room?.publicView==='questions')setPublicView('welcome');const popup=window.open(url.toString(),'comparisonPublicScreen');if(!popup)alertText('Chrome bloqueó la ventana pública. Permite las ventanas emergentes para este sitio.',true);else popup.focus()};
 window.addEventListener('offline',()=>alertText('Sin conexión: verifica tu internet. Los cambios pendientes pueden no haberse sincronizado.',true));
 window.addEventListener('online',()=>alertText('Conexión restablecida. Verifica que tus respuestas estén registradas.'));
 
