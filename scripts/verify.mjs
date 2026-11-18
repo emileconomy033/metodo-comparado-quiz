@@ -156,4 +156,23 @@ assert(source.includes("attendanceRefreshInProgress=true"),'La actualización no
 assert(rules.includes("request.resource.data.quizVersion == 3 && request.resource.data.mode == 'competition'"),'Reglas permiten nuevas salas de encuesta libre');
 assert(rules.includes("resource.data.mode == 'survey' && request.resource.data.mode == 'competition'"),'Reglas no permiten migración controlada');
 assert(rules.includes("parent(id).data.get('quizVersion',1) != 3 && parent(id).data.mode == 'survey'"),'Reglas permiten voto libre en sala oficial actual');
-console.log('OK: competencia dirigida, sala única, asistencia sincronizada y bloqueo de avance libre.');
+// Readiness lobby: per-user server confirmation and live moderator counters.
+for(const id of ['waitTitle','waitingIdentity','confirmReady','waitingReadyStatus','attendanceCount','readyCount','pendingCount','readyProgress','readyProgressFill','attendanceNames']){
+ assert(html.includes('id="'+id+'"'),'Falta control de espera o asistencia '+id);
+}
+assert(source.includes("function renderWaitingConfirmation()"),'El móvil no muestra inscripción confirmada');
+assert(source.includes("myRegistration?.ready===true"),'El estado listo no depende del registro real');
+assert(source.includes("collection('participants').doc(anonUid).update({ready:true,readyAt:firebase.firestore.FieldValue.serverTimestamp()})"),'No se guarda la confirmación en Firebase');
+assert(source.includes("myRegistration=saved.exists?{...saved.data(),name:registeredName}:{name:registeredName,ready:false}"),'No restaura el estado listo previo');
+assert(source.includes("myRegistration=mine.data()"),'No recupera la confirmación tras recargar');
+assert(source.includes("myRegistration=snapshot.data()"),'No escucha la confirmación desde Firebase');
+assert(source.includes("snapshot.metadata?.hasPendingWrites"),'No distingue escritura pendiente de confirmación persistida');
+assert(source.includes("const registered=people.length,ready=people.filter(p=>p.ready===true).length"),'Faltan contadores dinámicos listos/pendientes');
+assert(source.includes("panel.append(add('span',(isReady?'✓ ':'○ ')"),'Faltan nombres separados por preparación');
+assert(source.includes("const quorumReady=people.length>0&&confirmedCount===people.length"),'Se permite iniciar con participantes pendientes');
+assert(source.includes("people.some(p=>p.ready!==true)"),'El controlador de inicio no verifica preparación');
+assert(source.includes("name:'Participante ficticio '+(i+1),country:'',ready:true"),'Simulación se bloquea por pendientes ficticios');
+assert(rules.includes("request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ready','readyAt'])"),'Las reglas permiten editar otros datos del participante');
+assert(rules.includes("resource.data.get('ready',false) == false"),'No se comprueba la primera confirmación');
+assert(rules.includes("request.resource.data.readyAt == request.time"),'No se vincula la confirmación a la hora del servidor');
+console.log('OK: sala única y competencia dirigida con confirmación individual y conteo dinámico de preparados.');
