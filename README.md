@@ -219,3 +219,16 @@ Esta ventana es pública desde su carga, no contiene botones de navegación entr
 La ventana pública comprueba la autenticación de expositor y la autorización de esa cuenta a la sala antes de leer resultados. Si no se puede confirmar su acceso, muestra un mensaje dentro de la pantalla pública, no un panel privado ni el formulario de participación.
 
 **Límites:** requiere iniciar sesión como expositor en Chrome y abrir la ventana desde su panel. La sincronización se basa en listeners de Firebase; aún debe probarse end-to-end con dos ventanas y un móvil. La proyección separada no debe confundirse con compartir el escritorio completo, que puede exponer otras ventanas.
+
+## Corrección: portada al abrir ventana para compartir (18 Nov 2026)
+
+Se detectó que abrir la ventana pública mientras la sala anterior estaba en `live` mostraba directamente P1, saltándose el QR. Desde esta versión la portada **no depende solo de `room.status`**: utiliza `publicView`, almacenado en la sala de Firebase, con `welcome` por defecto para registros antiguos.
+
+- **Abrir pantalla para compartir:** abre/reutiliza la misma ventana pública e inicia en portada con QR, código único, inscritos, listos y pendientes (sin nombres). Si la sala ya tenía preguntas abiertas, vuelve a mostrar portada antes de continuar. La vista inicial tiene protección para evitar mostrar fugazmente P1 en la carga.
+- Los contadores se actualizan desde el listener de participantes en el servidor; no se necesita pulsar «Actualizar participantes» en la pantalla pública. El QR se conserva en un nodo reutilizable para evitar parpadeos cuando cambian los contadores.
+- **Iniciar competencia:** desde la sala en espera cambia de forma atómica la sala a `live` y `publicView:'questions'`, de modo que la pantalla pública pasa automáticamente a la primera pregunta.
+- **Mostrar portada y QR / Mostrar pregunta al público:** controles exclusivos del panel privado para alternar durante una sesión ya iniciada, sin avanzar preguntas ni modificar votos.
+- **Reiniciar ensayo:** devuelve `publicView` a `welcome` junto con el estado de sala en espera, sin cambiar el QR.
+- **Reglas:** se agregó `publicView` a los campos permitidos y se limita a `welcome` o `questions`. **Debe publicarse el último `firestore.rules` en Firebase Console**, ya que GitHub por sí mismo no despliega esos permisos.
+
+**Límite de validación:** las comprobaciones automáticas verifican código y reglas, pero no sustituyen el ensayo con navegador principal, ventana pública y celular reales.
