@@ -183,3 +183,13 @@ Las comprobaciones automáticas validan la estructura del directorio y las condi
 **Validación efectuada:** comprobaciones de sintaxis y pruebas estáticas del repositorio. **No se ha probado una votación real en el Firebase del usuario**, por lo que debe realizarse una prueba con moderador y al menos un celular.
 
 **Prueba mínima:** recuperar sala; comprobar que el panel indique **Competencia**; ingresar con nombre desde celular; verificar que aparezca en el listado; iniciar P1 desde PC; comprobar que no existen botones Anterior/Siguiente en el celular; revelar y avanzar desde PC; verificar que el celular cambia de pregunta únicamente después del avance.
+
+## Sala de espera con confirmación individual
+
+- Al ingresar mediante el QR y guardarse el registro en Firebase, el móvil muestra **Inscripción confirmada** con el nombre utilizado.
+- Cada participante pulsa **Estoy listo**. La confirmación persiste en el documento de registro personal mediante los campos `ready: true` y `readyAt` con hora de servidor; al recargar o abrir de nuevo con el mismo navegador, se recupera su confirmación.
+- En el panel privado aparecen **Inscritos**, **Listos** y **Pendientes**, una barra de progreso y los nombres con ✓ (preparado) o ○ (pendiente). Los cambios se reflejan con el listener en tiempo real y la consulta de respaldo del servidor.
+- El botón **Iniciar competencia** permanece deshabilitado si no hay participantes registrados, quedan confirmaciones pendientes o aún no se han sincronizado los datos. Cuando todos los inscritos confirman, el inicio sigue siendo manual, bajo el control de los expositores.
+- El mecanismo **no garantiza conexión en línea en ese instante**: describe inscripciones guardadas y confirmaciones expresas. El grupo puede cotejar verbalmente en la videollamada quién falta por ingresar.
+- Después de cerrar y limpiar la sala, los registros se eliminan. Los asistentes que regresen deberán inscribirse y confirmar nuevamente, con el mismo QR.
+- **Actualizar las reglas en Firebase Console**, ya que los participantes ahora necesitan permiso limitado para actualizar exclusivamente `ready` y `readyAt` en su documento durante el estado de espera.
