@@ -773,7 +773,7 @@ $('reviewSurvey').onclick=()=>{reviewingSurvey=true;surveyAt=0;renderParticipant
 $('prevSurvey').onclick=()=>{surveyAt=Math.max(0,surveyAt-1);renderParticipant()};$('nextSurvey').onclick=()=>{if(surveyAt===N-1&&QUIZ.every((q,i)=>hasVoted(i))){reviewingSurvey=false;renderParticipant()}else{surveyAt=(surveyAt+1)%N;renderParticipant()}};
 $('start').onclick=async()=>{try{if(!isHost||room.status!=='lobby'||(room.quizVersion===3&&room.mode!=='competition'))return;
  if(!simulationMode&&(!loadedPeople||loadedVotes.size!==N||people.length===0||people.some(p=>p.ready!==true))){alertText('La sala aún tiene participantes pendientes de confirmar.',true);return}
- const change={status:'live',idx:room.mode==='survey'?-1:0,reveal:false,openedAt:firebase.firestore.FieldValue.serverTimestamp()};
+ const change={status:'live',idx:room.mode==='survey'?-1:0,reveal:false,publicView:'questions',openedAt:firebase.firestore.FieldValue.serverTimestamp()};
  if(room.quizVersion>=2)change.revealStage=0;
  if(simulationMode){Object.assign(room,change,{openedAt:firebase.firestore.Timestamp.fromMillis(Date.now())});render()}
  else await rref().update(change)
