@@ -217,7 +217,8 @@ function countFor(i,j){return votes[i].filter(v=>v.choice===j).length}
 function correctFor(i){return countFor(i,QUIZ[i].correct)}
 function nAnswers(){return votes.reduce((n,a)=>n+a.length,0)}
 function questionSeconds(i){const n=room?.questionTimes?.[i];return Number.isInteger(n)&&n>=10&&n<=180?n:DEFAULT_SECONDS}
-function remaining(){const sec=questionSeconds(room?.idx??0);if(!room?.openedAt||typeof room.openedAt.toMillis!=='function')return sec;return Math.max(0,Math.ceil((room.openedAt.toMillis()+sec*1000-(Date.now()+clockOffsetMs))/1000))}
+function timingReady(){return !!(room?.openedAt&&typeof room.openedAt.toMillis==='function'&&room.idx>=0)}
+function remaining(){const sec=questionSeconds(room?.idx??0);if(!timingReady())return 0;return Math.max(0,Math.ceil((room.openedAt.toMillis()+sec*1000-(Date.now()+clockOffsetMs))/1000))}
 function chart(target,i,showAnswer,compact=false){
  const d=$(target);d.replaceChildren();const q=QUIZ[i],n=votes[i]?.length||0,good=correctFor(i),bad=n-good;
  const layout=add('div',undefined,'result-layout'),left=add('div'),right=add('div');
@@ -368,7 +369,7 @@ if(room.mode==='competition'&&stageNow()===1&&room.status==='live'){
  $('revealChart').replaceChildren();$('revealExplanation').textContent='Dialoguemos sobre las alternativas antes de conocer la solución.';$('microTransfer').classList.add('hidden');return
  }
  if(room.reveal){$('revealPanel').classList.remove('hidden');updatePersonalScore();drawPersonalReveal();drawMicroTransfer();$('revealTitle').textContent=`Explicación · pregunta ${room.idx+1}`;$('revealChart').replaceChildren();$('revealChart').append(add('p',`Respuesta correcta: ${'ABCD'[QUIZ[room.idx].correct]}. ${QUIZ[room.idx].a[QUIZ[room.idx].correct]}`));$('revealExplanation').textContent=stageNow()>=3?'Principio metodológico: '+PEDAGOGY[room.idx].principle+' · Para otra investigación: '+PEDAGOGY[room.idx].transfer:'La explicación metodológica se presentará en la siguiente etapa.';return}
-$('competition').classList.remove('hidden');updatePersonalScore();$('compProgress').textContent=`Pregunta ${room.idx+1}/${N}`;$('compQuestion').textContent=QUIZ[room.idx].q;const rem=remaining();$('clock').textContent=rem+' s';optionButtons('compChoices',room.idx,rem===0,true);$('compFeedback').textContent=hasVoted(room.idx)?'Respuesta guardada. Puedes cambiarla mientras quede tiempo; se conservará la última elección.':rem===0?'Tiempo agotado. Espera al moderador.':'Selecciona una sola respuesta.'}
+$('competition').classList.remove('hidden');updatePersonalScore();$('compProgress').textContent=`Pregunta ${room.idx+1}/${N}`;$('compQuestion').textContent=QUIZ[room.idx].q;const ready=timingReady(),rem=remaining();$('clock').textContent=ready?rem+' s':'Preparando…';optionButtons('compChoices',room.idx,!ready||rem===0,true);$('compFeedback').textContent=!ready?'La pregunta se está sincronizando. Podrás responder cuando se confirme la apertura.':hasVoted(room.idx)?'Respuesta guardada. Puedes cambiarla mientras quede tiempo; se conservará la última elección.':rem===0?'Tiempo agotado. Espera al moderador.':'Selecciona una sola respuesta.'}
 function drawRankings(){const el=$('ranking');el.replaceChildren();el.append(add('h3','Tus resultados'));el.append(add('p','La comparación de resultados de todo el grupo se realiza con el moderador. Los nombres y las respuestas individuales de los compañeros permanecen privados.'))}
 function drawQR(){if(simulationMode){$('qr').replaceChildren();$('qr').append(add('p','Sin QR: simulación local'));$('qr').dataset.code='';$('joinUrl').removeAttribute('href');$('joinUrl').textContent='No se comparte un enlace durante el ensayo';return}if($('qr').dataset.code===roomId)return;$('qr').replaceChildren();$('qr').dataset.code=roomId;if(window.QRCode)new QRCode($('qr'),{text:link(),width:160,height:160,correctLevel:QRCode.CorrectLevel.M});else $('qr').textContent='QR no disponible: comparte el enlace';$('joinUrl').href=link();$('joinUrl').textContent=link()}
 function render(){if(!room)return;section(...(isHost?(projecting?['projection']:['host']):['participant']));clearInterval(ticker);if(isHost){drawQR();renderHost();if(projecting)renderProjection()}else{renderParticipant()}if(room.status==='live'&&room.mode==='competition'&&!room.reveal&&stageNow()===0){ticker=setInterval(()=>{if(isHost)return;const rem=remaining();$('clock').textContent=rem+' s';if(!rem){clearInterval(ticker);renderParticipant()}},1000)}}
@@ -506,7 +507,37 @@ function subscribe(){
   render();
  },e=>alertText('Conexión de la sala: '+e.message,true)));
 }
-const pendingVotes=new Set();async function submit(i,choice){if(pendingVotes.has(i))return;pendingVotes.add(i);try{if(!room||room.status!=='live'||(room.mode==='competition'&&(room.idx!==i||room.reveal||stageNow()>0||remaining()<=0)))throw Error('Esta pregunta ya está cerrada.');const shouldAdvance=room.mode==='survey'&&i<N-1&&!hasVoted(i)&&!reviewingSurvey;await voteRef(i).set({choice,submittedAt:firebase.firestore.FieldValue.serverTimestamp()});if(shouldAdvance){surveyAt=i+1;renderParticipant()}else if(room.mode==='survey'&&QUIZ.every((q,k)=>k===i||hasVoted(k))&&i===N-1&&!reviewingSurvey){reviewingSurvey=false;renderParticipant()}else{renderParticipant()}}catch(e){alertText('No se pudo registrar la respuesta: '+e.message,true)}finally{pendingVotes.delete(i);if(room)renderParticipant()}}
+const pendingVotes=new Set();
+async function submit(i,choice){
+ if(pendingVotes.has(i))return;
+ if(!room||room.status!=='live'||(room.mode==='competition'&&(room.idx!==i||room.reveal||stageNow()>0||!timingReady()||remaining()<=1))){
+  alertText('Esta pregunta no está abierta o su tiempo terminó. Espera la indicación del moderador.',true);return
+ }
+ pendingVotes.add(i);
+ try{
+  const shouldAdvance=room.mode==='survey'&&i<N-1&&!hasVoted(i)&&!reviewingSurvey;
+  await voteRef(i).set({choice,submittedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  // El aviso de una respuesta anterior fallida no debe mantenerse después de confirmar otra.
+  alertText('');
+  if(shouldAdvance)surveyAt=i+1;
+  else if(room.mode==='survey'&&i===N-1&&!reviewingSurvey)reviewingSurvey=false;
+ }catch(e){
+  console.error('No se pudo guardar el voto', {roomId,question:i+1,errorCode:e.code,message:e.message});
+  let detail='No se pudo guardar la respuesta. ';
+  if(e.code==='permission-denied'||/permission/i.test(e.message||'')){
+   let fresh=null;
+   try{fresh=(await rref().get({source:'server'})).data()}catch{}
+   if(fresh?.status!=='live'&&fresh?.status)detail='La sala ya no admite respuestas. ';
+   else if(room.mode==='competition'&&fresh&&(fresh.idx!==i||fresh.reveal||fresh.revealStage>0))
+    detail='El moderador cerró esta pregunta antes de que se guardara tu voto. ';
+   else if(room.mode==='competition'&&fresh?.openedAt?.toMillis&&Date.now()+clockOffsetMs>=fresh.openedAt.toMillis()+questionSeconds(i)*1000-1000)
+    detail='El plazo de esta pregunta finalizó antes de que Firebase recibiera tu voto. ';
+   else detail='Firebase rechazó el voto por permisos. Comprueba que las reglas publicadas estén actualizadas y que hayas ingresado a la sala con tu usuario registrado. ';
+  }else if(e.code==='unavailable')detail='No hay conexión con Firebase. Comprueba internet y vuelve a intentarlo. ';
+  else detail+=e.message||'Intenta otra vez.';
+  alertText(detail,true);
+ }finally{pendingVotes.delete(i);if(room)renderParticipant()}
+}
 $('reviewSurvey').onclick=()=>{reviewingSurvey=true;surveyAt=0;renderParticipant()};
 $('prevSurvey').onclick=()=>{surveyAt=Math.max(0,surveyAt-1);renderParticipant()};$('nextSurvey').onclick=()=>{if(surveyAt===N-1&&QUIZ.every((q,i)=>hasVoted(i))){reviewingSurvey=false;renderParticipant()}else{surveyAt=(surveyAt+1)%N;renderParticipant()}};
 $('start').onclick=async()=>{try{if(!isHost||room.status!=='lobby')return;
