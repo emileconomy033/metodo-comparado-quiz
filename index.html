@@ -168,7 +168,7 @@ function activateQuizVersion(v){
  }
  if(typeof N!=='undefined')N=QUIZ.length;
 }
-const $=x=>document.getElementById(x);const IDs=['setup','home','create','moderatorLogin','presenterEntry','host','participant','mySessions','projection'];const ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const DEFAULT_SECONDS=40;const UNIQUE_ROOM_KEY='comparisonPermanentRoomId';let N=QUIZ.length;const MODERATOR_EMAIL='emil.economia@gmail.com';const DEFAULT_PRESENTER_EMAIL='gramirezfunes@gmail.com';const RELEASE_ID='2026-11-18-comp-dirigida2';
+const $=x=>document.getElementById(x);const IDs=['setup','home','create','moderatorLogin','presenterEntry','host','participant','mySessions','projection'];const ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const DEFAULT_SECONDS=40;const UNIQUE_ROOM_KEY='comparisonPermanentRoomId';let N=QUIZ.length;const MODERATOR_EMAIL='emil.economia@gmail.com';const DEFAULT_PRESENTER_EMAIL='gramirezfunes@gmail.com';const RELEASE_ID='2026-11-18-espera-confirmada1';
 let myRegistration=null,readySubmitting=false;
 let db=null,uid='',anonDb=null,anonUid='',moderatorDb=null,moderatorAuth=null,roomId='',room=null,isHost=false,myName='',myCountry='',people=[],votes=Array.from({length:N},()=>[]),stops=[],activeTab=0,surveyAt=0,ticker=null,authReady=false,reviewingSurvey=false,projecting=false,projectAt=0,projectView='question';
 function section(...names){IDs.forEach(x=>$(x).classList.toggle('hidden',!names.includes(x)))}
@@ -412,7 +412,10 @@ const readyEl=$('roomReadiness');const synced=simulationMode||(loadedPeople&&loa
  readyEl.className='room-readiness'+(ready?' ready':room.status==='live'||cleanupInProgress?' busy':'');
  readyEl.textContent=simulationMode?'Ensayo simulado · sin QR ni votos reales':cleanupInProgress?'Limpiando datos del ensayo; no permitas nuevos ingresos…':room.status==='done'?'Sesión finalizada · borra los datos si deseas reutilizar el mismo QR':!synced?'Verificando registros y respuestas en Firebase…':ready?'Sala lista y disponible · 0 participantes · 0 respuestas · mismo código QR':room.status==='live'?'Actividad en curso · '+people.length+' participantes': 'Sala en espera · '+people.length+' inscritos y '+nAnswers()+' respuestas';
  $('hostHint').textContent=people.length+(simulationMode?' participantes ficticios':' participantes');$('simulationWarning').classList.toggle('hidden',!simulationMode);$('completedActions').classList.toggle('hidden',room.status!=='done');$('teacherSimulation').style.display=simulationMode?'none':'inline-block';$('openAudienceWindow').disabled=simulationMode;$('presenterAccess').classList.toggle('hidden',simulationMode||room.owner!==uid);$('resetOfficial').classList.toggle('hidden',simulationMode||room.owner!==uid||room.status!=='done');$('exitSimulation').style.display=simulationMode?'inline-block':'none';
-$('start').textContent=room.mode==='survey'?'Abrir encuesta':'Iniciar competencia';$('start').disabled=room.status!=='lobby'||(room.quizVersion===3&&room.mode!=='competition')||!simulationMode&&(!loadedPeople||loadedVotes.size!==N);$('next').classList.toggle('hidden',room.mode==='survey'||room.idx>=N-1);$('reveal').classList.toggle('hidden',room.mode==='survey');$('next').disabled=room.status!=='live'||!room.reveal||room.idx>=N-1||(room.quizVersion>=2&&stageNow()<2);$('reveal').disabled=room.status!=='live'||(room.quizVersion!==2&&room.reveal)||(room.quizVersion>=2&&stageNow()>=3);$('reveal').textContent=room.quizVersion>=2?(stageNow()===0?'Mostrar distribución':stageNow()===1?'Revelar respuesta':'Ampliar explicación (opcional)'):'Revelar respuesta';$('stageGuide').textContent=room.mode!=='competition'?'':room.status==='done'?'Dinámica finalizada. Puedes revisar resultados o crear otra.':room.idx===N-1&&stageNow()>=2?'Última pregunta: pulsa «Cerrar y mostrar resultados».':stageNow()===0?'Paso 1: mostrar cómo respondió el grupo.':stageNow()===1?'Paso 2: revelar cuál era correcta.':'Ya puedes pulsar «Siguiente pregunta»; la explicación adicional es opcional.';$('finish').disabled=room.status==='done'||room.status==='lobby';
+$('start').textContent=room.mode==='survey'?'Abrir encuesta':'Iniciar competencia';
+ const confirmedCount=people.filter(p=>p.ready===true).length;
+ const quorumReady=people.length>0&&confirmedCount===people.length;
+ $('start').disabled=room.status!=='lobby'||(room.quizVersion===3&&room.mode!=='competition')||(!simulationMode&&(!loadedPeople||loadedVotes.size!==N||!quorumReady));$('next').classList.toggle('hidden',room.mode==='survey'||room.idx>=N-1);$('reveal').classList.toggle('hidden',room.mode==='survey');$('next').disabled=room.status!=='live'||!room.reveal||room.idx>=N-1||(room.quizVersion>=2&&stageNow()<2);$('reveal').disabled=room.status!=='live'||(room.quizVersion!==2&&room.reveal)||(room.quizVersion>=2&&stageNow()>=3);$('reveal').textContent=room.quizVersion>=2?(stageNow()===0?'Mostrar distribución':stageNow()===1?'Revelar respuesta':'Ampliar explicación (opcional)'):'Revelar respuesta';$('stageGuide').textContent=room.status==='lobby'?(people.length===0?'Esperando participantes':confirmedCount+'/'+people.length+' confirmados · '+(quorumReady?'Puedes iniciar':'Faltan '+(people.length-confirmedCount)+' confirmaciones')):room.mode!=='competition'?'':room.status==='done'?'Dinámica finalizada. Puedes revisar resultados o crear otra.':room.idx===N-1&&stageNow()>=2?'Última pregunta: pulsa «Cerrar y mostrar resultados».':stageNow()===0?'Paso 1: mostrar cómo respondió el grupo.':stageNow()===1?'Paso 2: revelar cuál era correcta.':'Ya puedes pulsar «Siguiente pregunta»; la explicación adicional es opcional.';$('finish').disabled=room.status==='done'||room.status==='lobby';
 const total=nAnswers(),correct=QUIZ.reduce((v,q,i)=>v+correctFor(i),0),submitted=people.filter(p=>QUIZ.every((q,i)=>votes[i].some(v=>v.uid===p.uid))).length;
 $('metrics').replaceChildren(rowMetric(people.length,'Participantes'),rowMetric(total,'Respuestas registradas'),rowMetric(fmtPercent(correct,total),'Porcentaje de aciertos'),rowMetric(submitted,'Cuestionarios completos'));
 if(room.owner===uid&&!simulationMode)refreshPresenterInvite();renderLearningSummary();if(projecting)renderProjection();const sum=$('summary');sum.replaceChildren();QUIZ.forEach((q,i)=>{const n=votes[i].length,ac=correctFor(i),box=add('div',undefined,'aggregate'),left=add('div');left.append(add('strong',`P${i+1} · ${q.topic}`),add('div',`${ac} aciertos de ${n} respuestas · ${fmtPercent(ac,n)}`,'small'));const prog=add('progress');prog.max=100;prog.value=n?100*ac/n:0;prog.setAttribute('aria-label',`Porcentaje de aciertos en pregunta ${i+1}`);box.append(left,prog);sum.append(box)});
@@ -651,6 +654,20 @@ function subscribe(){
     dataStops.push(rref().collection('participants').onSnapshot(s=>{
      people=s.docs.map(d=>({uid:d.id,...d.data()}));loadedPeople=true;attendanceConnection=s.metadata?.fromCache?'cache':'live';attendanceError='';attendanceSyncAt=Date.now();if(room)render()
     },e=>{attendanceConnection='error';attendanceError=e.message||'Permiso denegado';renderAttendance();alertText('No se pudo sincronizar la lista de participantes: '+attendanceError,true)}));
+   }else{
+    dataStops.push(anonDb.collection('rooms').doc(roomId).collection('participants').doc(anonUid).onSnapshot({includeMetadataChanges:true},snapshot=>{
+     if(snapshot.metadata?.hasPendingWrites)return;
+     if(!snapshot.exists){
+      myRegistration=null;
+      if(room?.status==='lobby'){
+       unsubscribe();room=null;roomId='';section('home');
+       alertText('La sala se reinició. Ingresa nuevamente para participar.',true);
+      }
+      return;
+     }
+     myRegistration=snapshot.data();
+     if(room?.status==='lobby')renderWaitingConfirmation();
+    },e=>alertText('No se pudo actualizar tu confirmación: '+e.message,true)));
    }
    QUIZ.forEach((q,i)=>{
     if(isHost){
@@ -708,6 +725,7 @@ async function submit(i,choice){
 $('reviewSurvey').onclick=()=>{reviewingSurvey=true;surveyAt=0;renderParticipant()};
 $('prevSurvey').onclick=()=>{surveyAt=Math.max(0,surveyAt-1);renderParticipant()};$('nextSurvey').onclick=()=>{if(surveyAt===N-1&&QUIZ.every((q,i)=>hasVoted(i))){reviewingSurvey=false;renderParticipant()}else{surveyAt=(surveyAt+1)%N;renderParticipant()}};
 $('start').onclick=async()=>{try{if(!isHost||room.status!=='lobby'||(room.quizVersion===3&&room.mode!=='competition'))return;
+ if(!simulationMode&&(!loadedPeople||loadedVotes.size!==N||people.length===0||people.some(p=>p.ready!==true))){alertText('La sala aún tiene participantes pendientes de confirmar.',true);return}
  const change={status:'live',idx:room.mode==='survey'?-1:0,reveal:false,openedAt:firebase.firestore.FieldValue.serverTimestamp()};
  if(room.quizVersion>=2)change.revealStage=0;
  if(simulationMode){Object.assign(room,change,{openedAt:firebase.firestore.Timestamp.fromMillis(Date.now())});render()}
@@ -802,7 +820,7 @@ function launchSimulation(){
  // Modo sin escrituras remotas: conserva el enlace real para regresar después.
  simulationMode=true;unsubscribe();db=moderatorDb;uid=moderatorAuth.currentUser.uid;isHost=true;roomId='SIMULADO';activateQuizVersion(3);
  room={owner:uid,quizVersion:3,sessionKind:'practice',mode:'competition',status:'lobby',idx:-1,reveal:false,revealStage:0,questionTimes:[20,20,20,20],openedAt:null};
- people=Array.from({length:24},(_,i)=>({uid:'sim'+(i+1),name:'Participante ficticio '+(i+1),country:''}));
+ people=Array.from({length:24},(_,i)=>({uid:'sim'+(i+1),name:'Participante ficticio '+(i+1),country:'',ready:true}));
  votes=QUIZ.map((q,i)=>people.map((p,k)=>({uid:p.uid,choice:(k+i)%4,submittedAt:null})));
  render();
 }
