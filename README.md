@@ -203,3 +203,19 @@ En la sala `L7VAP5K`, el propietario observó «Encuesta · En curso», dos insc
 Tras el reinicio, los participantes deberán volver a ingresar mediante el mismo QR, inscribirse y confirmar «Estoy listo». El propietario verá `1 inscrito · 1 listo · 0 pendientes` si solo ingresa un celular con una identidad nueva. La confirmación requiere las reglas de `firestore.rules` que incluyen la actualización de campos `ready`/`readyAt`; si estas reglas aún no están publicadas, Firebase rechazará la confirmación.
 
 **Prueba pendiente:** validar este proceso con Firebase real. Las comprobaciones del repositorio no certifican que el reinicio ya se haya realizado ni que las reglas estén publicadas.
+
+## Pantalla pública continua (QR → preguntas → resultados)
+
+La actividad se presenta en **dos ventanas**. El propietario mantiene su panel privado de moderación, mientras que el botón **«Abrir pantalla para compartir»** abre/reutiliza una ventana identificada `comparisonPublicScreen` con URL `?room=CODIGO&view=projection`. Se debe compartir **solo esa ventana** en la videollamada.
+
+Esta ventana es pública desde su carga, no contiene botones de navegación entre preguntas ni el guion privado y sigue el estado de la sala publicado en Firebase:
+
+1. **Sala en espera:** QR grande, código único, participantes inscritos y listos (sin nombres).
+2. **Pregunta abierta:** enunciado y cuatro opciones, sin porcentajes ni respuesta correcta.
+3. **Mostrar distribución:** gráfico agregado de respuestas, sin revelar la opción correcta.
+4. **Revelar respuesta:** gráfico con respuesta correcta destacada; el moderador sigue controlando el avance desde la ventana privada.
+5. **Sesión cerrada:** síntesis final del grupo, en la misma pantalla pública.
+
+La ventana pública comprueba la autenticación de expositor y la autorización de esa cuenta a la sala antes de leer resultados. Si no se puede confirmar su acceso, muestra un mensaje dentro de la pantalla pública, no un panel privado ni el formulario de participación.
+
+**Límites:** requiere iniciar sesión como expositor en Chrome y abrir la ventana desde su panel. La sincronización se basa en listeners de Firebase; aún debe probarse end-to-end con dos ventanas y un móvil. La proyección separada no debe confundirse con compartir el escritorio completo, que puede exponer otras ventanas.
