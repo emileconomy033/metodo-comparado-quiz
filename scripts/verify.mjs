@@ -131,4 +131,13 @@ assert(rules.includes('function activeRoom(id)'),'Sin comprobación de código v
 assert(rules.includes('allow create: if signed() && activeRoom(id) && request.auth.uid == pid'),'Puede registrarse en una sala antigua');
 assert(rules.includes('allow update: if signed() && activeRoom(id) && request.auth.uid == pid'),'Puede actualizar votos de sala antigua');
 assert(rules.includes('allow create: if signed() && activeRoom(id) && request.auth.uid == pid && participant(id)'),'Puede votar en sala antigua');
-console.log('OK: sala única centralizada, enlaces obsoletos rechazados, Firebase protegido y visualizaciones sincronizadas.');
+for(const banned of [
+ 'Interpretación descriptiva basada únicamente en respuestas registradas',
+ 'Los porcentajes no equivalen por sí solos a dominio del concepto',
+ 'Muestra pequeña: estos porcentajes describen',
+ 'Precaución: al menos una pregunta',
+ 'Estos resultados describen respuestas; no miden',
+ 'Informe descriptivo: no atribuye dominio conceptual',
+ 'Sigue las instrucciones del README'
+])assert(!html.includes(banned),'Reapareció nota editorial: '+banned);
+console.log('OK: sala única, Firebase, visualizaciones y ausencia de notas editoriales.');
