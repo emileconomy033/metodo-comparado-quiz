@@ -824,6 +824,7 @@ function renderLearningSummary(){
 }
 function stageNow(){return room?.revealStage??(room?.reveal?2:0)}
 function projectReady(i){return room.status==='done'||(room.mode==='competition'&&(room.idx>i||(room.idx===i&&stageNow()>=1)))}
+let cachedPublicQr=null,cachedPublicQrRoom='';
 function renderProjection(){
  if(!projecting||!room||!isHost)return;
  const out=$('projectChart');out.replaceChildren();
@@ -834,10 +835,13 @@ function renderProjection(){
   $('projectStage').textContent='Sala de espera';
   $('projectIndicator').textContent='Sala '+roomId;
   const layout=add('div',undefined,'project-welcome');
-  const qr=add('div',undefined,'project-qr');
-  if(simulationMode){qr.append(add('p','Simulación · sin acceso de participantes'))}
-  else if(window.QRCode){new QRCode(qr,{text:link(),width:330,height:330,correctLevel:QRCode.CorrectLevel.M})}
-  else qr.append(add('p','Código de sala: '+roomId));
+  if(!cachedPublicQr||cachedPublicQrRoom!==roomId){
+   cachedPublicQr=add('div',undefined,'project-qr');cachedPublicQrRoom=roomId;
+   if(simulationMode){cachedPublicQr.append(add('p','Simulación · sin acceso de participantes'))}
+   else if(window.QRCode){new QRCode(cachedPublicQr,{text:link(),width:330,height:330,correctLevel:QRCode.CorrectLevel.M})}
+   else cachedPublicQr.append(add('p','Código de sala: '+roomId));
+  }
+  const qr=cachedPublicQr;
   const info=add('div');
   info.append(add('span','Únete desde tu teléfono','kicker'));
   info.append(add('h3','Escanea el código QR'));
