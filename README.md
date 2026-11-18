@@ -97,3 +97,12 @@ En nuevas salas de competencia, después de **Explicar el concepto**, cada parti
 
 ### Informe visual
 El informe imprimible incluye barras horizontales por opción, porcentajes y una breve interpretación de cada pregunta. El usuario puede elegir «Guardar como PDF» en el cuadro de impresión del navegador. No se envían los datos a un servicio externo de PDF.
+
+## Corrección de navegación (18 noviembre 2026)
+- En competencia versión 2, el botón **Siguiente pregunta** se habilita en cuanto el moderador termina la segunda etapa (**Revelar respuesta**). **Ampliar explicación** es ahora una etapa opcional, no un requisito para avanzar.
+- En la última pregunta, se indica que debe elegirse **Cerrar y mostrar resultados**; el botón «Siguiente pregunta» deja de mostrarse para evitar confusiones.
+- En el panel del moderador están disponibles **Volver al inicio** y **Crear otra dinámica**, incluso al completar una actividad.
+- Después del cierre se presenta una sección de acciones rápidas: **Nuevo ensayo**, **Nueva sesión oficial** y **Volver al inicio**.
+- Volver al inicio cancela las suscripciones en tiempo real de la pantalla, limpia el código de sala de la URL y deja intactos los votos persistidos en Firebase. Si la sesión aún está abierta, solicita confirmación porque salir del panel **no cierra la sala**.
+- Se conserva la posibilidad de volver a abrir una sesión anterior desde la lista local del navegador, siempre que la identidad de Firebase siga siendo válida.
+- Esta corrección no modifica las reglas de Firestore ni el contenido de las preguntas.
