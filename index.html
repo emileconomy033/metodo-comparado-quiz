@@ -119,7 +119,7 @@ const TRANSFER=[
 const microResponses=new Map();
 function drawMicroTransfer(){
  const box=$('microTransfer');box.replaceChildren();
- const show=room?.quizVersion===2&&room.mode==='competition'&&room.status==='live'&&stageNow()>=3;
+ const show=room?.quizVersion>=2&&room.mode==='competition'&&room.status==='live'&&stageNow()>=3;
  box.classList.toggle('hidden',!show);
  if(!show)return;
  const i=room.idx,task=TRANSFER[i],key=roomId+':'+i;
@@ -151,12 +151,24 @@ const TEXT_V2=[
  ['Es una hipótesis que requiere examinar explicaciones alternativas.','El modelo de fila única demuestra una reducción causal de la espera.','Dos casos no permiten proponer ninguna hipótesis metodológica.','Los mismos recursos implican que los otros factores son equivalentes.'],
  ['Los recordatorios son necesarios y suficientes para alcanzar ese resultado.','Las diferencias territoriales impiden toda comparación entre casos.','El resultado compartido demuestra que el presupuesto no influye.','Las condiciones comunes sugieren hipótesis que requieren contrastación.']
 ];
+const ORDER_V3=[[0,1,2,3],[0,2,1,3],[0,1,3,2],[0,2,3,1]];
 function activateQuizVersion(v){
- if(v!==2){QUIZ=QUIZ_ORIGINAL;PEDAGOGY=PEDAGOGY_ORIGINAL;return}
- QUIZ=QUIZ_ORIGINAL.map((q,i)=>({...q,a:TEXT_V2[i],correct:ORDER_V2[i].indexOf(q.correct)}));
- PEDAGOGY=PEDAGOGY_ORIGINAL.map((p,i)=>({...p,mis:ORDER_V2[i].map(j=>p.mis[j])}));
+ if(v!==2&&v!==3){QUIZ=QUIZ_ORIGINAL;PEDAGOGY=PEDAGOGY_ORIGINAL}
+ else {
+ const count=v===3?4:6;
+ QUIZ=QUIZ_ORIGINAL.slice(0,count).map((q,i)=>{
+   const previous=ORDER_V2[i],priorCorrect=previous.indexOf(q.correct);
+   const order=v===3?ORDER_V3[i]:[0,1,2,3];
+   return {...q,a:order.map(j=>TEXT_V2[i][j]),correct:order.indexOf(priorCorrect)};
+ });
+ PEDAGOGY=PEDAGOGY_ORIGINAL.slice(0,count).map((p,i)=>{
+  const earlier=ORDER_V2[i].map(j=>p.mis[j]);
+  return {...p,mis:(v===3?ORDER_V3[i]:[0,1,2,3]).map(j=>earlier[j])};
+ });
+ }
+ N=QUIZ.length;
 }
-const $=x=>document.getElementById(x);const IDs=['setup','home','create','moderatorLogin','host','participant','mySessions','projection'];const ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const DEFAULT_SECONDS=40;const N=QUIZ.length;const MODERATOR_EMAIL='emil.economia@gmail.com';
+const $=x=>document.getElementById(x);const IDs=['setup','home','create','moderatorLogin','host','participant','mySessions','projection'];const ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const DEFAULT_SECONDS=40;let N=QUIZ.length;const MODERATOR_EMAIL='emil.economia@gmail.com';
 let db=null,uid='',anonDb=null,anonUid='',moderatorDb=null,moderatorAuth=null,roomId='',room=null,isHost=false,myName='',myCountry='',people=[],votes=Array.from({length:N},()=>[]),stops=[],activeTab=0,surveyAt=0,ticker=null,authReady=false,reviewingSurvey=false,projecting=false,projectAt=0,projectView='question';
 function section(...names){IDs.forEach(x=>$(x).classList.toggle('hidden',!names.includes(x)))}
 function alertText(s,isError=false){$('alert').replaceChildren();if(!s)return;const n=document.createElement('div');n.className='notice'+(isError?' error':'');n.textContent=s;$('alert').append(n)}
@@ -296,7 +308,7 @@ function rankings(){return people.map(p=>({...p,score:scoreFor(p.uid)})).sort((a
 function rowMetric(n,label){const box=add('div',undefined,'metric');box.append(add('b',String(n)),add('span',label));return box}
 function renderHost(){if(!isHost)return;$('hostCode').textContent='Sala '+roomId;$('hostStatus').textContent=`${room.sessionKind==='official'?'OFICIAL':'ENSAYO'} · ${room.mode==='survey'?'Encuesta':'Competencia'} · ${room.status==='lobby'?'En espera':room.status==='done'?'Finalizada':'En curso'}`;
 $('hostHint').textContent=people.length+(simulationMode?' perfiles simulados. Datos ficticios.':' participantes inscritos. Actualización automática desde Firebase.');$('simulationWarning').classList.toggle('hidden',!simulationMode);$('completedActions').classList.toggle('hidden',room.status!=='done');$('teacherSimulation').style.display=simulationMode?'none':'inline-block';$('exitSimulation').style.display=simulationMode?'inline-block':'none';
-$('start').textContent=room.mode==='survey'?'Abrir encuesta':'Iniciar competencia';$('start').disabled=room.status!=='lobby';$('next').classList.toggle('hidden',room.mode==='survey'||room.idx>=N-1);$('reveal').classList.toggle('hidden',room.mode==='survey');$('next').disabled=room.status!=='live'||!room.reveal||room.idx>=N-1||(room.quizVersion===2&&stageNow()<2);$('reveal').disabled=room.status!=='live'||(room.quizVersion!==2&&room.reveal)||(room.quizVersion===2&&stageNow()>=3);$('reveal').textContent=room.quizVersion===2?(stageNow()===0?'Mostrar distribución':stageNow()===1?'Revelar respuesta':'Ampliar explicación (opcional)'):'Revelar respuesta';$('stageGuide').textContent=room.mode!=='competition'?'':room.status==='done'?'Dinámica finalizada. Puedes revisar resultados o crear otra.':room.idx===N-1&&stageNow()>=2?'Última pregunta: pulsa «Cerrar y mostrar resultados».':stageNow()===0?'Paso 1: mostrar cómo respondió el grupo.':stageNow()===1?'Paso 2: revelar cuál era correcta.':'Ya puedes pulsar «Siguiente pregunta»; la explicación adicional es opcional.';$('finish').disabled=room.status==='done'||room.status==='lobby';
+$('start').textContent=room.mode==='survey'?'Abrir encuesta':'Iniciar competencia';$('start').disabled=room.status!=='lobby';$('next').classList.toggle('hidden',room.mode==='survey'||room.idx>=N-1);$('reveal').classList.toggle('hidden',room.mode==='survey');$('next').disabled=room.status!=='live'||!room.reveal||room.idx>=N-1||(room.quizVersion>=2&&stageNow()<2);$('reveal').disabled=room.status!=='live'||(room.quizVersion!==2&&room.reveal)||(room.quizVersion>=2&&stageNow()>=3);$('reveal').textContent=room.quizVersion>=2?(stageNow()===0?'Mostrar distribución':stageNow()===1?'Revelar respuesta':'Ampliar explicación (opcional)'):'Revelar respuesta';$('stageGuide').textContent=room.mode!=='competition'?'':room.status==='done'?'Dinámica finalizada. Puedes revisar resultados o crear otra.':room.idx===N-1&&stageNow()>=2?'Última pregunta: pulsa «Cerrar y mostrar resultados».':stageNow()===0?'Paso 1: mostrar cómo respondió el grupo.':stageNow()===1?'Paso 2: revelar cuál era correcta.':'Ya puedes pulsar «Siguiente pregunta»; la explicación adicional es opcional.';$('finish').disabled=room.status==='done'||room.status==='lobby';
 const total=nAnswers(),correct=QUIZ.reduce((v,q,i)=>v+correctFor(i),0),submitted=people.filter(p=>QUIZ.every((q,i)=>votes[i].some(v=>v.uid===p.uid))).length;
 $('metrics').replaceChildren(rowMetric(people.length,'Participantes'),rowMetric(total,'Respuestas registradas'),rowMetric(fmtPercent(correct,total),'Porcentaje de aciertos'),rowMetric(submitted,'Cuestionarios completos'));
 renderLearningSummary();if(projecting)renderProjection();const sum=$('summary');sum.replaceChildren();QUIZ.forEach((q,i)=>{const n=votes[i].length,ac=correctFor(i),box=add('div',undefined,'aggregate'),left=add('div');left.append(add('strong',`P${i+1} · ${q.topic}`),add('div',`${ac} aciertos de ${n} respuestas · ${fmtPercent(ac,n)}`,'small'));const prog=add('progress');prog.max=100;prog.value=n?100*ac/n:0;prog.setAttribute('aria-label',`Porcentaje de aciertos en pregunta ${i+1}`);box.append(left,prog);sum.append(box)});
@@ -332,12 +344,12 @@ async function boot(){try{let cfg=window.FIREBASE_CONFIG;if(!cfg){const s=localS
 $('saveConfig').onclick=async()=>{try{const c=JSON.parse($('configInput').value);localStorage.setItem('comparisonFirebaseConfig',JSON.stringify(c));await init(c)}catch(e){alertText(e.message,true)}};
 $('showCreate').onclick=async()=>{try{await initModeratorAuth();if(moderatorAuth.currentUser?.email===MODERATOR_EMAIL){enterModerator();return}section('moderatorLogin')}catch(e){alertText('No se pudo abrir el acceso del moderador: '+e.message,true)}};
 $('moderatorBack').onclick=()=>section('home');
-function enterModerator(){if(!moderatorAuth?.currentUser||moderatorAuth.currentUser.email!==MODERATOR_EMAIL)throw Error('La cuenta no está autorizada.');unsubscribe();db=moderatorDb;uid=moderatorAuth.currentUser.uid;room=null;roomId='';isHost=false;people=[];votes=Array.from({length:N},()=>[]);section('create');$('moderatorPassword').value='';alertText('Acceso del moderador autorizado.')}
+function enterModerator(){if(!moderatorAuth?.currentUser||moderatorAuth.currentUser.email!==MODERATOR_EMAIL)throw Error('La cuenta no está autorizada.');unsubscribe();db=moderatorDb;uid=moderatorAuth.currentUser.uid;room=null;roomId='';isHost=false;people=[];votes=Array.from({length:N},()=>[]);activateQuizVersion(3);section('create');$('moderatorPassword').value='';alertText('Acceso del moderador autorizado.')}
 $('moderatorEnter').onclick=async()=>{const pwd=$('moderatorPassword').value;if(!pwd)return alertText('Escribe la contraseña del moderador.',true);$('moderatorEnter').disabled=true;try{await moderatorAuth.signInWithEmailAndPassword(MODERATOR_EMAIL,pwd);enterModerator()}catch(e){alertText('No se pudo autenticar. Comprueba la contraseña y el usuario registrado en Firebase.',true)}finally{$('moderatorEnter').disabled=false}};
-const durations=$('durationFields');for(let i=0;i<N;i++){const l=add('label','Pregunta '+(i+1));const input=add('input');input.id='duration'+i;input.type='number';input.min='10';input.max='180';input.step='1';input.value='40';input.inputMode='numeric';l.append(input);durations.append(l)}
+const durations=$('durationFields');for(let i=0;i<4;i++){const l=add('label','Pregunta '+(i+1));const input=add('input');input.id='duration'+i;input.type='number';input.min='10';input.max='180';input.step='1';input.value='40';input.inputMode='numeric';l.append(input);durations.append(l)}
 $('mode').onchange=()=>{$('durationEditor').classList.toggle('hidden',$('mode').value!=='competition')};
 $('sameTime').onclick=()=>{const v=$('duration0').value;for(let i=1;i<N;i++)$('duration'+i).value=v};$('cancelCreate').onclick=()=>{if(moderatorDb&&db===moderatorDb){db=anonDb;uid=anonUid;isHost=false}section('home');showOwnedRooms()};
-$('createRoom').onclick=async()=>{if(!authReady)return;try{const bytes=crypto.getRandomValues(new Uint8Array(7));const id=Array.from(bytes,b=>ALPH[b%ALPH.length]).join('');if(!moderatorAuth?.currentUser||moderatorAuth.currentUser.uid!==uid||db!==moderatorDb)throw Error('Inicia sesión como moderador.');const times=Array.from({length:N},(_,i)=>Number($('duration'+i).value));if($('mode').value==='competition'&&times.some(x=>!Number.isInteger(x)||x<10||x>180))throw Error('Configura entre 10 y 180 segundos enteros para cada pregunta.');roomId=id;await rref().set({owner:uid,mode:$('mode').value,sessionKind:$('sessionKind').value,questionTimes:$('mode').value==='competition'?times:Array(N).fill(DEFAULT_SECONDS),quizVersion:2,revealStage:0,status:'lobby',idx:-1,reveal:false,openedAt:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()});isHost=true;activateQuizVersion(2);saveOwnedRoom(id);subscribe();const u=new URL(location.href);u.searchParams.set('room',id);history.replaceState(null,'',u.toString())}catch(e){alertText('No se pudo crear la sala: '+e.message,true)}};
+$('createRoom').onclick=async()=>{if(!authReady)return;try{const bytes=crypto.getRandomValues(new Uint8Array(7));const id=Array.from(bytes,b=>ALPH[b%ALPH.length]).join('');if(!moderatorAuth?.currentUser||moderatorAuth.currentUser.uid!==uid||db!==moderatorDb)throw Error('Inicia sesión como moderador.');const times=Array.from({length:4},(_,i)=>Number($('duration'+i).value));if($('mode').value==='competition'&&times.some(x=>!Number.isInteger(x)||x<10||x>180))throw Error('Configura entre 10 y 180 segundos enteros para cada pregunta.');roomId=id;await rref().set({owner:uid,mode:$('mode').value,sessionKind:$('sessionKind').value,questionTimes:$('mode').value==='competition'?times:Array(N).fill(DEFAULT_SECONDS),quizVersion:3,revealStage:0,status:'lobby',idx:-1,reveal:false,openedAt:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()});isHost=true;activateQuizVersion(3);saveOwnedRoom(id);subscribe();const u=new URL(location.href);u.searchParams.set('room',id);history.replaceState(null,'',u.toString())}catch(e){alertText('No se pudo crear la sala: '+e.message,true)}};
 $('join').onclick=async()=>{
  let stage='validación inicial';
  try{
@@ -369,26 +381,26 @@ $('reviewSurvey').onclick=()=>{reviewingSurvey=true;surveyAt=0;renderParticipant
 $('prevSurvey').onclick=()=>{surveyAt=Math.max(0,surveyAt-1);renderParticipant()};$('nextSurvey').onclick=()=>{if(surveyAt===N-1&&QUIZ.every((q,i)=>hasVoted(i))){reviewingSurvey=false;renderParticipant()}else{surveyAt=(surveyAt+1)%N;renderParticipant()}};
 $('start').onclick=async()=>{try{if(!isHost||room.status!=='lobby')return;
  const change={status:'live',idx:room.mode==='survey'?-1:0,reveal:false,openedAt:firebase.firestore.FieldValue.serverTimestamp()};
- if(room.quizVersion===2)change.revealStage=0;
+ if(room.quizVersion>=2)change.revealStage=0;
  if(simulationMode){Object.assign(room,change,{openedAt:firebase.firestore.Timestamp.fromMillis(Date.now())});render()}
  else await rref().update(change)
  }catch(e){alertText(e.message,true)}};
 $('next').onclick=async()=>{try{
- if(!isHost||room.mode!=='competition'||!room.reveal||room.idx>=N-1||(room.quizVersion===2&&stageNow()<2))return;
+ if(!isHost||room.mode!=='competition'||!room.reveal||room.idx>=N-1||(room.quizVersion>=2&&stageNow()<2))return;
  const change={idx:room.idx+1,reveal:false,openedAt:firebase.firestore.FieldValue.serverTimestamp()};
- if(room.quizVersion===2)change.revealStage=0;
+ if(room.quizVersion>=2)change.revealStage=0;
  if(simulationMode){Object.assign(room,change,{openedAt:firebase.firestore.Timestamp.fromMillis(Date.now())});render()}
  else await rref().update(change)
  }catch(e){alertText(e.message,true)}};
 $('reveal').onclick=async()=>{try{
  if(!isHost||room.mode!=='competition'||room.status!=='live')return;
- if(room.quizVersion===2){
+ if(room.quizVersion>=2){
  const stage=stageNow();if(stage>=3)return;
  const update={revealStage:stage+1,reveal:stage+1>=2};
  if(simulationMode){Object.assign(room,update);render()}else await rref().update(update)
  }else if(!room.reveal){if(simulationMode){room.reveal=true;render()}else await rref().update({reveal:true})}
  }catch(e){alertText(e.message,true)}};
-$('finish').onclick=async()=>{try{if(isHost&&room.status==='live'&&confirm('¿Cerrar la sesión? Ya no podrán enviar respuestas.')){if(simulationMode){room.status='done';room.reveal=true;room.revealStage=3;render()}else await rref().update({status:'done',reveal:true,...(room.quizVersion===2?{revealStage:3}:{})})}}catch(e){alertText(e.message,true)}};
+$('finish').onclick=async()=>{try{if(isHost&&room.status==='live'&&confirm('¿Cerrar la sesión? Ya no podrán enviar respuestas.')){if(simulationMode){room.status='done';room.reveal=true;room.revealStage=3;render()}else await rref().update({status:'done',reveal:true,...(room.quizVersion>=2?{revealStage:3}:{})})}}catch(e){alertText(e.message,true)}};
 $('copyLink').onclick=async()=>{try{await navigator.clipboard.writeText(link());alertText('Enlace copiado.')}catch{alertText('Selecciona y copia el enlace visible.')}};
 $('downloadQR').onclick=()=>{const img=$('qr').querySelector('canvas');const picture=$('qr').querySelector('img');const url=img?.toDataURL('image/png')||picture?.src;if(!url)return alertText('No hay un QR disponible.',true);const a=document.createElement('a');a.href=url;a.download=`QR-metodo-comparado-${roomId}.png`;a.click()};
 function csvCell(s){return '"'+String(s??'').replace(/"/g,'""').replace(/^[=+@\-\t\r]/,'\'$&')+'"'}
@@ -452,8 +464,8 @@ window.addEventListener('online',()=>alertText('Conexión restablecida. Verifica
 function launchSimulation(){
  if(simulationMode||!moderatorAuth?.currentUser)return;
  // Modo sin escrituras remotas: conserva el enlace real para regresar después.
- simulationMode=true;unsubscribe();db=moderatorDb;uid=moderatorAuth.currentUser.uid;isHost=true;roomId='SIMULADO';activateQuizVersion(2);
- room={owner:uid,quizVersion:2,sessionKind:'practice',mode:'competition',status:'lobby',idx:-1,reveal:false,revealStage:0,questionTimes:[20,20,20,20,20,20],openedAt:null};
+ simulationMode=true;unsubscribe();db=moderatorDb;uid=moderatorAuth.currentUser.uid;isHost=true;roomId='SIMULADO';activateQuizVersion(3);
+ room={owner:uid,quizVersion:3,sessionKind:'practice',mode:'competition',status:'lobby',idx:-1,reveal:false,revealStage:0,questionTimes:[20,20,20,20],openedAt:null};
  people=Array.from({length:24},(_,i)=>({uid:'sim'+(i+1),name:'Participante ficticio '+(i+1),country:''}));
  votes=QUIZ.map((q,i)=>people.map((p,k)=>({uid:p.uid,choice:(k+i)%4,submittedAt:null})));
  render();
