@@ -356,7 +356,7 @@ if(room.owner===uid&&!simulationMode)refreshPresenterInvite();renderLearningSumm
 const tabs=$('questionTabs');tabs.replaceChildren();QUIZ.forEach((q,i)=>{const b=add('button','Pregunta '+(i+1)+(activeTab===i?' ●':''),activeTab===i?'active':'');b.onclick=()=>{activeTab=i;renderHost()};tabs.append(b)});$('hostNotesView').classList.toggle('active',hostReadingView==='notes');$('hostPublicView').classList.toggle('active',hostReadingView==='public');chart('hostChart',activeTab,room.status==='done'||(room.mode==='competition'&&(room.idx>activeTab||(room.idx===activeTab&&stageNow()>=2))),hostReadingView==='public');
 const counts={};people.forEach(p=>{if(p.country)counts[p.country]=(counts[p.country]||0)+1});const co=$('countries');co.replaceChildren();co.append(add('h3','Participantes por país declarado (opcional)'));if(!Object.keys(counts).length)co.append(add('p','Todavía no se han declarado países.'));else Object.entries(counts).sort((a,b)=>b[1]-a[1]).forEach(([name,n])=>co.append(add('div',`${name}: ${n} participantes`,'small')))}
 function optionButtons(target,i,locked,allowSubmit){const el=$(target);el.replaceChildren();QUIZ[i].a.forEach((text,j)=>{const b=add('button',undefined,'choice'+(votes[i].some(v=>v.uid===uid&&v.choice===j)?' selected':''));b.disabled=locked||pendingVotes.has(i);b.append(add('span','ABCD'[j],'letter'),add('span',text));b.onclick=()=>submit(i,j,allowSubmit);el.append(b)})}
-function renderParticipant(){if(isHost){$('participant').classList.add('hidden');return}$('participant').classList.remove('hidden');['waiting','survey','submittedPanel','competition','revealPanel','donePanel'].forEach(s=>$(s).classList.add('hidden'));
+function renderParticipant(){if(isHost){$('participant').classList.add('hidden');return}if($('alert').textContent?.includes('No se pudo completar el ingreso')||$('alert').textContent?.includes('No fue posible ingresar (validación inicial)'))alertText('');$('participant').classList.remove('hidden');['waiting','survey','submittedPanel','competition','revealPanel','donePanel'].forEach(s=>$(s).classList.add('hidden'));
 if(room.status==='lobby'){$('waiting').classList.remove('hidden');$('waitTitle').textContent='Esperando al moderador…';$('waitText').textContent='Ya estás registrado. La actividad comenzará en cuanto se abra la sesión.';return}
 if(room.status==='done'){$('donePanel').classList.remove('hidden');updatePersonalScore();$('myScore').textContent=`Resultado final: ${scoreReleased().correct} respuestas correctas de ${N}.`;drawRankings();return}
 if(room.mode==='survey'){if(QUIZ.every((q,i)=>hasVoted(i))&&!reviewingSurvey){$('submittedPanel').classList.remove('hidden');$('submittedText').textContent='Se registraron tus '+N+' respuestas. Cuando el moderador cierre la sesión, podrás ver el resultado grupal y tu puntuación.';return}$('survey').classList.remove('hidden');$('surveyProgress').textContent=`Pregunta ${surveyAt+1} de ${N}`;$('surveyRecorded').textContent=`${QUIZ.filter((q,i)=>hasVoted(i)).length}/${N} respondidas`;$('surveyQuestion').textContent=QUIZ[surveyAt].q;optionButtons('surveyChoices',surveyAt,false,true);$('prevSurvey').disabled=surveyAt===0;$('nextSurvey').textContent=surveyAt===N-1?'Finalizar revisión':'Siguiente';return}
@@ -436,28 +436,37 @@ $('createRoom').onclick=async()=>{if(!authReady)return;try{const bytes=crypto.ge
    }
  }
  subscribe();const u=new URL(location.href);u.searchParams.set('room',id);history.replaceState(null,'',u.toString())}catch(e){alertText('No se pudo crear la sala: '+e.message,true)}};
+let joiningInProgress=false;
 $('join').onclick=async()=>{
- let stage='validación inicial';
+ if(joiningInProgress)return;
+ const enteredCode=code($('roomCode').value),enteredName=$('playerName').value.trim(),enteredCountry=$('country').value;
+ if(!enteredCode||!enteredName){alertText('Para participar, escribe el código de sala y tu nombre o seudónimo.',true);return}
+ if(enteredName.length>35){alertText('El nombre o seudónimo no puede superar 35 caracteres.',true);return}
+ if(!anonDb||!anonUid){alertText('La conexión todavía no está lista. Recarga la página.',true);return}
+ joiningInProgress=true;$('join').disabled=true;
+ let step='consultar la sala';
  try{
-  // La sala pública siempre debe usarse con autenticación anónima, nunca con la cuenta de moderación.
-  db=anonDb;uid=anonUid;isHost=false;
-  roomId=code($('roomCode').value);myName=$('playerName').value.trim();myCountry=$('country').value;
-  if(!roomId||!myName)throw Error('Ingresa código y nombre.');
-  if(myName.length>35)throw Error('El seudónimo excede 35 caracteres.');
-  stage='consulta de la sala';const existing=await rref().get();
+  const ref=anonDb.collection('rooms').doc(enteredCode);
+  const existing=await ref.get({source:'server'});
   if(!existing.exists)throw Error('La sala no existe.');
-  if(existing.data().status==='done')throw Error('La sesión ya finalizó.');
-  stage='consulta del registro personal';const personRef=rref().collection('participants').doc(uid);
-  const previous=await personRef.get();
-  if(!previous.exists){
-   stage='inscripción del participante';
-   await personRef.set({name:myName,country:myCountry,joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
-  }else{myName=previous.data().name||myName;myCountry=previous.data().country||myCountry}
-  stage='activación de la sesión';
-  unsubscribe();room=null;people=[];votes=Array.from({length:N},()=>[]);
-  subscribe();
-  const u=new URL(location.href);u.searchParams.set('room',roomId);history.replaceState(null,'',u.toString());
- }catch(e){alertText('No fue posible ingresar ('+stage+'): '+e.message,true)}
+  if(existing.data().status==='done')throw Error('La sesión ya terminó.');
+  step='comprobar tu inscripción';
+  const person=ref.collection('participants').doc(anonUid);
+  const saved=await person.get({source:'server'});
+  let registeredName=enteredName,registeredCountry=enteredCountry;
+  if(!saved.exists){
+   step='registrarte en la sala';
+   await person.set({name:enteredName,country:enteredCountry,joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }else{registeredName=saved.data().name||enteredName;registeredCountry=saved.data().country||enteredCountry}
+  unsubscribe();sharedVoteStops.forEach(stop=>stop());sharedVoteStops=[];
+  db=anonDb;uid=anonUid;roomId=enteredCode;myName=registeredName;myCountry=registeredCountry;
+  room=null;isHost=false;projecting=false;people=[];votes=Array.from({length:N},()=>[]);
+  alertText('');subscribe();
+  const url=new URL(location.href);url.searchParams.set('room',roomId);url.searchParams.delete('view');history.replaceState(null,'',url.toString());
+ }catch(e){
+  console.error('Error al ingresar',step,e);
+  alertText('No se pudo completar el ingreso ('+step+'): '+e.message,true);
+ }finally{joiningInProgress=false;$('join').disabled=false}
 };
 let dataStops=[];
 function unsubscribe(){stops.forEach(fn=>fn());stops=[];dataStops.forEach(fn=>fn());dataStops=[]}let sharedVoteStops=[];
