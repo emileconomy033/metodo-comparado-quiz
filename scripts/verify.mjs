@@ -107,7 +107,7 @@ assert(source.includes("localStorage.setItem(UNIQUE_ROOM_KEY,id)"),'Debe conserv
 assert(source.includes("sessionKind:'official'"),'Las salas nuevas deben ser de tipo oficial reutilizable');
 assert(source.includes("readyEl.textContent=simulationMode?"),'Indicador de sala lista no es dinámico');
 assert(source.includes("loadedPeople&&loadedVotes.size===N"),'Estado de limpieza sin esperar confirmación de listeners');
-assert(source.includes("room.status==='lobby'&&empty&&!cleanupInProgress"),'No indicar lista con registros pendientes');
+assert(source.includes("room.status==='lobby'&&room.mode==='competition'&&empty&&!cleanupInProgress"),'No indicar lista con registros pendientes');
 assert(source.includes("remainsPeople=await ref.collection('participants')"),'No se verifica la eliminación de participantes');
 assert(source.includes("const pending=await ref.collection('answers')"),'No se verifica la eliminación de votos');
 assert(source.includes("function chart(target,i,showAnswer,compact=false)"));
