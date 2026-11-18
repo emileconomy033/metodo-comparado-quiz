@@ -482,6 +482,26 @@ async function init(cfg){if(!window.firebase)throw Error('No se pudo cargar Fire
  if(requested)$('roomCode').value=requested;
  section('home');await showOwnedRooms();
  if(requested&&roomVerified){try{
+const wantsPublicProjection=new URLSearchParams(location.search).get('view')==='projection';
+if(wantsPublicProjection){
+ const mod=await initModeratorAuth();
+ const authUser=mod.currentUser;
+ if(!authUser||!authUser.email)throw Error('Inicia sesión como expositor en la ventana privada antes de abrir esta pantalla.');
+ const ref=moderatorDb.collection('rooms').doc(requested);
+ const target=await ref.get({source:'server'});
+ if(!target.exists)throw Error('La sala no existe.');
+ let allowed=target.data().owner===authUser.uid;
+ if(!allowed){
+  try{
+   const invitation=await ref.collection('access').doc('presenter').get({source:'server'});
+   allowed=invitation.exists&&invitation.data().email===authUser.email.toLowerCase();
+  }catch{}
+ }
+ if(!allowed)throw Error('Esta cuenta no está autorizada a proyectar la sala.');
+ db=moderatorDb;uid=authUser.uid;roomId=requested;isHost=true;projecting=true;
+ people=[];votes=Array.from({length:N},()=>[]);
+ subscribe();document.title='Pantalla pública · ¿Realmente sabemos comparar?';return;
+}
 const doc=await anonDb.collection('rooms').doc(requested).get();
 if(doc.exists&&doc.data().owner===anonUid){roomId=requested;isHost=true;projecting=new URLSearchParams(location.search).get('view')==='projection';subscribe();return}
 if(doc.exists){const mine=await anonDb.collection('rooms').doc(requested).collection('participants').doc(anonUid).get();if(mine.exists){roomId=requested;myName=mine.data().name;myCountry=mine.data().country||'';myRegistration=mine.data();isHost=false;subscribe();return}}
@@ -496,7 +516,15 @@ if(mod.currentUser?.email&&doc.exists){
  }
  if(allowed){if(doc.data().owner===mod.currentUser.uid&&doc.data().quizVersion===3)localStorage.setItem(UNIQUE_ROOM_KEY,requested);db=moderatorDb;uid=mod.currentUser.uid;roomId=requested;isHost=true;projecting=new URLSearchParams(location.search).get('view')==='projection';people=[];votes=Array.from({length:N},()=>[]);subscribe();return}
 }
-}catch(e){console.warn('No se pudo recuperar la sala automáticamente',e)}}}
+}catch(e){
+ console.warn('No se pudo recuperar la sala automáticamente',e);
+ if(new URLSearchParams(location.search).get('view')==='projection'){
+  section('projection');$('projectHeading').textContent='Pantalla pública';
+  $('projectStage').textContent='Sin conexión';
+  $('projectChart').replaceChildren(add('p',e.message||'No se pudo abrir la presentación.','project-hidden'));
+  return;
+ }
+}}}
 async function boot(){try{let cfg=window.FIREBASE_CONFIG;if(!cfg){const s=localStorage.getItem('comparisonFirebaseConfig');if(s)cfg=JSON.parse(s)}if(cfg)await init(cfg);else section('setup')}catch(e){section('setup');alertText('Error de conexión: '+e.message,true)}}
 $('saveConfig').onclick=async()=>{try{const c=JSON.parse($('configInput').value);localStorage.setItem('comparisonFirebaseConfig',JSON.stringify(c));await init(c)}catch(e){alertText(e.message,true)}};
 $('showCreate').onclick=async()=>{try{await initModeratorAuth();if(moderatorAuth.currentUser?.email){enterModerator();return}section('moderatorLogin')}catch(e){alertText('No se pudo abrir el acceso del moderador: '+e.message,true)}};
@@ -846,7 +874,7 @@ function renderProjection(){
  chart('projectionTempChart',i,stage>=2,true);
 }
 
-$('openAudienceWindow').onclick=()=>{if(!isHost)return;const url=new URL(location.href);url.searchParams.set('room',roomId);url.searchParams.set('view','projection');const popup=window.open(url.toString(),'_blank');if(!popup)alertText('El navegador bloqueó la ventana: permite ventanas emergentes para abrir la pantalla pública.',true)};
+$('openAudienceWindow').onclick=()=>{if(!isHost||simulationMode)return;const url=new URL(location.href);url.searchParams.set('room',roomId);url.searchParams.set('view','projection');url.searchParams.set('v',RELEASE_ID);const popup=window.open(url.toString(),'comparisonPublicScreen');if(!popup)alertText('Chrome bloqueó la ventana pública. Permite las ventanas emergentes para este sitio.',true);else popup.focus()};
 window.addEventListener('offline',()=>alertText('Sin conexión: verifica tu internet. Los cambios pendientes pueden no haberse sincronizado.',true));
 window.addEventListener('online',()=>alertText('Conexión restablecida. Verifica que tus respuestas estén registradas.'));
 
