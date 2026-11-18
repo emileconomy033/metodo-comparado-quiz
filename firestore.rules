@@ -48,13 +48,18 @@ service cloud.firestore {
     match /rooms/{id} {
       allow get: if signed();
       allow list: if false;
-      allow create: if moderator() && request.resource.data.keys().hasOnly(['owner','mode','sessionKind','questionTimes','quizVersion','revealStage','status','idx','reveal','openedAt','createdAt'])
+      allow create: if moderator() && request.resource.data.keys().hasOnly(['owner','mode','sessionKind','questionTimes','quizVersion','publicView','revealStage','status','idx','reveal','openedAt','createdAt'])
         && request.resource.data.owner == request.auth.uid && ((request.resource.data.quizVersion == 3 && request.resource.data.mode == 'competition') || (request.resource.data.quizVersion == 2 && request.resource.data.mode in ['survey','competition'])) && request.resource.data.sessionKind in ['practice','official']
         && validTimes(request.resource.data.questionTimes, request.resource.data.quizVersion)
         && request.resource.data.quizVersion in [2,3] && request.resource.data.revealStage == 0
-        && request.resource.data.status == 'lobby' && request.resource.data.idx == -1 && request.resource.data.reveal == false;
-      allow update: if (owner(id) || (coPresenter(id) && resource.data.status != 'done' && request.resource.data.status != 'lobby' && request.resource.data.idx >= resource.data.idx))
-        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['status','idx','reveal','revealStage','openedAt','mode'])
+        && request.resource.data.status == 'lobby' && request.resource.data.idx == -1 && request.resource.data.reveal == false
+        && request.resource.data.publicView == 'welcome';
+      allow update: if (owner(id) || (coPresenter(id) && (
+          (resource.data.status != 'done' && request.resource.data.status != 'lobby' && request.resource.data.idx >= resource.data.idx)
+          || (resource.data.status != 'done' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['publicView'])))))
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','idx','reveal','revealStage','openedAt','mode','publicView'])
+        && request.resource.data.get('publicView','welcome') in ['welcome','questions']
+        && (request.resource.data.get('publicView','welcome') != 'questions' || request.resource.data.status in ['live','done'])
         && (request.resource.data.mode == resource.data.mode
           || (owner(id) && resource.data.get('quizVersion',1) == 3
             && resource.data.mode == 'survey' && request.resource.data.mode == 'competition'
