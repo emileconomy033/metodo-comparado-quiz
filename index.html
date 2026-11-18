@@ -174,6 +174,25 @@ let db=null,uid='',anonDb=null,anonUid='',moderatorDb=null,moderatorAuth=null,ro
 function section(...names){IDs.forEach(x=>$(x).classList.toggle('hidden',!names.includes(x)))}
 function alertText(s,isError=false){$('alert').replaceChildren();if(!s)return;const n=document.createElement('div');n.className='notice'+(isError?' error':'');n.textContent=s;$('alert').append(n)}
 function code(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8)}
+const ACTIVE_ROOM_PATH='roomDirectory/current';
+async function fetchActiveRoomId(){
+ if(!anonDb)throw Error('No existe conexión con Firebase.');
+ const snapshot=await anonDb.doc(ACTIVE_ROOM_PATH).get({source:'server'});
+ return snapshot.exists?code(snapshot.data()?.roomId):'';
+}
+function setRoomLocation(id){
+ const url=new URL(location.href);
+ url.searchParams.set('room',id);
+ url.searchParams.set('v',RELEASE_ID);
+ url.searchParams.delete('view');
+ history.replaceState(null,'',url.toString());
+}
+async function assertCurrentRoom(id){
+ const active=await fetchActiveRoomId();
+ if(!active)throw Error('Todavía no está activada la sala única del ejercicio. Solicita al moderador que abra o recupere su sala.');
+ if(active!==id)throw Error('El código '+id+' pertenece a una sala anterior. La sala vigente es '+active+'.');
+ return active;
+}
 function rref(){return db.collection('rooms').doc(roomId)}
 function voteRef(i){return rref().collection('answers').doc(String(i)).collection('votes').doc(uid)}
 function link(){const u=new URL(location.href);u.searchParams.set('room',roomId);u.searchParams.set('v',RELEASE_ID);u.searchParams.delete('view');u.searchParams.delete('utm_source');return u.toString()}
@@ -439,21 +458,50 @@ $('presenterOpen').onclick=async()=>{
 const durations=$('durationFields');for(let i=0;i<4;i++){const l=add('label','Pregunta '+(i+1));const input=add('input');input.id='duration'+i;input.type='number';input.min='10';input.max='180';input.step='1';input.value='40';input.inputMode='numeric';l.append(input);durations.append(l)}
 $('mode').onchange=()=>{$('durationEditor').classList.toggle('hidden',$('mode').value!=='competition')};
 $('sameTime').onclick=()=>{const v=$('duration0').value;for(let i=1;i<N;i++)$('duration'+i).value=v};$('cancelCreate').onclick=()=>{if(moderatorDb&&db===moderatorDb){db=anonDb;uid=anonUid;isHost=false}section('home');showOwnedRooms()};
-$('createRoom').onclick=async()=>{if(!authReady)return;try{const bytes=crypto.getRandomValues(new Uint8Array(7));const id=Array.from(bytes,b=>ALPH[b%ALPH.length]).join('');if(!moderatorAuth?.currentUser||moderatorAuth.currentUser.uid!==uid||db!==moderatorDb)throw Error('Inicia sesión como moderador.');const knownId=code(localStorage.getItem(UNIQUE_ROOM_KEY));if(knownId){
- const knownRef=moderatorDb.collection('rooms').doc(knownId);
- try{const existing=await knownRef.get({source:'server'});if(existing.exists&&existing.data().owner===moderatorAuth.currentUser.uid){unsubscribe();roomId=knownId;isHost=true;subscribe();const u=new URL(location.href);u.searchParams.set('room',knownId);history.replaceState(null,'',u.toString());return}}catch(e){throw Error('No se pudo comprobar la sala existente. No crearé otra para evitar dos códigos QR: '+e.message)}
- localStorage.removeItem(UNIQUE_ROOM_KEY);
- }
- const times=Array.from({length:4},(_,i)=>Number($('duration'+i).value));if($('mode').value==='competition'&&times.some(x=>!Number.isInteger(x)||x<10||x>180))throw Error('Configura entre 10 y 180 segundos enteros para cada pregunta.');roomId=id;await rref().set({owner:uid,mode:$('mode').value,sessionKind:'official',questionTimes:$('mode').value==='competition'?times:Array(N).fill(DEFAULT_SECONDS),quizVersion:3,revealStage:0,status:'lobby',idx:-1,reveal:false,openedAt:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()});isHost=true;activateQuizVersion(3);saveOwnedRoom(id);localStorage.setItem(UNIQUE_ROOM_KEY,id);
- if(true){
-   try{
-     await rref().collection('access').doc('presenter').set({email:DEFAULT_PRESENTER_EMAIL});
-     lastPresenterInviteLoaded=''; // Mostrar autorización vigente al abrir el panel.
-   }catch(inviteError){
-     alertText('Sala creada. No se pudo autorizar automáticamente al segundo expositor: '+inviteError.message,true);
-   }
- }
- subscribe();const u=new URL(location.href);u.searchParams.set('room',id);history.replaceState(null,'',u.toString())}catch(e){alertText('No se pudo crear la sala: '+e.message,true)}};
+let creatingRoom=false;
+$('createRoom').onclick=async()=>{
+ if(!authReady||creatingRoom)return;
+ creatingRoom=true;$('createRoom').disabled=true;
+ try{
+  if(!moderatorAuth?.currentUser||moderatorAuth.currentUser.uid!==uid||db!==moderatorDb)throw Error('Inicia sesión como propietario de la sala.');
+  const currentRef=moderatorDb.doc(ACTIVE_ROOM_PATH);
+  const currentSnap=await currentRef.get({source:'server'});
+  const currentId=currentSnap.exists?code(currentSnap.data().roomId):'';
+  const knownId=code(localStorage.getItem(UNIQUE_ROOM_KEY));
+  let id='',existingRoom=null;
+  // The shared directory takes precedence over local storage on all devices.
+  if(currentId){
+   const doc=await moderatorDb.collection('rooms').doc(currentId).get({source:'server'});
+   if(!doc.exists)throw Error('La sala vigente '+currentId+' no existe. No crearé otra hasta resolverlo.');
+   if(doc.data().owner!==uid)throw Error('La sala central pertenece a otra identidad. Accede con el usuario propietario.');
+   if(doc.data().quizVersion!==3)throw Error('La sala vigente usa una versión curricular anterior. Revisa su configuración antes de continuar.');
+   id=currentId;existingRoom=doc.data();
+  }else if(knownId){
+   const doc=await moderatorDb.collection('rooms').doc(knownId).get({source:'server'});
+   if(doc.exists&&doc.data().owner===uid&&doc.data().quizVersion===3){id=knownId;existingRoom=doc.data()}
+  }
+  if(!id){
+   const times=Array.from({length:4},(_,i)=>Number($('duration'+i).value));
+   if($('mode').value==='competition'&&times.some(x=>!Number.isInteger(x)||x<10||x>180))throw Error('Configura entre 10 y 180 segundos enteros para cada pregunta.');
+   const bytes=crypto.getRandomValues(new Uint8Array(7));
+   id=Array.from(bytes,b=>ALPH[b%ALPH.length]).join('');
+   const ref=moderatorDb.collection('rooms').doc(id);
+   const batch=moderatorDb.batch();
+   batch.set(ref,{owner:uid,mode:$('mode').value,sessionKind:'official',questionTimes:$('mode').value==='competition'?times:Array(4).fill(DEFAULT_SECONDS),quizVersion:3,revealStage:0,status:'lobby',idx:-1,reveal:false,openedAt:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+   batch.set(currentRef,{roomId:id,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+   await batch.commit();
+  }else if(!currentId){
+   // Upgrade an existing room to the shared active-room directory.
+   await currentRef.set({roomId:id,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }
+  unsubscribe();db=moderatorDb;uid=moderatorAuth.currentUser.uid;roomId=id;isHost=true;projecting=false;
+  activateQuizVersion(3);saveOwnedRoom(id);localStorage.setItem(UNIQUE_ROOM_KEY,id);
+  try{await moderatorDb.collection('rooms').doc(id).collection('access').doc('presenter').set({email:DEFAULT_PRESENTER_EMAIL});lastPresenterInviteLoaded=''}
+  catch(inviteError){alertText('Sala lista; revisa el acceso del segundo expositor: '+inviteError.message,true)}
+  subscribe();setRoomLocation(id);
+ }catch(e){alertText('No se pudo preparar la sala única: '+e.message,true)}
+ finally{creatingRoom=false;$('createRoom').disabled=false}
+};
 let joiningInProgress=false;
 $('join').onclick=async()=>{
  if(joiningInProgress)return;
@@ -464,6 +512,12 @@ $('join').onclick=async()=>{
  joiningInProgress=true;$('join').disabled=true;
  let step='consultar la sala';
  try{
+  const activeId=await fetchActiveRoomId();
+  if(!activeId)throw Error('No hay una sala oficial vigente. Pide al moderador que la active.');
+  if(enteredCode!==activeId){
+   $('roomCode').value=activeId;setRoomLocation(activeId);
+   throw Error('El QR o código '+enteredCode+' es antiguo. Actualicé el formulario a la sala vigente '+activeId+'. Pulsa «Participar» nuevamente.');
+  }
   const ref=anonDb.collection('rooms').doc(enteredCode);
   const existing=await ref.get({source:'server'});
   if(!existing.exists)throw Error('La sala no existe.');
