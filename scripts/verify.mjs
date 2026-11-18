@@ -145,7 +145,7 @@ assert(!html.includes('<option value="survey">'),'No debe ser posible escoger en
 assert(source.includes("mode:'competition',sessionKind:'official'"),'Nueva sala sin competencia dirigida');
 assert(source.includes("existingRoom?.mode==='survey'&&existingRoom.quizVersion===3&&existingRoom.status==='lobby'"),'No se corrige la sala anterior en espera');
 assert(source.includes("update({mode:'competition'})"),'No se migra la modalidad anterior');
-assert(source.includes("ref.update({status:'lobby',idx:-1,reveal:false,revealStage:0,openedAt:null,...(room.quizVersion===3?{mode:'competition'}:{})})"),'El borrado de prueba debe dejar la sala en modo dirigido');
+assert(source.includes("ref.update({status:'lobby',idx:-1,reveal:false,revealStage:0,openedAt:null,publicView:'welcome',...(room.quizVersion===3?{mode:'competition'}:{})})"),'El borrado de prueba debe dejar la sala dirigida y con portada pública');
 assert(source.includes("if(room.mode==='survey'&&room.quizVersion===3)"),'Un participante de sala antigua aún puede pasar preguntas sin moderador');
 assert(source.includes('function renderAttendance()'),'Falta lista visible de participantes');
 assert(source.includes('function refreshAttendees()'),'Falta actualización por consulta directa al servidor');
@@ -206,4 +206,17 @@ assert(source.includes("if(wantsPublicProjection)"),'La ventana pública no tien
 assert(source.includes("if(!allowed)throw Error('Esta cuenta no está autorizada a proyectar la sala.')"),'La proyección debe validar permisos');
 assert(source.includes("window.open(url.toString(),'comparisonPublicScreen')"),'La nueva ventana no se reutiliza');
 assert(source.includes("document.title='Pantalla pública"),'El título debe distinguir la ventana pública');
-console.log('OK: sala única, QR público inicial, seguimiento automático de preguntas y vista privada independiente.');
+assert(html.includes('id="showPublicWelcome"'),'Falta control de portada pública');
+assert(html.includes('id="showPublicQuestion"'),'Falta control de preguntas públicas');
+assert(source.includes("if(room.publicView!=='questions'||room.status==='lobby')"),'La pantalla no conserva el QR hasta orden del expositor');
+assert(source.includes("setPublicView('welcome')"),'El moderador no puede mostrar portada');
+assert(source.includes("setPublicView('questions')"),'El moderador no puede autorizar preguntas públicas');
+assert(source.includes("await rref().update({publicView:next})"),'La vista pública no se comparte entre ventanas usando Firebase');
+assert(source.includes("publicView:'welcome',revealStage:0,status:'lobby'"),'Sala nueva sin portada inicial');
+assert(source.includes("publicView:'welcome',...(room.quizVersion===3?{mode:'competition'}:{})"),'Reinicio no restaura portada');
+assert(source.includes("document.createTextNode(' pendientes')"),'Faltan pendientes en pantalla pública');
+assert(source.includes("let cachedPublicQr=null,cachedPublicQrRoom=''"),'El QR no debe parpadear con actualizaciones');
+assert(source.includes("cachedPublicQrRoom!==roomId"),'El QR no responde a cambio de sala');
+assert(rules.includes("request.resource.data.get('publicView','welcome') in ['welcome','questions']"),'Reglas no restringen el estado de proyección');
+assert(rules.includes("affectedKeys().hasOnly(['status','idx','reveal','revealStage','openedAt','mode','publicView'])"),'Reglas no admiten el estado público o permiten otros campos');
+console.log('OK: portada QR persistente, contadores en vivo, revelación controlada y recuperación del mismo QR.');
