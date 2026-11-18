@@ -169,14 +169,14 @@ function activateQuizVersion(v){
  }
  if(typeof N!=='undefined')N=QUIZ.length;
 }
-const $=x=>document.getElementById(x);const IDs=['setup','home','create','moderatorLogin','presenterEntry','host','participant','mySessions','projection'];const ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const DEFAULT_SECONDS=40;let N=QUIZ.length;const MODERATOR_EMAIL='emil.economia@gmail.com';const DEFAULT_PRESENTER_EMAIL='gramirezfunes@gmail.com';
+const $=x=>document.getElementById(x);const IDs=['setup','home','create','moderatorLogin','presenterEntry','host','participant','mySessions','projection'];const ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const DEFAULT_SECONDS=40;let N=QUIZ.length;const MODERATOR_EMAIL='emil.economia@gmail.com';const DEFAULT_PRESENTER_EMAIL='gramirezfunes@gmail.com';const RELEASE_ID='2026-11-18-qa1';
 let db=null,uid='',anonDb=null,anonUid='',moderatorDb=null,moderatorAuth=null,roomId='',room=null,isHost=false,myName='',myCountry='',people=[],votes=Array.from({length:N},()=>[]),stops=[],activeTab=0,surveyAt=0,ticker=null,authReady=false,reviewingSurvey=false,projecting=false,projectAt=0,projectView='question';
 function section(...names){IDs.forEach(x=>$(x).classList.toggle('hidden',!names.includes(x)))}
 function alertText(s,isError=false){$('alert').replaceChildren();if(!s)return;const n=document.createElement('div');n.className='notice'+(isError?' error':'');n.textContent=s;$('alert').append(n)}
 function code(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8)}
 function rref(){return db.collection('rooms').doc(roomId)}
 function voteRef(i){return rref().collection('answers').doc(String(i)).collection('votes').doc(uid)}
-function link(){const u=new URL(location.href);u.searchParams.set('room',roomId);return u.toString()}
+function link(){const u=new URL(location.href);u.searchParams.set('room',roomId);u.searchParams.set('v',RELEASE_ID);u.searchParams.delete('view');u.searchParams.delete('utm_source');return u.toString()}
 function savedRooms(){try{return JSON.parse(localStorage.getItem('comparisonOwnedRooms')||'[]')}catch{return []}}
 function saveOwnedRoom(id){localStorage.setItem('comparisonOwnedRooms',JSON.stringify([...new Set([...savedRooms(),id])].slice(-12)))}
 async function showOwnedRooms(){
