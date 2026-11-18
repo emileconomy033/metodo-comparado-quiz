@@ -193,6 +193,7 @@ for(const id of ids.slice().reverse()){
   for(const opt of options){
    const doc=await opt.db.collection('rooms').doc(id).get();
    if(doc.exists&&doc.data().owner===opt.uid){
+    if(doc.data().quizVersion===3&&doc.data().sessionKind==='official')localStorage.setItem(UNIQUE_ROOM_KEY,id);
     unsubscribe();db=opt.db;uid=opt.uid;roomId=id;isHost=true;people=[];votes=Array.from({length:N},()=>[]);subscribe();
     const u=new URL(location.href);u.searchParams.set('room',id);history.replaceState(null,'',u.toString());return
    }
@@ -397,7 +398,7 @@ if(mod.currentUser?.email&&doc.exists){
    allowed=invitation.exists&&invitation.data().email===mod.currentUser.email.toLowerCase()
   }catch{}
  }
- if(allowed){db=moderatorDb;uid=mod.currentUser.uid;roomId=requested;isHost=true;projecting=new URLSearchParams(location.search).get('view')==='projection';people=[];votes=Array.from({length:N},()=>[]);subscribe();return}
+ if(allowed){if(doc.data().owner===mod.currentUser.uid&&doc.data().quizVersion===3)localStorage.setItem(UNIQUE_ROOM_KEY,requested);db=moderatorDb;uid=mod.currentUser.uid;roomId=requested;isHost=true;projecting=new URLSearchParams(location.search).get('view')==='projection';people=[];votes=Array.from({length:N},()=>[]);subscribe();return}
 }
 }catch(e){console.warn('No se pudo recuperar la sala automáticamente',e)}}}
 async function boot(){try{let cfg=window.FIREBASE_CONFIG;if(!cfg){const s=localStorage.getItem('comparisonFirebaseConfig');if(s)cfg=JSON.parse(s)}if(cfg)await init(cfg);else section('setup')}catch(e){section('setup');alertText('Error de conexión: '+e.message,true)}}
