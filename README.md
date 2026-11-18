@@ -1,6 +1,6 @@
 # ¿Realmente sabemos comparar? — Método comparado, Grupo 1
 
-Encuesta interactiva de seis preguntas para el Taller de Métodos y Técnicas de Investigación I (ICAP).
+Cuestionario interactivo de cuatro preguntas para las nuevas salas del Taller de Métodos y Técnicas de Investigación I (ICAP). Las salas históricas de seis preguntas conservan su estructura original.
 
 ## Qué ofrece
 - Entrada por QR o enlace público; los participantes indican nombre o seudónimo y país opcional.
@@ -106,3 +106,37 @@ El informe imprimible incluye barras horizontales por opción, porcentajes y una
 - Volver al inicio cancela las suscripciones en tiempo real de la pantalla, limpia el código de sala de la URL y deja intactos los votos persistidos en Firebase. Si la sesión aún está abierta, solicita confirmación porque salir del panel **no cierra la sala**.
 - Se conserva la posibilidad de volver a abrir una sesión anterior desde la lista local del navegador, siempre que la identidad de Firebase siga siendo válida.
 - Esta corrección no modifica las reglas de Firestore ni el contenido de las preguntas.
+
+## Versión 7 — cuatro preguntas, dos expositores y una sala oficial reutilizable
+
+### Cuestionario vigente
+- Las salas **nuevas** usan `quizVersion: 3` y solo contienen las preguntas **1–4**. Las preguntas 5 y 6 se excluyeron del cuestionario vigente. Se mantienen en el código únicamente para interpretar **salas históricas** de versiones 1 y 2.
+- La clave del cuestionario vigente se distribuye **A, B, C, D**, sin repetición de posición. Las alternativas también se revisaron por longitud; esta inspección no sustituye una validación pedagógica real.
+- En competencia, solo se configuran cuatro tiempos; el marcador individual será `Aciertos: X/4`.
+
+### Dos vistas de resultados
+- **Guion privado del expositor**: alternativas incorrectas ordenadas de la más votada a la menos votada, con recuentos, porcentaje, explicación breve por error, respuesta correcta justificada y una orientación para trasladar el concepto.
+- **Previsualizar vista del público**: reduce el texto a gráficos, porcentaje de aciertos, respuesta correcta y conclusión metodológica. La pantalla pública no debe mostrar nombres individuales.
+- **Abrir pantalla pública aparte** abre otra pestaña/ventana en modo proyección; el expositor puede mantener su guion privado en la ventana original y colocar la vista pública en una segunda pantalla. La ventana pública sigue la pregunta activa del moderador.
+- Si todos contestan correctamente, el guion se centra en el principio que justifica la respuesta y su aplicación a otro ejemplo.
+
+### Segundo expositor con Firebase Authentication
+1. En **Firebase → Authentication → Users**, el administrador crea la cuenta del segundo expositor con su **propio correo y contraseña**; conserva activo Email/Password.
+2. El **propietario** abre la sala y escribe ese correo en «Segundo expositor autorizado → Autorizar expositor». La invitación se guarda bajo `rooms/{codigo}/access/presenter`.
+3. Comparte el **código de sala** con el colega (no la contraseña). El colega entra a «Soy moderador: crear sesión», usa su propio correo y contraseña y elige «Abrir panel de exposición».
+4. Ambos pueden ver el panel, navegar y revelar la exposición. **Solo el propietario puede borrar registros o gestionar la invitación**. El propietario puede revocar el acceso.
+5. El sistema no envía correos de invitación automáticamente. Si tu colega aún no tiene cuenta creada, no podrá autenticarse. Eviten manipular simultáneamente el mismo control de avance.
+
+### Única sala oficial para pruebas y clase definitiva
+1. Crear **Clase oficial (reutilizable)**, ahora predeterminada. Compartir el QR solo con participantes de prueba.
+2. Ejecutar la actividad real de prueba, y después **Cerrar y mostrar resultados**.
+3. En el panel final, el **propietario** selecciona «Borrar datos de prueba y reutilizar esta sala oficial».
+4. Confirmar escribiendo `BORRAR` y aceptando la confirmación. Se eliminan **todos los participantes y votos de esa sala**, de forma irreversible; se conserva su identificador, QR, contenido, tiempos e invitación del segundo expositor.
+5. La sala vuelve a **En espera** y el mismo QR sirve para la clase definitiva. Los participantes deben registrarse nuevamente.
+6. **Ojo:** esta limpieza no borra otras salas históricas ni elimina datos ya descargados por CSV o PDF. Si necesitas conservar resultados, expórtalos **antes** del borrado. No borres durante la votación; la limpieza solo está disponible cuando la sala está finalizada.
+
+### Configuración indispensable
+Subir `firestore.rules` a GitHub **no publica esas reglas** en Firebase. Antes de probar esta versión, copiar el archivo completo en **Firebase Console → Firestore Database → Rules → Publish**. Las nuevas reglas admiten salas de cuatro preguntas, invitación autenticada al segundo expositor y eliminación de votos/participantes cerrados solo por el propietario.
+
+### Estado de pruebas
+La sintaxis del JavaScript y las pruebas estáticas del repositorio comprueban versiones del currículo, claves, estructura del panel y restricciones previstas. **No se ha validado el borrado, la invitación ni la seguridad con un emulador de Firestore o varios dispositivos reales.** Hacer una prueba final con ambos expositores y al menos dos celulares antes de usarlo en clase.
