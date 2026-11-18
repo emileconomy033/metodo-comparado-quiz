@@ -208,7 +208,7 @@ assert(source.includes("window.open(url.toString(),'comparisonPublicScreen')"),'
 assert(source.includes("document.title='Pantalla pública"),'El título debe distinguir la ventana pública');
 assert(html.includes('id="showPublicWelcome"'),'Falta control de portada pública');
 assert(html.includes('id="showPublicQuestion"'),'Falta control de preguntas públicas');
-assert(source.includes("if(room.publicView!=='questions'||room.status==='lobby')"),'La pantalla no conserva el QR hasta orden del expositor');
+assert(source.includes("const showWelcomeNow=publicIntroUntilWelcome||room.publicView!=='questions'||room.status==='lobby'"),'La pantalla no conserva el QR hasta orden del expositor');
 assert(source.includes("setPublicView('welcome')"),'El moderador no puede mostrar portada');
 assert(source.includes("setPublicView('questions')"),'El moderador no puede autorizar preguntas públicas');
 assert(source.includes("await rref().update({publicView:next})"),'La vista pública no se comparte entre ventanas usando Firebase');
