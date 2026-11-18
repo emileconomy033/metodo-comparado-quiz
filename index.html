@@ -832,7 +832,7 @@ function renderProjection(){
  $('projectSimulationWarning').classList.toggle('hidden',!simulationMode);
  $('projectPrivacy').textContent='';
  const showWelcomeNow=publicIntroUntilWelcome||room.publicView!=='questions'||room.status==='lobby';
- if(publicIntroUntilWelcome&&room.publicView==='welcome')publicIntroUntilWelcome=false;
+ if(publicIntroUntilWelcome&&room.publicView!=='questions')publicIntroUntilWelcome=false;
  if(showWelcomeNow){
   $('projectHeading').textContent='¿Realmente sabemos comparar?';
   $('projectStage').textContent='Sala de espera';
