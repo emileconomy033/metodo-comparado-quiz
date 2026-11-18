@@ -219,4 +219,9 @@ assert(source.includes("let cachedPublicQr=null,cachedPublicQrRoom=''"),'El QR n
 assert(source.includes("cachedPublicQrRoom!==roomId"),'El QR no responde a cambio de sala');
 assert(rules.includes("request.resource.data.get('publicView','welcome') in ['welcome','questions']"),'Reglas no restringen el estado de proyección');
 assert(rules.includes("affectedKeys().hasOnly(['status','idx','reveal','revealStage','openedAt','mode','publicView'])"),'Reglas no admiten el estado público o permiten otros campos');
-console.log('OK: portada QR persistente, contadores en vivo, revelación controlada y recuperación del mismo QR.');
+assert(source.includes("url.searchParams.set('intro','1')"),'Abrir la ventana pública debe priorizar portada desde el inicio');
+assert(source.includes("if(room?.publicView==='questions')setPublicView('welcome')"),'Reabrir pantalla pública debe restaurar portada');
+assert(source.includes("let publicIntroUntilWelcome=new URLSearchParams(location.search).get('intro')==='1'"),'No hay bloqueo preventivo contra revelar pregunta anterior');
+assert(source.includes("if(publicIntroUntilWelcome&&room.publicView!=='questions')publicIntroUntilWelcome=false"),'El bloqueo debe liberarse incluso para salas antiguas');
+assert(source.includes("const showWelcomeNow=publicIntroUntilWelcome||room.publicView!=='questions'||room.status==='lobby'"),'El QR no tiene prioridad mientras inicia la ventana pública');
+console.log('OK: pantalla pública empieza en portada incluso tras reapertura de una sesión en curso.');
