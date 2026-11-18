@@ -369,30 +369,35 @@ function rowMetric(n,label){const box=add('div',undefined,'metric');box.append(a
 let attendanceConnection='waiting';
 let attendanceError='';
 let attendanceSyncAt=0;
+let attendancePollTimer=null;
+let attendanceRefreshInProgress=false;
 async function refreshAttendees(){
- if(!isHost||simulationMode||!roomId||!moderatorDb)return;
+ if(!isHost||simulationMode||!roomId||!moderatorDb||attendanceRefreshInProgress)return;
+ const expectedRoom=roomId;attendanceRefreshInProgress=true;
  $('refreshAttendees').disabled=true;
  try{
   const result=await rref().collection('participants').get({source:'server'});
+  if(!isHost||roomId!==expectedRoom)return;
   people=result.docs.map(doc=>({uid:doc.id,...doc.data()}));
   loadedPeople=true;attendanceConnection='server';attendanceError='';attendanceSyncAt=Date.now();
   if(room)render();
  }catch(e){
+  if(roomId!==expectedRoom)return;
   attendanceConnection='error';attendanceError=e.message||'Error de conexión';
   if(room)renderAttendance();
- }finally{$('refreshAttendees').disabled=false}
+ }finally{attendanceRefreshInProgress=false;$('refreshAttendees').disabled=false}
 }
 function renderAttendance(){
  const panel=$('attendanceNames');panel.replaceChildren();
  $('attendanceCount').textContent=people.length+' participante'+(people.length===1?'':'s')+' registrado'+(people.length===1?'':'s');
  people.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'')).forEach(p=>panel.append(add('span',p.name||'Sin nombre')));
- $('attendanceStatus').textContent=simulationMode?'Simulación':attendanceConnection==='error'?'Error de sincronización: '+attendanceError:!loadedPeople?'Consultando Firebase…':attendanceConnection==='live'?'Sincronización en tiempo real activa':attendanceConnection==='server'?'Datos verificados en el servidor':'Actualizando participantes…';
+ $('attendanceStatus').textContent=simulationMode?'Simulación':attendanceConnection==='error'?'Error de sincronización: '+attendanceError:!loadedPeople?'Consultando Firebase…':attendanceConnection==='live'?'Sincronización en tiempo real activa':attendanceConnection==='server'?'Datos verificados en el servidor':attendanceConnection==='cache'?'Verificando Firebase…':'Actualizando participantes…';
  $('attendanceStatus').style.color=attendanceConnection==='error'?'#aa5140':'';
 }
 $('refreshAttendees').onclick=refreshAttendees;
 function renderHost(){if(!isHost)return;renderAttendance();$('hostCode').textContent='Sala '+roomId;$('hostStatus').textContent=`${'SALA ÚNICA'} · ${room.mode==='survey'?'Encuesta':'Competencia'} · ${room.status==='lobby'?'En espera':room.status==='done'?'Finalizada':'En curso'}`;
 const readyEl=$('roomReadiness');const synced=simulationMode||(loadedPeople&&loadedVotes.size===N);const empty=synced&&!people.length&&votes.every(arr=>arr.length===0);
- const ready=!simulationMode&&room.status==='lobby'&&room.mode==='competition'&&empty&&!cleanupInProgress;
+ const ready=!simulationMode&&room.status==='lobby'&&room.mode==='competition'&&empty&&!cleanupInProgress&&['live','server'].includes(attendanceConnection);
  readyEl.className='room-readiness'+(ready?' ready':room.status==='live'||cleanupInProgress?' busy':'');
  readyEl.textContent=simulationMode?'Ensayo simulado · sin QR ni votos reales':cleanupInProgress?'Limpiando datos del ensayo; no permitas nuevos ingresos…':room.status==='done'?'Sesión finalizada · borra los datos si deseas reutilizar el mismo QR':!synced?'Verificando registros y respuestas en Firebase…':ready?'Sala lista y disponible · 0 participantes · 0 respuestas · mismo código QR':room.status==='live'?'Actividad en curso · '+people.length+' participantes': 'Sala en espera · '+people.length+' inscritos y '+nAnswers()+' respuestas';
  $('hostHint').textContent=people.length+(simulationMode?' participantes ficticios':' participantes');$('simulationWarning').classList.toggle('hidden',!simulationMode);$('completedActions').classList.toggle('hidden',room.status!=='done');$('teacherSimulation').style.display=simulationMode?'none':'inline-block';$('openAudienceWindow').disabled=simulationMode;$('presenterAccess').classList.toggle('hidden',simulationMode||room.owner!==uid);$('resetOfficial').classList.toggle('hidden',simulationMode||room.owner!==uid||room.status!=='done');$('exitSimulation').style.display=simulationMode?'inline-block':'none';
@@ -582,10 +587,11 @@ $('join').onclick=async()=>{
  }finally{joiningInProgress=false;$('join').disabled=false}
 };
 let dataStops=[];let loadedPeople=false,loadedVotes=new Set(),cleanupInProgress=false;
-function unsubscribe(){stops.forEach(fn=>fn());stops=[];dataStops.forEach(fn=>fn());dataStops=[]}let sharedVoteStops=[];
+function unsubscribe(){if(attendancePollTimer){clearInterval(attendancePollTimer);attendancePollTimer=null}stops.forEach(fn=>fn());stops=[];dataStops.forEach(fn=>fn());dataStops=[]}let sharedVoteStops=[];
 function watchSharedVotes(){sharedVoteStops.forEach(fn=>fn());sharedVoteStops=[];/* Los resultados individuales de terceros nunca se consultan desde el navegador participante. */}
 function subscribe(){
  unsubscribe();loadedPeople=false;loadedVotes=new Set();attendanceConnection='waiting';attendanceError='';sharedVoteStops.forEach(fn=>fn());sharedVoteStops=[];
+ if(isHost&&!simulationMode){attendancePollTimer=setInterval(()=>{if(room&&room.status!=='done')refreshAttendees()},12000)}
  if(!isHost){
   stops.push(anonDb.doc(ACTIVE_ROOM_PATH).onSnapshot(snapshot=>{
    if(!snapshot.exists)return;
@@ -612,7 +618,7 @@ function subscribe(){
    people=[];votes=Array.from({length:N},()=>[]);
    if(isHost){
     dataStops.push(rref().collection('participants').onSnapshot(s=>{
-     people=s.docs.map(d=>({uid:d.id,...d.data()}));loadedPeople=true;attendanceConnection=s.metadata?.fromCache?'server':'live';attendanceError='';attendanceSyncAt=Date.now();if(room)render()
+     people=s.docs.map(d=>({uid:d.id,...d.data()}));loadedPeople=true;attendanceConnection=s.metadata?.fromCache?'cache':'live';attendanceError='';attendanceSyncAt=Date.now();if(room)render()
     },e=>{attendanceConnection='error';attendanceError=e.message||'Permiso denegado';renderAttendance();alertText('No se pudo sincronizar la lista de participantes: '+attendanceError,true)}));
    }
    QUIZ.forEach((q,i)=>{
