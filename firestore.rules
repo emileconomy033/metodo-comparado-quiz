@@ -73,7 +73,13 @@ service cloud.firestore {
           && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 35
           && request.resource.data.country is string && request.resource.data.country.size() <= 40
           && request.resource.data.joinedAt == request.time;
-        allow update: if false;
+        // A registered attendee may confirm readiness once, while the room is waiting.
+        allow update: if signed() && activeRoom(id) && request.auth.uid == pid
+          && parent(id).data.status == 'lobby'
+          && resource.data.get('ready',false) == false
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ready','readyAt'])
+          && request.resource.data.ready == true
+          && request.resource.data.readyAt == request.time;
         allow delete: if owner(id) && parent(id).data.status == 'done';
       }
       match /answers/{qid}/votes/{pid} {
