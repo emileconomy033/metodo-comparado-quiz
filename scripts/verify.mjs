@@ -62,4 +62,19 @@ assert(source.includes("if(room?.status==='live'"),'Advertencia de salida durant
 assert(source.includes('const difficult=[...meaningful]'),'El cierre público debe ser breve y descriptivo');
 assert(source.includes('function normalizeExplanation(text)'),'Debe mejorar la lectura de distractores');
 assert(html.includes('Aciertos: 0/4'),'La puntuación inicial debe mostrar cuatro preguntas');
-console.log('OK: cuatro preguntas, historial intacto, roles seguros, doble pantalla, síntesis y borrado controlado.');
+// Regressions reported during live mobile rehearsals
+assert(source.includes('let joiningInProgress=false;'),'Ingreso doble sin protección');
+assert(source.includes("if(joiningInProgress)return;"),'Un doble toque puede lanzar dos inscripciones');
+assert(source.includes("await ref.get({source:'server'})"),'Ingreso sin comprobar estado actual en servidor');
+assert(source.includes("await person.get({source:'server'})"),'Inscripción anterior no contrastada con servidor');
+assert(source.includes("clearVoteProblem();alertText('');subscribe()"),'Alertas de entrada previas permanecen después del ingreso');
+assert(source.includes("function timingReady()"),'No se valida apertura de pregunta');
+assert(source.includes("if(!timingReady())return 0"),'Temporizador no sincronizado aparenta tiempo completo');
+assert(source.includes("room.idx!==i||room.reveal||stageNow()>0||!timingReady()"),'Se permite votar en estado no confirmado');
+assert(source.includes("lastVoteProblem?.i===room.idx"),'El rechazo de voto no aparece junto a la pregunta de competencia');
+assert(source.includes("lastVoteProblem?.i===surveyAt"),'El rechazo de voto no aparece en la encuesta libre');
+assert(html.includes('id="surveyVoteError"'),'Falta alerta contextual en móvil');
+assert(source.includes("e.code==='permission-denied'"),'No se diferencia plazo agotado de rechazo por permisos');
+assert(source.includes("if(!timingReady()){$('clock').textContent='Preparando…'"),'Temporizador de móviles durante transición incorrecto');
+assert(source.includes("if(pendingVotes.has(i))return"),'Doble toque puede duplicar envíos de voto');
+console.log('OK: cuatro preguntas, roles, proyección, limpieza, ingreso móvil y confirmación de votos.');
