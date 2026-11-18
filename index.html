@@ -442,7 +442,7 @@ $('confirmReady').onclick=async()=>{
  finally{readySubmitting=false;if(room?.status==='lobby')renderWaitingConfirmation()}
 };
 function renderParticipant(){if(isHost){$('participant').classList.add('hidden');return}if($('alert').textContent?.includes('No se pudo completar el ingreso')||$('alert').textContent?.includes('No fue posible ingresar (validación inicial)'))alertText('');$('participant').classList.remove('hidden');['waiting','survey','submittedPanel','competition','revealPanel','donePanel'].forEach(s=>$(s).classList.add('hidden'));
-if(room.status==='lobby'){$('waiting').classList.remove('hidden');renderWaitingConfirmation();return}
+if(room.status==='lobby'){if(!myRegistration){unsubscribe();room=null;roomId='';section('home');alertText('La sala se reinició. Ingresa nuevamente para participar.',true);return}$('waiting').classList.remove('hidden');renderWaitingConfirmation();return}
 if(room.status==='done'){$('donePanel').classList.remove('hidden');updatePersonalScore();$('myScore').textContent=`Resultado final: ${scoreReleased().correct} respuestas correctas de ${N}.`;drawRankings();return}
 if(room.mode==='survey'&&room.quizVersion===3){
  $('waiting').classList.remove('hidden');$('waitTitle').textContent='Preparando competencia dirigida';
@@ -658,6 +658,7 @@ function subscribe(){
     dataStops.push(anonDb.collection('rooms').doc(roomId).collection('participants').doc(anonUid).onSnapshot({includeMetadataChanges:true},snapshot=>{
      if(snapshot.metadata?.hasPendingWrites)return;
      if(!snapshot.exists){
+      if(snapshot.metadata?.fromCache)return;
       myRegistration=null;
       if(room?.status==='lobby'){
        unsubscribe();room=null;roomId='';section('home');
