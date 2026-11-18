@@ -140,4 +140,20 @@ for(const banned of [
  'Informe descriptivo: no atribuye dominio conceptual',
  'Sigue las instrucciones del README'
 ])assert(!html.includes(banned),'Reapareció nota editorial: '+banned);
-console.log('OK: sala única, Firebase, visualizaciones y ausencia de notas editoriales.');
+assert(html.includes('id="mode" type="hidden" value="competition"'),'La sala debe ser de competencia dirigida');
+assert(!html.includes('<option value="survey">'),'No debe ser posible escoger encuesta libre');
+assert(source.includes("mode:'competition',sessionKind:'official'"),'Nueva sala sin competencia dirigida');
+assert(source.includes("existingRoom?.mode==='survey'&&existingRoom.quizVersion===3&&existingRoom.status==='lobby'"),'No se corrige la sala anterior en espera');
+assert(source.includes("update({mode:'competition'})"),'No se migra la modalidad anterior');
+assert(source.includes("ref.update({status:'lobby',idx:-1,reveal:false,revealStage:0,openedAt:null,...(room.quizVersion===3?{mode:'competition'}:{})})"),'El borrado de prueba debe dejar la sala en modo dirigido');
+assert(source.includes("if(room.mode==='survey'&&room.quizVersion===3)"),'Un participante de sala antigua aún puede pasar preguntas sin moderador');
+assert(source.includes('function renderAttendance()'),'Falta lista visible de participantes');
+assert(source.includes('function refreshAttendees()'),'Falta actualización por consulta directa al servidor');
+assert(source.includes("attendancePollTimer=setInterval"),'No existe respaldo ante interrupción de listener de inscritos');
+assert(source.includes("attendanceConnection=s.metadata?.fromCache?'cache':'live'"),'No distinguir cache de datos confirmados');
+assert(source.includes("['live','server'].includes(attendanceConnection)"),'No anunciar sala lista con contador de caché');
+assert(source.includes("attendanceRefreshInProgress=true"),'La actualización no debe multiplicar consultas concurrentes');
+assert(rules.includes("request.resource.data.quizVersion == 3 && request.resource.data.mode == 'competition'"),'Reglas permiten nuevas salas de encuesta libre');
+assert(rules.includes("resource.data.mode == 'survey' && request.resource.data.mode == 'competition'"),'Reglas no permiten migración controlada');
+assert(rules.includes("parent(id).data.get('quizVersion',1) != 3 && parent(id).data.mode == 'survey'"),'Reglas permiten voto libre en sala oficial actual');
+console.log('OK: competencia dirigida, sala única, asistencia sincronizada y bloqueo de avance libre.');
