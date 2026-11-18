@@ -193,3 +193,13 @@ Las comprobaciones automáticas validan la estructura del directorio y las condi
 - El mecanismo **no garantiza conexión en línea en ese instante**: describe inscripciones guardadas y confirmaciones expresas. El grupo puede cotejar verbalmente en la videollamada quién falta por ingresar.
 - Después de cerrar y limpiar la sala, los registros se eliminan. Los asistentes que regresen deberán inscribirse y confirmar nuevamente, con el mismo QR.
 - **Actualizar las reglas en Firebase Console**, ya que los participantes ahora necesitan permiso limitado para actualizar exclusivamente `ready` y `readyAt` en su documento durante el estado de espera.
+
+## Incidencia visual de sala antigua en curso (18 noviembre 2026)
+
+En la sala `L7VAP5K`, el propietario observó «Encuesta · En curso», dos inscripciones «Emil», cero confirmados y un voto. Esta combinación indica un **ensayo antiguo todavía activo**, no una sala de competencia dirigida en espera. Cada registro con el mismo nombre puede corresponder a identidades anónimas diferentes de Firebase; «inscritos» cuenta registros persistentes, no teléfonos conectados en ese instante.
+
+**Corrección publicada:** se muestra **«Reiniciar ensayo · conservar QR»** al propietario incluso cuando el ensayo sigue en `live` (también disponible tras `done`). Con confirmación expresa `REINICIAR`, cierra una sesión aún abierta, elimina los votos y participantes, verifica la limpieza en Firebase y devuelve la misma sala a `lobby` con `mode: 'competition'`. El código y el QR se mantienen. Un participante de una vieja encuesta v3 ya no verá el botón «Estoy listo» ni una indicación engañosa que no puede guardar durante la transición: se le comunica que el propietario debe reiniciar la sala. **No se ejecuta ningún borrado automático.**
+
+Tras el reinicio, los participantes deberán volver a ingresar mediante el mismo QR, inscribirse y confirmar «Estoy listo». El propietario verá `1 inscrito · 1 listo · 0 pendientes` si solo ingresa un celular con una identidad nueva. La confirmación requiere las reglas de `firestore.rules` que incluyen la actualización de campos `ready`/`readyAt`; si estas reglas aún no están publicadas, Firebase rechazará la confirmación.
+
+**Prueba pendiente:** validar este proceso con Firebase real. Las comprobaciones del repositorio no certifican que el reinicio ya se haya realizado ni que las reglas estén publicadas.
