@@ -39,10 +39,10 @@ w.eval("roomId='OTHER1';votes=Array.from({length:N},()=>[]);room.owner='z';rende
 assert(!d.body.innerHTML.includes('teacherSimulation'),'sin simulación');
 // guiones: cada distractor recibe SU explicación aunque las alternativas estén reordenadas
 const tr=w.eval('PEDAGOGY.slice(0,4).map(p=>p.trap)');
-assert(tr[0][1].includes('duplicar')&&tr[0][2].includes('administrativa')&&tr[0][3].includes('resultado'),'trap P1');
-assert(tr[1][0].includes('prohibición')&&tr[1][2].includes('nombre')&&tr[1][3].includes('resultados se parezcan'),'trap P2');
+assert(tr[0][1].includes('idénticos')&&tr[0][2].includes('país')&&tr[0][3].includes('manzana'),'trap P1');
+assert(tr[1][0].includes('prohibición')&&tr[1][2].includes('denominación')&&tr[1][3].includes('valores'),'trap P2');
 assert(tr[2][0].includes('Sartori')&&tr[2][1].includes('fijos')&&tr[2][3].includes('Invierte'),'trap P3');
-assert(tr[3][0].includes('razón')&&tr[3][1].includes('desempeño')&&tr[3][2].includes('operacional')&&tr[3][3]===null,'trap P4');
+assert(tr[3][0].includes('razón')&&tr[3][1].includes('desempeño')&&tr[3][2].includes('unidad de medida')&&tr[3][3]===null,'trap P4');
 assert.deepEqual([...w.eval('QUIZ.map(q=>q.correct)')],[0,1,2,3]);
 w.eval(`roomId='GUION1';room.owner='o';uid='o';room.status='live';room.idx=3;room.reveal=true;room.revealStage=3;projecting=false;activeTab=3;hostReadingView='notes';people=[{uid:'a',name:'A',ready:true},{uid:'b',name:'B',ready:true},{uid:'c',name:'C',ready:true}];
 votes=Array.from({length:N},()=>[]);votes[3]=[{uid:'a',choice:3},{uid:'b',choice:0},{uid:'c',choice:0}];loadedPeople=true;loadedVotes=new Set([0,1,2,3]);render()`);
