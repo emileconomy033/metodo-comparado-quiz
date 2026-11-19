@@ -171,7 +171,7 @@ assert(source.includes("const registered=people.length,ready=people.filter(p=>p.
 assert(source.includes("const chip=add('span',(isReady?'✓ ':'○ ')"),'Faltan nombres separados por preparación');
 assert(source.includes("const quorumReady=people.length>0&&confirmedCount===people.length"),'Se permite iniciar con participantes pendientes');
 assert(source.includes("people.some(p=>p.ready!==true)"),'El controlador de inicio no verifica preparación');
-assert(source.includes("name:'Participante ficticio '+(i+1),country:'',ready:true"),'Simulación se bloquea por pendientes ficticios');
+// (retirado con la simulación) assert(source.includes("name:'Participante ficticio '+(i+1),country:'',ready:true"),'Simulación se bloquea por pendientes ficticios');
 assert(rules.includes("request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ready','readyAt'])"),'Las reglas permiten editar otros datos del participante');
 assert(rules.includes("resource.data.get('ready',false) == false"),'No se comprueba la primera confirmación');
 assert(rules.includes("request.resource.data.readyAt == request.time"),'No se vincula la confirmación a la hora del servidor');

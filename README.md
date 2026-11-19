@@ -240,3 +240,7 @@ Se detectó que abrir la ventana pública mientras la sala anterior estaba en `l
 - La ventana pública solo fuerza la portada en la primera carga; recargarla durante una pregunta ya no vuelve a la portada.
 - Se retiró el sondeo cada 12 s del panel (menos lecturas); «Actualizar participantes» queda como lectura manual.
 - `npm test` ejecuta `scripts/verify.mjs` y una prueba de comportamiento con jsdom (`scripts/lobby.test.mjs`).
+
+## Simplificación (19 nov 2026)
+- Se retiró la **simulación con datos ficticios**: solo existe la sala real y sus ensayos con celulares.
+- Si el propietario abre una sala cerrada (o en modo encuesta antiguo) **sin participantes ni votos**, se reabre sola con el mismo QR. Con datos existentes nunca borra nada: hay que usar «Reiniciar ensayo · conservar QR» con confirmación.

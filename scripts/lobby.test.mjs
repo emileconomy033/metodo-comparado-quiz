@@ -29,4 +29,12 @@ w.eval(`room.status='lobby';uid='x';render()`);assert.equal(d.querySelectorAll('
 w.eval("uid='o';room.status='done';room.publicView='welcome';projecting=true;renderProjection()");
 assert(d.getElementById('projectChart').textContent.includes('La sala está cerrada'),'pública cerrada');
 assert(d.getElementById('projectStage').textContent==='Sala cerrada');
+// reapertura automática: solo con sala cerrada Y vacía, una vez, y solo el propietario
+let reopened=0;d.getElementById('resetOfficial').onclick=()=>{reopened++};
+w.eval("projecting=false;uid='o';roomId='EMPTY1';room.owner='o';room.status='done';room.mode='competition';people=[];votes=Array.from({length:N},()=>[]);loadedPeople=true;loadedVotes=new Set([0,1,2,3]);render();render()");
+assert.equal(reopened,1,'reabre una sola vez');
+w.eval("roomId='FULL01';people=[{uid:'a',name:'Ana',ready:true}];render()");assert.equal(reopened,1,'no actúa con participantes');
+w.eval("roomId='VOTES1';people=[];votes[0]=[{uid:'a',choice:1}];render()");assert.equal(reopened,1,'no actúa con votos');
+w.eval("roomId='OTHER1';votes=Array.from({length:N},()=>[]);room.owner='z';render()");assert.equal(reopened,1,'solo propietario');
+assert(!d.body.innerHTML.includes('teacherSimulation'),'sin simulación');
 console.log('JSDOM OK');process.exit(0);
