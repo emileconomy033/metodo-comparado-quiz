@@ -312,7 +312,7 @@ if(!moderatorAuth){
 await new Promise(resolve=>{const un=moderatorAuth.onAuthStateChanged(()=>{un();resolve()},()=>resolve())});
 return moderatorAuth;
 }
-function fmtPercent(n,d){return d?((100*n/d).toFixed(1).replace('.',',')+' %'):'0,0 %'}
+function fmtPercent(n,d){return d?((100*n/d).toFixed(1)+' %'):'0.0 %'}
 function add(tag,txt,cls){const el=document.createElement(tag);if(txt!==undefined)el.textContent=txt;if(cls)el.className=cls;return el}
 function countFor(i,j){return votes[i].filter(v=>v.choice===j).length}
 function correctFor(i){return countFor(i,QUIZ[i].correct)}
