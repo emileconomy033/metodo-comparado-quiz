@@ -244,3 +244,9 @@ Se detectó que abrir la ventana pública mientras la sala anterior estaba en `l
 ## Simplificación (19 nov 2026)
 - Se retiró la **simulación con datos ficticios**: solo existe la sala real y sus ensayos con celulares.
 - Si el propietario abre una sala cerrada (o en modo encuesta antiguo) **sin participantes ni votos**, se reabre sola con el mismo QR. Con datos existentes nunca borra nada: hay que usar «Reiniciar ensayo · conservar QR» con confirmación.
+
+## Guiones del expositor (19 nov 2026)
+- Cada pregunta tiene guion propio: qué evalúa, qué decir al revelar, por qué falla cada distractor, preguntas para conversar, ejemplo, puente a la siguiente y tiempo sugerido. Los textos viven en `GUION` (`index.html`).
+- «Cómo leer estos resultados» adapta la sugerencia a la distribución real (consenso, distractor dominante, mayoría con dudas, grupo dividido).
+- El resumen final de la pantalla pública y del panel muestra el resultado de cada pregunta con un mensaje.
+- El panel incluye un «Guion de la sesión para los dos expositores» (reparto 2 y 2).

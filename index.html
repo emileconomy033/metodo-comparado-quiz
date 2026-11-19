@@ -82,7 +82,7 @@ footer{color:#788692}
 <section id="moderatorLogin" class="card hidden"><h2>Acceso para expositores</h2><label for="moderatorEmail">Correo de expositor</label><input id="moderatorEmail" type="email" autocomplete="username" value="emil.economia@gmail.com" placeholder="correo@ejemplo.com"><label for="moderatorPassword">Contraseña del expositor</label><input id="moderatorPassword" type="password" autocomplete="current-password" placeholder="Contraseña"><div class="row" style="margin-top:16px"><button class="btn" id="moderatorEnter">Acceder</button><button class="btn secondary" id="moderatorBack">Volver</button></div></section>
 <section id="presenterEntry" class="card hidden"><h2>Entrar a la sala existente</h2><label for="presenterRoomCode">Código de la sala única</label><input id="presenterRoomCode" maxlength="8" autocomplete="off" placeholder="Código compartido"><div class="row" style="margin-top:16px"><button class="btn" id="presenterOpen">Abrir panel de exposición</button><button class="btn secondary" id="presenterBack">Volver al inicio</button></div></section>
 <section id="create" class="card hidden"><h2>Mi sala · propietario</h2><input id="mode" type="hidden" value="competition"><div class="mode-locked"><strong>Competencia dirigida</strong><span> El avance de preguntas lo controlan los expositores.</span></div><div id="durationEditor"><h3>Tiempo de respuesta por pregunta</h3><div id="durationFields" class="time-grid"></div><button class="btn secondary" id="sameTime" type="button">Aplicar el tiempo de P1 a todas</button></div><div class="row"><button class="btn" id="createRoom">Abrir mi sala · crear solo si no existe</button><button class="btn secondary" id="cancelCreate">Volver</button></div></section>
-<section id="host" class="hidden"><div class="card"><div class="row between"><div><div class="eyebrow">Panel privado del moderador</div><h2 id="hostCode"></h2></div><span class="pill" id="hostStatus"></span></div><div class="room-readiness" id="roomReadiness" role="status" aria-live="polite"></div><div class="row"><div id="qr" aria-label="Código QR para unirse"></div><div style="flex:1;min-width:200px"><p>Acceso de participantes</p><a id="joinUrl" target="_blank" rel="noopener noreferrer"></a><div class="row" style="margin-top:12px"><button class="btn secondary" id="copyLink">Copiar enlace</button><button class="btn secondary" id="downloadQR">Guardar QR</button><button class="btn secondary" id="hostHome">Volver al inicio</button><button class="btn secondary" id="newActivity">Volver a mi sala</button></div></div></div><div class="attendance-panel"><div class="row between"><strong id="attendanceCount" aria-live="polite">0 inscritos</strong><button class="btn secondary" id="refreshAttendees">Actualizar participantes</button></div><div class="ready-metrics" aria-live="polite"><div><strong id="readyCount">0</strong><span>Listos</span></div><div><strong id="pendingCount">0</strong><span>Pendientes</span></div></div><div class="ready-track" role="progressbar" aria-label="Confirmaciones de preparación" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="readyProgress"><div id="readyProgressFill"></div></div><p id="attendanceStatus" class="small" role="status">Conectando con Firebase…</p><div id="attendanceNames" class="attendance-names" aria-live="polite"></div></div><p id="hostHint" class="small"></p><section id="presenterAccess" class="presenter-access"><h3>Segundo expositor autorizado</h3><div class="row"><input id="presenterInviteEmail" type="email" value="gramirezfunes@gmail.com" placeholder="Correo del segundo expositor" style="flex:1;min-width:210px"><button class="btn secondary" id="savePresenter">Autorizar expositor</button><button class="btn secondary" id="removePresenter">Revocar acceso</button></div><p id="presenterInviteStatus" class="small" role="status"></p></section><div id="simulationWarning" class="notice hidden" role="status">SIMULACIÓN · DATOS FICTICIOS</div><div class="row"><button class="btn" id="start">Abrir encuesta</button><button class="btn warning hidden" id="startAnyway" type="button">Iniciar solo con los listos</button><button class="btn secondary" id="next">Siguiente pregunta</button><button class="btn secondary" id="reveal">Revelar respuesta</button><button class="btn warning" id="finish">Cerrar y mostrar resultados</button><button class="btn warning" id="resetOfficial">Reiniciar ensayo · conservar QR</button><span class="small" id="stageGuide" aria-live="polite"></span></div></div><div class="card"><div class="row between"><h2>Estadísticas del grupo</h2><div class="row"><button class="btn" id="openAudienceWindow">Abrir pantalla para compartir</button><button class="btn secondary" id="showPublicWelcome">Mostrar portada y QR</button><button class="btn secondary" id="showPublicQuestion">Mostrar pregunta al público</button><button class="btn secondary" id="exportCSV">Exportar CSV</button><button class="btn secondary" id="printReport">Informe PDF</button></div></div><div id="completedActions" class="card hidden" style="margin:18px 0"><h2>Dinámica finalizada</h2><p></p><div class="row"><button class="btn secondary" id="completedHome">Volver al inicio</button></div></div><div id="metrics" class="grid"></div><h3>Desempeño por pregunta</h3><div id="summary"></div><div class="tabs" id="questionTabs"></div><div class="row" style="margin:15px 0"><button class="btn secondary" id="hostNotesView">Guion privado del expositor</button><button class="btn secondary" id="hostPublicView">Previsualizar vista del público</button></div><div id="hostChart"></div><div id="countries"></div><section id="finalLearning" class="learning-summary" aria-live="polite"></section></div></section>
+<section id="host" class="hidden"><div class="card"><div class="row between"><div><div class="eyebrow">Panel privado del moderador</div><h2 id="hostCode"></h2></div><span class="pill" id="hostStatus"></span></div><div class="room-readiness" id="roomReadiness" role="status" aria-live="polite"></div><div class="row"><div id="qr" aria-label="Código QR para unirse"></div><div style="flex:1;min-width:200px"><p>Acceso de participantes</p><a id="joinUrl" target="_blank" rel="noopener noreferrer"></a><div class="row" style="margin-top:12px"><button class="btn secondary" id="copyLink">Copiar enlace</button><button class="btn secondary" id="downloadQR">Guardar QR</button><button class="btn secondary" id="hostHome">Volver al inicio</button><button class="btn secondary" id="newActivity">Volver a mi sala</button></div></div></div><div class="attendance-panel"><div class="row between"><strong id="attendanceCount" aria-live="polite">0 inscritos</strong><button class="btn secondary" id="refreshAttendees">Actualizar participantes</button></div><div class="ready-metrics" aria-live="polite"><div><strong id="readyCount">0</strong><span>Listos</span></div><div><strong id="pendingCount">0</strong><span>Pendientes</span></div></div><div class="ready-track" role="progressbar" aria-label="Confirmaciones de preparación" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="readyProgress"><div id="readyProgressFill"></div></div><p id="attendanceStatus" class="small" role="status">Conectando con Firebase…</p><div id="attendanceNames" class="attendance-names" aria-live="polite"></div></div><p id="hostHint" class="small"></p><details id="sessionScript" class="presenter-access"><summary><strong>Guion de la sesión para los dos expositores</strong></summary><ol><li><strong>Antes de empezar (5 min).</strong> Pantalla pública abierta con la portada y el QR. Verificar por voz que todos pudieron entrar. Cuando el contador muestre todos listos, pulsar «Iniciar competencia».</li><li><strong>Apertura (2 min, expositor 1).</strong> «Vamos a responder cuatro preguntas con el teléfono. Cada una tiene un tiempo de respuesta; después veremos cómo respondió el grupo y por qué.»</li><li><strong>Preguntas 1 y 2 (expositor 1, unos 6 min cada una).</strong> Pasos del panel: dejar correr el tiempo → «Mostrar distribución» → pedir que dos personas con respuestas distintas argumenten → «Revelar respuesta» → leer «Qué decir al revelar» → una pregunta de «Para conversar» → «Siguiente pregunta».</li><li><strong>Relevo.</strong> El expositor 2 puede llevar el panel desde su propia cuenta; los controles de avance funcionan igual en ambos paneles.</li><li><strong>Preguntas 3 y 4 (expositor 2, unos 6 min cada una).</strong> Mismo recorrido. En la pregunta 4 usar el «Puente» como cierre y pulsar «Cerrar y mostrar resultados».</li><li><strong>Cierre (3 min, ambos).</strong> La pantalla pública muestra el resultado por pregunta con su mensaje. Cada celular muestra el puntaje personal. Terminar con: «Antes de comparar: ¿qué propiedad, definida cómo, en qué casos y con qué equivalencia?»</li><li><strong>Después de clase.</strong> «Exportar CSV» y «Informe PDF». Para reutilizar la sala: «Reiniciar ensayo · conservar QR» (solo la cuenta propietaria).</li></ol></details><section id="presenterAccess" class="presenter-access"><h3>Segundo expositor autorizado</h3><div class="row"><input id="presenterInviteEmail" type="email" value="gramirezfunes@gmail.com" placeholder="Correo del segundo expositor" style="flex:1;min-width:210px"><button class="btn secondary" id="savePresenter">Autorizar expositor</button><button class="btn secondary" id="removePresenter">Revocar acceso</button></div><p id="presenterInviteStatus" class="small" role="status"></p></section><div id="simulationWarning" class="notice hidden" role="status">SIMULACIÓN · DATOS FICTICIOS</div><div class="row"><button class="btn" id="start">Abrir encuesta</button><button class="btn warning hidden" id="startAnyway" type="button">Iniciar solo con los listos</button><button class="btn secondary" id="next">Siguiente pregunta</button><button class="btn secondary" id="reveal">Revelar respuesta</button><button class="btn warning" id="finish">Cerrar y mostrar resultados</button><button class="btn warning" id="resetOfficial">Reiniciar ensayo · conservar QR</button><span class="small" id="stageGuide" aria-live="polite"></span></div></div><div class="card"><div class="row between"><h2>Estadísticas del grupo</h2><div class="row"><button class="btn" id="openAudienceWindow">Abrir pantalla para compartir</button><button class="btn secondary" id="showPublicWelcome">Mostrar portada y QR</button><button class="btn secondary" id="showPublicQuestion">Mostrar pregunta al público</button><button class="btn secondary" id="exportCSV">Exportar CSV</button><button class="btn secondary" id="printReport">Informe PDF</button></div></div><div id="completedActions" class="card hidden" style="margin:18px 0"><h2>Dinámica finalizada</h2><p></p><div class="row"><button class="btn secondary" id="completedHome">Volver al inicio</button></div></div><div id="metrics" class="grid"></div><h3>Desempeño por pregunta</h3><div id="summary"></div><div class="tabs" id="questionTabs"></div><div class="row" style="margin:15px 0"><button class="btn secondary" id="hostNotesView">Guion privado del expositor</button><button class="btn secondary" id="hostPublicView">Previsualizar vista del público</button></div><div id="hostChart"></div><div id="countries"></div><section id="finalLearning" class="learning-summary" aria-live="polite"></section></div></section>
 <section id="projection" class="hidden projection-screen" aria-label="Presentación de resultados">
 <div class="projection-top"><div><span class="kicker">MÉTODO COMPARADO · GRUPO 1</span><h2 id="projectHeading">¿Realmente sabemos comparar?</h2></div><span class="project-stage" id="projectStage">Sala de espera</span></div>
 <div id="projectChart"></div><div id="projectSimulationWarning" class="notice hidden">SIMULACIÓN DOCENTE · DATOS FICTICIOS</div><div class="projection-foot"><span id="projectIndicator"></span><span id="projectPrivacy"></span></div>
@@ -139,9 +139,96 @@ function drawMicroTransfer(){
   box.append(add('p','Respuesta defendible: '+'ABC'[task.correct]+'. '+task.a[task.correct],'small'));
  }
 }
+/* Guion del expositor. Los arreglos `trap` están en el orden ORIGINAL de las alternativas (igual que `mis`) y se reordenan con el currículo versionado. */
+const GUION=[
+{
+ means:'Que la comparabilidad no significa identidad ni coincidencia de valores: es una relación definida por la pregunta de investigación y por una propiedad pertinente que conserva el mismo significado en ambos casos.',
+ say:'Dos casos son comparables respecto de algo: una propiedad relevante para la pregunta que significa lo mismo en los dos. No necesitan ser iguales; si lo fueran, no habría nada que explicar.',
+ trap:[
+  'Confunde comparar con duplicar. Si los casos fueran idénticos no habría variación que explicar, que es justamente lo que la comparación busca.',
+  null,
+  'Toma una etiqueta administrativa (el país) como si fuera una propiedad relevante. Un mismo país puede contener casos incomparables y países distintos pueden ser comparables.',
+  'Confunde comparabilidad con resultado. Comparamos precisamente para explicar por qué los valores difieren.'
+ ],
+ discuss:['¿Respecto de qué propiedad comparan ustedes sus propios casos de estudio y cómo la definen?','¿Se les ocurren dos casos muy distintos que sean comparables para una pregunta concreta? ¿Y dos casos parecidos que no lo sean?'],
+ example:'Un sistema de salud centroamericano y uno europeo son comparables respecto de la «cobertura de vacunación infantil» si ambos la miden para el mismo grupo de edad y esquema. No lo son respecto de la «calidad» si nadie ha definido qué se mide con esa palabra.',
+ bridge:'Ya tenemos el criterio general. La siguiente pregunta lo aplica a un indicador concreto: el gasto público como porcentaje del PIB.',
+ time:'2 a 3 minutos de discusión',
+ refs:'Sartori (1970); Przeworski y Teune (1970).'
+},
+{
+ means:'Que un indicador con el mismo nombre no garantiza equivalencia, y que las diferencias de sistema político no impiden comparar una propiedad bien delimitada.',
+ say:'Los sistemas políticos pueden ser muy distintos y aun así comparar el gasto público, siempre que la definición, la cobertura y el período sean equivalentes y se tenga presente el contexto. Lo decisivo es qué mide el indicador, no cómo se llama ni si los valores se parecen.',
+ trap:[
+  'Convierte una diferencia de contexto en una prohibición absoluta. El contexto se documenta y se controla; no invalida la comparación por sí mismo.',
+  'Cree que el nombre del indicador garantiza que mide lo mismo. La cobertura (gobierno central o general), el año fiscal y el tratamiento de las empresas públicas pueden diferir.',
+  null,
+  'Exige que los resultados se parezcan. La comparabilidad se refiere a la propiedad medida, no a que las magnitudes coincidan.'
+ ],
+ discuss:['¿Qué revisarían antes de comparar el gasto público de dos países? (definición, cobertura institucional, período, fuente)','¿Qué diferencia de contexto sí volvería inadecuada la comparación y cuál solo exige cautela?'],
+ example:'«Gasto público general» frente a «gasto del gobierno central»: el nombre es parecido, pero la cobertura cambia. Comparar sin homologar produce una diferencia contable, no una diferencia de política.',
+ bridge:'Hasta aquí hablamos de comparar casos e indicadores. Ahora vamos al concepto mismo: ¿qué ocurre cuando lo ampliamos para que quepan más casos?',
+ time:'2 a 3 minutos de discusión',
+ refs:'Przeworski y Teune (1970).'
+},
+{
+ means:'Distinguir la abstracción justificada (subir en la escalera de abstracción) del alargamiento conceptual (aplicar un concepto a más casos sin ajustar sus atributos definitorios).',
+ say:'Ampliar un concepto no es un error en sí mismo. Sartori muestra que al aumentar los casos que abarca (extensión) se reducen los atributos que exige (intensión). Es legítimo si se hace de forma explícita y la definición sigue siendo coherente. El problema es estirarlo sin decirlo y seguir usándolo como si significara lo mismo.',
+ trap:[
+  'Toma una advertencia de Sartori como regla absoluta. Sin abstracción no habría conceptos que viajen entre contextos.',
+  null,
+  'Trata los conceptos como fijos. Los conceptos científicos pueden redefinirse cuando se justifica y se documenta.',
+  'Invierte el criterio: sumar casos no valida nada. La validez depende de la coherencia entre la definición y los casos incluidos.'
+ ],
+ discuss:['Si «democracia» se define solo como «hay elecciones», ¿qué casos entran y qué distinciones se pierden?','¿Cómo sabría un lector que un autor subió legítimamente en la escalera de abstracción y no estiró el concepto?'],
+ example:'Definir democracia por elecciones competitivas, sufragio amplio y garantías de libertades frente a definirla solo por la existencia de elecciones: la segunda incluye más países, pero ya no distingue a las democracias de los regímenes con elecciones sin competencia real.',
+ bridge:'Ya vimos el concepto. Ahora la medición: si dos indicadores usan la misma unidad, ¿miden lo mismo?',
+ time:'3 minutos de discusión',
+ refs:'Sartori (1970).'
+},
+{
+ means:'La equivalencia de indicadores: la misma unidad de medida (minutos) no garantiza que se mida el mismo fenómeno. Hay que definir el evento inicial y el final.',
+ say:'Veinte y cuarenta minutos no son comparables porque miden intervalos distintos: uno llega hasta el triaje y el otro hasta la consulta médica. Antes de comparar hay que homologar inicio, fin, población y período.',
+ trap:[
+  'Aplica una razón aritmética (40 entre 20) a cantidades que no miden lo mismo. La razón solo tiene sentido si el intervalo es equivalente.',
+  null,
+  'Salta de un número a un juicio de desempeño. Un tiempo menor puede reflejar un triaje más rápido y una consulta igual de lenta; ni siquiera sabemos si miden lo mismo.',
+  'Confunde unidad de medida con definición operacional. Los minutos pueden medirse entre eventos muy distintos.'
+ ],
+ discuss:['¿Qué datos pedirían a cada hospital para poder compararlos?','Si el segundo hospital también midiera hasta el triaje y diera 40 minutos, ¿qué cambiaría en la conclusión y qué seguiría sin saberse (gravedad de los casos, volumen, personal)?'],
+ example:'Un hospital puede tener un triaje muy rápido y una consulta lenta, y otro lo contrario. Con el tiempo medido hasta la consulta médica en ambos, la comparación pasa a ser informativa.',
+ bridge:'Cierre de la actividad: las cuatro preguntas comparten un mismo criterio. Antes de comparar, ¿qué propiedad, definida cómo, en qué casos y con qué equivalencia? Pasamos a los resultados del grupo.',
+ time:'3 minutos de discusión y cierre',
+ refs:'Adcock y Collier (2001).'
+}
+];
+function readingGuide(i,revealed){
+ const q=QUIZ[i],n=votes[i]?.length||0;
+ if(!n)return 'Todavía no hay respuestas. Espera a que termine el tiempo antes de mostrar la distribución.';
+ const good=correctFor(i),rate=good/n;
+ const counts=q.a.map((_,j)=>({j,n:countFor(i,j)}));
+ if(!revealed){
+  const top=[...counts].sort((a,b)=>b.n-a.n||a.j-b.j)[0];
+  return `La alternativa más votada es la ${'ABCD'[top.j]} (${fmtPercent(top.n,n)}). Antes de revelar, invita a una persona que la eligió y a otra que eligió una distinta a defender su razonamiento.`;
+ }
+ const wrong=counts.filter(x=>x.j!==q.correct).sort((a,b)=>b.n-a.n||a.j-b.j),top=wrong[0];
+ let s;
+ if(rate>=.8)s='Amplio acuerdo con la respuesta correcta. Confírmalo en una frase y dedica el tiempo a la discusión y al ejemplo.';
+ else if(top&&top.n/n>=.4)s=`La alternativa ${'ABCD'[top.j]} concentra ${fmtPercent(top.n,n)} de las respuestas. Empieza por ella: pregunta «¿qué los llevó a elegirla?» antes de explicar por qué no es la correcta.`;
+ else if(rate>=.55)s='La mayoría acertó, pero persisten dudas. Da la palabra a quien eligió la alternativa incorrecta más frecuente.';
+ else s='Las respuestas están divididas. Pide a dos personas con respuestas distintas que argumenten y luego sintetiza el criterio.';
+ if(n<8)s+=' Con pocas respuestas, úsalo como punto de partida de la conversación y no como diagnóstico del grupo.';
+ return s;
+}
+function resultMessage(rate){
+ if(rate>=.8)return 'Amplio acuerdo del grupo con el criterio metodológico.';
+ if(rate>=.6)return 'La mayoría coincide con el criterio, con espacio para precisarlo.';
+ if(rate>=.4)return 'El grupo está dividido: vale la pena volver sobre este criterio.';
+ return 'Fue la pregunta más difícil: conviene retomar el concepto con un ejemplo adicional.';
+}
 /* Las versiones curriculares son inmutables: v3 = cuatro preguntas nuevas; v1/v2 = seis históricas. */
 const QUIZ_ORIGINAL=QUIZ.map(q=>({...q,a:[...q.a]}));
-const PEDAGOGY_ORIGINAL=PEDAGOGY.map(p=>({...p,mis:[...p.mis]}));
+const PEDAGOGY_ORIGINAL=PEDAGOGY.map((p,i)=>({...p,...(GUION[i]||{}),mis:[...p.mis]}));
 const ORDER_V2=[[1,0,2,3],[0,1,2,3],[0,2,3,1],[0,1,2,3],[2,0,1,3],[0,1,2,3]];
 const TEXT_V2=[
  ['Comparten una propiedad relevante con significado equivalente.','Son comparables únicamente cuando sus rasgos son idénticos.','Pertenecen al mismo país y comparten instituciones.','Presentan valores semejantes en todos los indicadores.'],
@@ -163,7 +250,7 @@ function activateQuizVersion(v){
  });
  PEDAGOGY=PEDAGOGY_ORIGINAL.slice(0,count).map((p,i)=>{
   const earlier=ORDER_V2[i].map(j=>p.mis[j]);
-  return {...p,mis:(v===3?ORDER_V3[i]:[0,1,2,3]).map(j=>earlier[j])};
+  const earlierTrap=p.trap?ORDER_V2[i].map(j=>p.trap[j]):null,fin=(v===3?ORDER_V3[i]:[0,1,2,3]);return {...p,mis:fin.map(j=>earlier[j]),...(earlierTrap?{trap:fin.map(j=>earlierTrap[j])}:{})};
  });
  }
  if(typeof N!=='undefined')N=QUIZ.length;
@@ -256,7 +343,7 @@ function chart(target,i,showAnswer,compact=false){
   d.append(answer);
  }
  d.append(layout);
- if(!showAnswer){d.append(add('p','La interpretación aparecerá cuando se revele la respuesta correcta.','small'));return}
+ if(!showAnswer){d.append(add('p',(compact||(room.status==='live'&&room.idx===i&&stageNow()===0))?'La interpretación aparecerá cuando se revele la respuesta correcta.':readingGuide(i,false),'small'));return}
  if(compact){
   const concise=add('div',undefined,'presentation-insight');
   concise.append(add('strong',n?`${fmtPercent(good,n)} seleccionó la respuesta correcta.`:'Todavía no se registraron respuestas.'));
@@ -264,33 +351,30 @@ function chart(target,i,showAnswer,compact=false){
   if(stageNow()>=3||room.status==='done')concise.append(add('p',PEDAGOGY[i].principle,'public-principle'));
   d.append(concise);return
  }
- const panel=add('section',undefined,'insight pedagogical-report');
- panel.append(add('h3','Guion pedagógico del expositor'));
- if(!n){panel.append(add('p','Aún no hay respuestas registradas.'));d.append(panel);return}
- panel.append(add('p',`${n} respuesta${n===1?'':'s'} registrada${n===1?'':'s'}. ${fmtPercent(good,n)} acertó y ${fmtPercent(bad,n)} eligió otra alternativa.`,'pedagogical-intro'));
- const mistakes=q.a.map((_,j)=>({j,count:countFor(i,j)}))
-   .filter(x=>x.j!==q.correct&&x.count>0)
-   .sort((a,b)=>b.count-a.count||a.j-b.j);
- if(mistakes.length){
-  panel.append(add('h3','Alternativas incorrectas, de mayor a menor frecuencia'));
-  mistakes.forEach((x,k)=>{
-   const item=add('div',undefined,'pedagogical-item error-choice');
-   item.append(add('strong',`${k+1}. Alternativa ${'ABCD'[x.j]}: ${fmtPercent(x.count,n)} (${x.count} de ${n})`));
-   item.append(add('p',`Esta alternativa no es correcta porque ${normalizeExplanation(PEDAGOGY[i].mis[x.j])}`));
-   panel.append(item);
-  });
- }else{
-  panel.append(add('p','Todas las respuestas registradas fueron correctas. En este caso conviene explicar el razonamiento y comprobarlo con un ejemplo diferente.','pedagogical-intro'));
- }
- const correctItem=add('div',undefined,'pedagogical-item correct-choice');
- correctItem.append(add('strong',`Respuesta correcta · ${'ABCD'[q.correct]} · ${fmtPercent(good,n)} (${good} de ${n})`));
- correctItem.append(add('p',`Es la opción correcta porque ${PEDAGOGY[i].principle.charAt(0).toLowerCase()+PEDAGOGY[i].principle.slice(1)}`));
- panel.append(correctItem);
- const transfer=add('div',undefined,'pedagogical-transfer');
- transfer.append(add('strong','Cómo explicarlo y trasladarlo a otra investigación'));
- transfer.append(add('p',PEDAGOGY[i].transfer));
- transfer.append(add('p','Para conversar con el grupo: '+PEDAGOGY[i].question));
- panel.append(transfer);d.append(panel);
+ const panel=add('section',undefined,'insight pedagogical-report'),G=PEDAGOGY[i];
+ const item=(title,body,cls)=>{const b=add('div',undefined,'pedagogical-item'+(cls?' '+cls:''));b.append(add('strong',title));(Array.isArray(body)?body:[body]).forEach(t=>b.append(add('p',t)));return b};
+ panel.append(add('h3',`Guion pedagógico del expositor · Pregunta ${i+1}`));
+ const enrolled=people.length;
+ panel.append(add('p',n?`${n} respuesta${n===1?'':'s'}${enrolled?' de '+enrolled+' inscrito'+(enrolled===1?'':'s'):''}. ${fmtPercent(good,n)} acertó y ${fmtPercent(bad,n)} eligió otra alternativa.`:'Aún no hay respuestas registradas.','pedagogical-intro'));
+ panel.append(item('Cómo leer estos resultados',readingGuide(i,true)));
+ if(G.means)panel.append(item('Qué evalúa esta pregunta',G.means));
+ if(G.say)panel.append(item('Qué decir al revelar',G.say,'correct-choice'));
+ panel.append(item(`Respuesta correcta · ${'ABCD'[q.correct]}${n?' · '+fmtPercent(good,n)+' ('+good+' de '+n+')':''}`,`${q.a[q.correct]} ${G.principle}`,'correct-choice'));
+ const mistakes=q.a.map((_,j)=>({j,count:countFor(i,j)})).filter(x=>x.j!==q.correct).sort((a,b)=>b.count-a.count||a.j-b.j);
+ panel.append(add('h3','Por qué fallan las otras alternativas (de más a menos elegida)'));
+ mistakes.forEach((x,k)=>{
+  const it=add('div',undefined,'pedagogical-item error-choice');
+  it.append(add('strong',`${k+1}. Alternativa ${'ABCD'[x.j]}${n?': '+fmtPercent(x.count,n)+' ('+x.count+' de '+n+')':''}`));
+  it.append(add('p',q.a[x.j],'small'));
+  it.append(add('p',(G.trap&&G.trap[x.j])||('Esta alternativa no es correcta porque '+normalizeExplanation(G.mis[x.j]))));
+  panel.append(it);
+ });
+ if(G.discuss)panel.append(item('Preguntas para conversar con el grupo',G.discuss.map((t,k)=>(k+1)+'. '+t)));
+ if(G.example)panel.append(item('Ejemplo para aclarar',G.example));
+ panel.append(item('Cómo trasladarlo a otra investigación',[G.transfer,'Pregunta guía: '+G.question]));
+ if(G.bridge)panel.append(item('Puente a lo siguiente',G.bridge));
+ if(G.time||G.refs)panel.append(add('p',[G.time?'Tiempo sugerido: '+G.time+'.':'',G.refs?'Lecturas de apoyo: '+G.refs:''].filter(Boolean).join(' '),'small'));
+ d.append(panel);
 }
 function normalizeExplanation(text){
  if(!text)return 'no se ajusta al principio metodológico evaluado.';
@@ -836,24 +920,24 @@ function exportCsv(){if(!isHost)return;if(simulationMode){alertText('No se expor
 /* Análisis descriptivo: sin atribuir dominio conceptual a partir de una sola respuesta. */
 function renderLearningSummary(){
  const out=$('finalLearning');if(!out||!isHost)return;out.replaceChildren();
- const title=add('h3',simulationMode?'Síntesis simulada (datos ficticios)':'Síntesis de aprendizajes del grupo');out.append(title);
- const rows=QUIZ.map((q,i)=>({i,n:votes[i].length,correct:correctFor(i),rate:votes[i].length?correctFor(i)/votes[i].length:null}));
+ out.append(add('h3','Síntesis de aprendizajes del grupo'));
+ const rows=QUIZ.map((q,i)=>({i,n:votes[i].length,correct:correctFor(i)}));
  const answered=rows.filter(x=>x.n>0);if(!answered.length){out.append(add('p','Todavía no hay respuestas para elaborar conclusiones.'));return}
- const high=[...answered].filter(x=>x.rate>=.8).sort((a,b)=>b.rate-a.rate);
- const low=[...answered].sort((a,b)=>a.rate-b.rate);
- const overall=rows.reduce((n,x)=>n+x.correct,0),total=rows.reduce((n,x)=>n+x.n,0);
+ const overall=answered.reduce((n,x)=>n+x.correct,0),total=answered.reduce((n,x)=>n+x.n,0);
  const summary=add('div',undefined,'learning-card');
- summary.append(add('strong',`Resultado agregado: ${fmtPercent(overall,total)} de aciertos sobre ${total} respuestas.`));
- summary.append(add('p',high.length?`Mayor acuerdo en: ${high.map(x=>'P'+(x.i+1)+' · '+QUIZ[x.i].topic).join('; ')}.`:'No hay preguntas con 80 % o más de aciertos; conviene revisar los conceptos con mayor dificultad.'));
+ summary.append(add('strong',`Resultado agregado: ${fmtPercent(overall,total)} de aciertos sobre ${total} respuestas (${people.length} inscritos).`));
+ const best=[...answered].sort((a,b)=>b.correct/b.n-a.correct/a.n)[0],worst=[...answered].sort((a,b)=>a.correct/a.n-b.correct/b.n)[0];
+ summary.append(add('p',best.i===worst.i?`Solo hay respuestas en P${best.i+1}.`:`Mayor acuerdo: P${best.i+1} · ${QUIZ[best.i].topic} (${fmtPercent(best.correct,best.n)}). Mayor dificultad: P${worst.i+1} · ${QUIZ[worst.i].topic} (${fmtPercent(worst.correct,worst.n)}).`));
  out.append(summary);
- low.slice(0,Math.min(3,low.length)).forEach(x=>{
- const q=QUIZ[x.i],box=add('div',undefined,'learning-card');
- box.append(add('strong',`P${x.i+1} · ${q.topic}: ${fmtPercent(x.correct,x.n)} de aciertos (${x.n} respuestas)`));
- box.append(add('p',PEDAGOGY[x.i].principle));
- const errors=q.a.map((_,j)=>({j,n:countFor(x.i,j)})).filter(z=>z.j!==q.correct&&z.n).sort((a,b)=>b.n-a.n);
- if(errors.length)box.append(add('p',`Error más frecuente: ${'ABCD'[errors[0].j]} (${fmtPercent(errors[0].n,x.n)}). ${PEDAGOGY[x.i].mis[errors[0].j]}`));
- box.append(add('p','Para trasladarlo a otras investigaciones: '+PEDAGOGY[x.i].transfer));
- out.append(box);
+ answered.forEach(x=>{
+  const q=QUIZ[x.i],G=PEDAGOGY[x.i],box=add('div',undefined,'learning-card');
+  box.append(add('strong',`P${x.i+1} · ${q.topic}: ${fmtPercent(x.correct,x.n)} de aciertos (${x.correct} de ${x.n})`));
+  box.append(add('p',resultMessage(x.correct/x.n)));
+  const errors=q.a.map((_,j)=>({j,n:countFor(x.i,j)})).filter(z=>z.j!==q.correct&&z.n).sort((a,b)=>b.n-a.n);
+  if(errors.length)box.append(add('p',`Error más frecuente: alternativa ${'ABCD'[errors[0].j]} (${fmtPercent(errors[0].n,x.n)}). ${(G.trap&&G.trap[errors[0].j])||G.mis[errors[0].j]}`));
+  box.append(add('p','Idea para recordar: '+G.principle));
+  box.append(add('p','Para trasladarlo a otras investigaciones: '+G.transfer));
+  out.append(box);
  });
 }
 function stageNow(){return room?.revealStage??(room?.reveal?2:0)}
@@ -906,13 +990,18 @@ function renderProjection(){
   $('projectIndicator').textContent='Resultados del grupo';
   const meaningful=QUIZ.map((q,i)=>({i,n:votes[i]?.length||0,correct:correctFor(i)})).filter(x=>x.n>0);
   const total=meaningful.reduce((a,x)=>a+x.n,0),hit=meaningful.reduce((a,x)=>a+x.correct,0);
-  const panel=add('div',undefined,'project-hidden');
+  const panel=add('div',undefined,'project-hidden');panel.style.maxWidth='1100px';panel.style.textAlign='left';
   panel.append(add('h3','¿Qué aprendimos como grupo?'));
   if(!meaningful.length)panel.append(add('p','No se registraron respuestas.'));
   else{
+   panel.append(add('p',`Aciertos totales: ${fmtPercent(hit,total)} en ${total} respuestas.`));
+   meaningful.forEach(x=>{
+    const row=add('div',undefined,'answerrow'),head=add('div',undefined,'answerhead');
+    head.append(add('span',`P${x.i+1} · ${QUIZ[x.i].topic}`),add('strong',`${fmtPercent(x.correct,x.n)} (${x.correct} de ${x.n})`));
+    const track=add('div',undefined,'barbg'),bar=add('div',undefined,'bar correct');bar.style.width=(100*x.correct/x.n)+'%';track.append(bar);
+    row.append(head,track,add('p',resultMessage(x.correct/x.n),'small'));panel.append(row);
+   });
    const difficult=[...meaningful].sort((a,b)=>a.correct/a.n-b.correct/b.n)[0];
-   panel.append(add('p',`Aciertos totales: ${fmtPercent(hit,total)} en ${total} respuestas registradas.`));
-   panel.append(add('p',`Mayor dificultad observada: pregunta ${difficult.i+1} — ${QUIZ[difficult.i].topic}.`));
    panel.append(add('p','Idea para recordar: '+PEDAGOGY[difficult.i].principle));
   }
   out.append(panel);return;
