@@ -14,7 +14,7 @@ assert(start>=0&&end>start,'No se encontró el currículo versionado');
 const curriculum=source.slice(start,end);
 function loadVersion(version){
   const result=runInNewContext(curriculum+';activateQuizVersion('+version+');globalThis.out={QUIZ,PEDAGOGY,TRANSFER}',{});
-  return result.out;
+  return result;
 }
 const original=loadVersion(1),legacy=loadVersion(2),current=loadVersion(3);
 assert.equal(original.QUIZ.length,6,'Las salas históricas originales deben conservar seis preguntas');
@@ -44,7 +44,7 @@ assert(source.includes('if(compact)'),'La vista pública debe ser abreviada');
 assert(source.includes('function subscribe()'));
 assert(source.includes("observedVersion!==room.quizVersion"),'Al cambiar la versión deben recrearse los listeners');
 assert(source.includes('if(typed!==\'REINICIAR\')return'),'Requerir reinicio confirmado');
-assert(source.includes('room.owner!==uid')&&source.includes("!['live','done'].includes(room.status)"),'El reinicio debe estar restringido al propietario y sala abierta/finalizada');
+assert(source.includes('room.owner!==uid')&&source.includes("!['lobby','live','done'].includes(room.status)"),'El reinicio debe estar restringido al propietario y sala abierta/finalizada');
 assert(source.includes("status:'lobby',idx:-1,reveal:false,revealStage:0,openedAt:null"),'Se requiere restablecer sala sin cambiar código');
 assert(rules.includes('version == 3 && t.size() == 4'));
 assert(rules.includes('request.resource.data.quizVersion in [2,3]'));
@@ -149,7 +149,7 @@ assert(source.includes("ref.update({status:'lobby',idx:-1,reveal:false,revealSta
 assert(source.includes("if(room.mode==='survey'&&room.quizVersion===3)"),'Un participante de sala antigua aún puede pasar preguntas sin moderador');
 assert(source.includes('function renderAttendance()'),'Falta lista visible de participantes');
 assert(source.includes('function refreshAttendees()'),'Falta actualización por consulta directa al servidor');
-assert(source.includes("attendancePollTimer=setInterval"),'No existe respaldo ante interrupción de listener de inscritos');
+assert(!source.includes("attendancePollTimer=setInterval")&&source.includes("No se pudo sincronizar la lista de participantes"),"El sondeo periódico debe estar retirado y el error del listener debe mostrarse");
 assert(source.includes("attendanceConnection=s.metadata?.fromCache?'cache':'live'"),'No distinguir cache de datos confirmados');
 assert(source.includes("['live','server'].includes(attendanceConnection)"),'No anunciar sala lista con contador de caché');
 assert(source.includes("attendanceRefreshInProgress=true"),'La actualización no debe multiplicar consultas concurrentes');
@@ -168,7 +168,7 @@ assert(source.includes("myRegistration=mine.data()"),'No recupera la confirmaci�
 assert(source.includes("myRegistration=snapshot.data()"),'No escucha la confirmación desde Firebase');
 assert(source.includes("snapshot.metadata?.hasPendingWrites"),'No distingue escritura pendiente de confirmación persistida');
 assert(source.includes("const registered=people.length,ready=people.filter(p=>p.ready===true).length"),'Faltan contadores dinámicos listos/pendientes');
-assert(source.includes("panel.append(add('span',(isReady?'✓ ':'○ ')"),'Faltan nombres separados por preparación');
+assert(source.includes("const chip=add('span',(isReady?'✓ ':'○ ')"),'Faltan nombres separados por preparación');
 assert(source.includes("const quorumReady=people.length>0&&confirmedCount===people.length"),'Se permite iniciar con participantes pendientes');
 assert(source.includes("people.some(p=>p.ready!==true)"),'El controlador de inicio no verifica preparación');
 assert(source.includes("name:'Participante ficticio '+(i+1),country:'',ready:true"),'Simulación se bloquea por pendientes ficticios');
@@ -184,9 +184,9 @@ assert(source.includes("activeId&&activeId!==codeValue"),'El invitado no puede a
 assert(source.includes("people=[];votes=Array.from({length:N},()=>[]);subscribe()"),'El segundo expositor necesita listeners compatibles con cuatro preguntas');
 assert(!html.includes('Soy moderador: crear sesión'),'No debe persistir el texto ambiguo anterior');
 assert(html.includes('id="resetOfficial">Reiniciar ensayo · conservar QR'),'Debe mostrarse la acción de recuperar una sala antigua activa');
-assert(source.includes("if(room.status==='live')await ref.update({status:'done',reveal:true,revealStage:3})"),'El reinicio cierra el ensayo antes de borrar registros');
+assert(source.includes("if(room.status!=='done')await ref.update({status:'done',reveal:true,revealStage:3,publicView:'welcome'})"),'El reinicio cierra el ensayo antes de borrar registros');
 assert(source.includes("if(typed!=='REINICIAR')return"),'La acción destructiva debe requerir confirmación escrita');
-assert(source.includes("['live','done'].includes(room.status)"),'El propietario debe poder reiniciar un ensayo abierto');
+assert(source.includes("['lobby','live','done'].includes(room.status)"),"El propietario debe poder reiniciar también desde la sala de espera");
 assert(source.includes("if(room.mode==='survey'&&room.quizVersion===3)"),'Una encuesta antigua debe bloquear las respuestas libres');
 assert(source.includes("$('confirmReady').classList.add('hidden')"),'No debe mostrarse confirmar listo cuando el ensayo antiguo está en marcha');
 assert(source.includes("status:'lobby',idx:-1,reveal:false,revealStage:0,openedAt:null"),'Debe conservar QR y restablecer a espera');
@@ -226,3 +226,11 @@ assert(source.includes("if(publicIntroUntilWelcome&&room.publicView!=='questions
 assert(source.includes("const showWelcomeNow=publicIntroUntilWelcome||room.publicView!=='questions'||room.status==='lobby'"),'El QR no tiene prioridad mientras inicia la ventana pública');
 assert(source.includes("const change={status:'live',idx:room.mode==='survey'?-1:0,reveal:false,publicView:'questions'"),'Iniciar competencia debe cambiar automáticamente de QR a P1');
 console.log('OK: portada inicial, inscripción en vivo y transición automática a P1 al comenzar.');
+
+// Regresiones del ensayo del 18-nov: lobby bloqueado por registros pendientes o duplicados
+assert(source.includes("id=\"startAnyway\"")||html.includes("id=\"startAnyway\""),"Falta iniciar solo con los listos");
+assert(source.includes("async function startCompetition(force)")&&source.includes("confirm('Iniciar sin "),"El inicio forzado debe pedir confirmación explícita");
+assert(source.includes("async function removeParticipant(p)")&&source.includes("posible duplicado"),"Falta marcar y quitar duplicados");
+assert(rules.includes("allow delete: if owner(id) && parent(id).data.status in ['lobby','done']"),"Regla: el propietario debe poder quitar participantes en lobby");
+assert(source.includes("function withTimeout("),"Falta tiempo límite en confirmaciones");
+console.log("OK: regresiones del lobby (inicio con listos, duplicados, reinicio en espera).");

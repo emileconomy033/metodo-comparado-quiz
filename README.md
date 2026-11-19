@@ -44,7 +44,7 @@ Se comprobaron estáticamente los seis ítems y la sintaxis del JavaScript. No s
 - Cada pregunta de la modalidad **Competencia** admite un tiempo propio de **10 a 180 segundos** (valor predeterminado 40). El moderador lo configura antes de crear la sala. Los temporizadores se aplican también en las reglas de Firestore. Las salas antiguas, sin el campo `questionTimes`, mantienen 40 segundos.
 - **Acceso del moderador**: se usa **Firebase Authentication → Email/Password** mediante una aplicación Firebase secundaria. El participante sigue utilizando la autenticación anónima normal, sin contraseña ni correo.
 - **Configuración obligatoria, una sola vez**: en Firebase Console → Authentication → Sign-in method, activar **Email/Password** (sin habilitar Email link); en la pestaña **Users**, pulsar **Add user**, introducir el correo de moderador configurado en el código (`emil.economia@gmail.com`) y elegir una contraseña. La pantalla de moderador solicita solo esa contraseña, no el correo. Si se prefiere otra dirección de cuenta, actualizar `MODERATOR_EMAIL` en `index.html` y la condición de email en `firestore.rules` de forma idéntica.
-- La contraseña propuesta `123Moderador` es funcional si se registra en Firebase, pero es predecible. Se recomienda establecer una contraseña única y más fuerte. **Nunca escribir la contraseña en el código del repositorio**. La identidad se verifica en el servidor de Firebase; la interfaz sola no concede permisos.
+- Usa una contraseña única y robusta para la cuenta del propietario y activa la verificación en dos pasos del correo. **Nunca escribir la contraseña en el código ni en la documentación del repositorio.**
 - **Es imprescindible publicar nuevamente `firestore.rules`** desde Firebase Console. A partir de estas reglas, solo la cuenta autenticada por correo/contraseña permitida puede **crear salas nuevas**. Las salas preexistentes de moderadores anónimos conservan el permiso de administración para el mismo UID original.
 - El moderador recupera su rol en el mismo navegador siempre que mantenga iniciada su sesión Firebase; se mantiene el acceso a salas antiguas creadas con la identidad anónima previa. Si cambia de navegador, deberá entrar como moderador con la contraseña y conservar el enlace de la sala.
 - **No compartir la contraseña con participantes.** El QR solo abre la pantalla pública para ingresar al cuestionario.
@@ -232,3 +232,11 @@ Se detectó que abrir la ventana pública mientras la sala anterior estaba en `l
 - **Reglas:** se agregó `publicView` a los campos permitidos y se limita a `welcome` o `questions`. **Debe publicarse el último `firestore.rules` en Firebase Console**, ya que GitHub por sí mismo no despliega esos permisos.
 
 **Límite de validación:** las comprobaciones automáticas verifican código y reglas, pero no sustituyen el ensayo con navegador principal, ventana pública y celular reales.
+
+## Sala de espera: inscritos pendientes y duplicados (19 nov 2026)
+- «Iniciar competencia» sigue exigiendo que todos hayan confirmado. Si alguien no responde, el propietario o el segundo expositor pueden usar **«Iniciar solo con los listos»** (pide confirmación y nombra a los pendientes).
+- Los nombres repetidos se marcan como «posible duplicado». El propietario puede **Quitar** un registro en la sala de espera (requiere publicar `firestore.rules`: borrado de participantes en `lobby` o `done`).
+- **Reiniciar ensayo · conservar QR** ahora también está disponible desde la sala de espera.
+- La ventana pública solo fuerza la portada en la primera carga; recargarla durante una pregunta ya no vuelve a la portada.
+- Se retiró el sondeo cada 12 s del panel (menos lecturas); «Actualizar participantes» queda como lectura manual.
+- `npm test` ejecuta `scripts/verify.mjs` y una prueba de comportamiento con jsdom (`scripts/lobby.test.mjs`).

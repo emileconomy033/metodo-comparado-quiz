@@ -85,7 +85,8 @@ service cloud.firestore {
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ready','readyAt'])
           && request.resource.data.ready == true
           && request.resource.data.readyAt == request.time;
-        allow delete: if owner(id) && parent(id).data.status == 'done';
+        // El propietario puede quitar un registro abandonado o duplicado en la sala de espera, o limpiar al terminar.
+        allow delete: if owner(id) && parent(id).data.status in ['lobby','done'];
       }
       match /answers/{qid}/votes/{pid} {
         // Participantes solo pueden consultar votos cuando ya se revelaron, o al cerrar.

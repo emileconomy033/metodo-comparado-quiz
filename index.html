@@ -82,7 +82,7 @@ footer{color:#788692}
 <section id="moderatorLogin" class="card hidden"><h2>Acceso para expositores</h2><label for="moderatorEmail">Correo de expositor</label><input id="moderatorEmail" type="email" autocomplete="username" value="emil.economia@gmail.com" placeholder="correo@ejemplo.com"><label for="moderatorPassword">Contraseña del expositor</label><input id="moderatorPassword" type="password" autocomplete="current-password" placeholder="Contraseña"><div class="row" style="margin-top:16px"><button class="btn" id="moderatorEnter">Acceder</button><button class="btn secondary" id="moderatorBack">Volver</button></div></section>
 <section id="presenterEntry" class="card hidden"><h2>Entrar a la sala existente</h2><label for="presenterRoomCode">Código de la sala única</label><input id="presenterRoomCode" maxlength="8" autocomplete="off" placeholder="Código compartido"><div class="row" style="margin-top:16px"><button class="btn" id="presenterOpen">Abrir panel de exposición</button><button class="btn secondary" id="presenterBack">Volver al inicio</button></div></section>
 <section id="create" class="card hidden"><h2>Mi sala · propietario</h2><input id="mode" type="hidden" value="competition"><div class="mode-locked"><strong>Competencia dirigida</strong><span> El avance de preguntas lo controlan los expositores.</span></div><div id="durationEditor"><h3>Tiempo de respuesta por pregunta</h3><div id="durationFields" class="time-grid"></div><button class="btn secondary" id="sameTime" type="button">Aplicar el tiempo de P1 a todas</button></div><div class="row"><button class="btn" id="createRoom">Abrir mi sala · crear solo si no existe</button><button class="btn secondary" id="simulateFromCreate">Ensayar con datos ficticios</button><button class="btn secondary" id="cancelCreate">Volver</button></div></section>
-<section id="host" class="hidden"><div class="card"><div class="row between"><div><div class="eyebrow">Panel privado del moderador</div><h2 id="hostCode"></h2></div><span class="pill" id="hostStatus"></span></div><div class="room-readiness" id="roomReadiness" role="status" aria-live="polite"></div><div class="row"><div id="qr" aria-label="Código QR para unirse"></div><div style="flex:1;min-width:200px"><p>Acceso de participantes</p><a id="joinUrl" target="_blank" rel="noopener noreferrer"></a><div class="row" style="margin-top:12px"><button class="btn secondary" id="copyLink">Copiar enlace</button><button class="btn secondary" id="downloadQR">Guardar QR</button><button class="btn secondary" id="hostHome">Volver al inicio</button><button class="btn secondary" id="newActivity">Volver a mi sala</button></div></div></div><div class="attendance-panel"><div class="row between"><strong id="attendanceCount" aria-live="polite">0 inscritos</strong><button class="btn secondary" id="refreshAttendees">Actualizar participantes</button></div><div class="ready-metrics" aria-live="polite"><div><strong id="readyCount">0</strong><span>Listos</span></div><div><strong id="pendingCount">0</strong><span>Pendientes</span></div></div><div class="ready-track" role="progressbar" aria-label="Confirmaciones de preparación" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="readyProgress"><div id="readyProgressFill"></div></div><p id="attendanceStatus" class="small" role="status">Conectando con Firebase…</p><div id="attendanceNames" class="attendance-names" aria-live="polite"></div></div><p id="hostHint" class="small"></p><section id="presenterAccess" class="presenter-access"><h3>Segundo expositor autorizado</h3><div class="row"><input id="presenterInviteEmail" type="email" value="gramirezfunes@gmail.com" placeholder="Correo del segundo expositor" style="flex:1;min-width:210px"><button class="btn secondary" id="savePresenter">Autorizar expositor</button><button class="btn secondary" id="removePresenter">Revocar acceso</button></div><p id="presenterInviteStatus" class="small" role="status"></p></section><div id="simulationWarning" class="notice hidden" role="status">SIMULACIÓN · DATOS FICTICIOS</div><div class="row"><button class="btn" id="start">Abrir encuesta</button><button class="btn secondary" id="next">Siguiente pregunta</button><button class="btn secondary" id="reveal">Revelar respuesta</button><button class="btn warning" id="finish">Cerrar y mostrar resultados</button><button class="btn warning" id="resetOfficial">Reiniciar ensayo · conservar QR</button><span class="small" id="stageGuide" aria-live="polite"></span><button class="btn secondary" id="teacherSimulation">Ensayo docente con datos ficticios</button><button class="btn secondary" id="exitSimulation" style="display:none">Salir del ensayo</button></div></div><div class="card"><div class="row between"><h2>Estadísticas del grupo</h2><div class="row"><button class="btn" id="openAudienceWindow">Abrir pantalla para compartir</button><button class="btn secondary" id="showPublicWelcome">Mostrar portada y QR</button><button class="btn secondary" id="showPublicQuestion">Mostrar pregunta al público</button><button class="btn secondary" id="exportCSV">Exportar CSV</button><button class="btn secondary" id="printReport">Informe PDF</button></div></div><div id="completedActions" class="card hidden" style="margin:18px 0"><h2>Dinámica finalizada</h2><p></p><div class="row"><button class="btn secondary" id="completedHome">Volver al inicio</button></div></div><div id="metrics" class="grid"></div><h3>Desempeño por pregunta</h3><div id="summary"></div><div class="tabs" id="questionTabs"></div><div class="row" style="margin:15px 0"><button class="btn secondary" id="hostNotesView">Guion privado del expositor</button><button class="btn secondary" id="hostPublicView">Previsualizar vista del público</button></div><div id="hostChart"></div><div id="countries"></div><section id="finalLearning" class="learning-summary" aria-live="polite"></section></div></section>
+<section id="host" class="hidden"><div class="card"><div class="row between"><div><div class="eyebrow">Panel privado del moderador</div><h2 id="hostCode"></h2></div><span class="pill" id="hostStatus"></span></div><div class="room-readiness" id="roomReadiness" role="status" aria-live="polite"></div><div class="row"><div id="qr" aria-label="Código QR para unirse"></div><div style="flex:1;min-width:200px"><p>Acceso de participantes</p><a id="joinUrl" target="_blank" rel="noopener noreferrer"></a><div class="row" style="margin-top:12px"><button class="btn secondary" id="copyLink">Copiar enlace</button><button class="btn secondary" id="downloadQR">Guardar QR</button><button class="btn secondary" id="hostHome">Volver al inicio</button><button class="btn secondary" id="newActivity">Volver a mi sala</button></div></div></div><div class="attendance-panel"><div class="row between"><strong id="attendanceCount" aria-live="polite">0 inscritos</strong><button class="btn secondary" id="refreshAttendees">Actualizar participantes</button></div><div class="ready-metrics" aria-live="polite"><div><strong id="readyCount">0</strong><span>Listos</span></div><div><strong id="pendingCount">0</strong><span>Pendientes</span></div></div><div class="ready-track" role="progressbar" aria-label="Confirmaciones de preparación" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="readyProgress"><div id="readyProgressFill"></div></div><p id="attendanceStatus" class="small" role="status">Conectando con Firebase…</p><div id="attendanceNames" class="attendance-names" aria-live="polite"></div></div><p id="hostHint" class="small"></p><section id="presenterAccess" class="presenter-access"><h3>Segundo expositor autorizado</h3><div class="row"><input id="presenterInviteEmail" type="email" value="gramirezfunes@gmail.com" placeholder="Correo del segundo expositor" style="flex:1;min-width:210px"><button class="btn secondary" id="savePresenter">Autorizar expositor</button><button class="btn secondary" id="removePresenter">Revocar acceso</button></div><p id="presenterInviteStatus" class="small" role="status"></p></section><div id="simulationWarning" class="notice hidden" role="status">SIMULACIÓN · DATOS FICTICIOS</div><div class="row"><button class="btn" id="start">Abrir encuesta</button><button class="btn warning hidden" id="startAnyway" type="button">Iniciar solo con los listos</button><button class="btn secondary" id="next">Siguiente pregunta</button><button class="btn secondary" id="reveal">Revelar respuesta</button><button class="btn warning" id="finish">Cerrar y mostrar resultados</button><button class="btn warning" id="resetOfficial">Reiniciar ensayo · conservar QR</button><span class="small" id="stageGuide" aria-live="polite"></span><button class="btn secondary" id="teacherSimulation">Ensayo docente con datos ficticios</button><button class="btn secondary" id="exitSimulation" style="display:none">Salir del ensayo</button></div></div><div class="card"><div class="row between"><h2>Estadísticas del grupo</h2><div class="row"><button class="btn" id="openAudienceWindow">Abrir pantalla para compartir</button><button class="btn secondary" id="showPublicWelcome">Mostrar portada y QR</button><button class="btn secondary" id="showPublicQuestion">Mostrar pregunta al público</button><button class="btn secondary" id="exportCSV">Exportar CSV</button><button class="btn secondary" id="printReport">Informe PDF</button></div></div><div id="completedActions" class="card hidden" style="margin:18px 0"><h2>Dinámica finalizada</h2><p></p><div class="row"><button class="btn secondary" id="completedHome">Volver al inicio</button></div></div><div id="metrics" class="grid"></div><h3>Desempeño por pregunta</h3><div id="summary"></div><div class="tabs" id="questionTabs"></div><div class="row" style="margin:15px 0"><button class="btn secondary" id="hostNotesView">Guion privado del expositor</button><button class="btn secondary" id="hostPublicView">Previsualizar vista del público</button></div><div id="hostChart"></div><div id="countries"></div><section id="finalLearning" class="learning-summary" aria-live="polite"></section></div></section>
 <section id="projection" class="hidden projection-screen" aria-label="Presentación de resultados">
 <div class="projection-top"><div><span class="kicker">MÉTODO COMPARADO · GRUPO 1</span><h2 id="projectHeading">¿Realmente sabemos comparar?</h2></div><span class="project-stage" id="projectStage">Sala de espera</span></div>
 <div id="projectChart"></div><div id="projectSimulationWarning" class="notice hidden">SIMULACIÓN DOCENTE · DATOS FICTICIOS</div><div class="projection-foot"><span id="projectIndicator"></span><span id="projectPrivacy"></span></div>
@@ -172,7 +172,7 @@ const $=x=>document.getElementById(x);const IDs=['setup','home','create','modera
 let myRegistration=null,readySubmitting=false;
 let db=null,uid='',anonDb=null,anonUid='',moderatorDb=null,moderatorAuth=null,roomId='',room=null,isHost=false,myName='',myCountry='',people=[],votes=Array.from({length:N},()=>[]),stops=[],activeTab=0,surveyAt=0,ticker=null,authReady=false,reviewingSurvey=false,projecting=false,projectAt=0,projectView='question';
 function section(...names){IDs.forEach(x=>$(x).classList.toggle('hidden',!names.includes(x)))}
-function alertText(s,isError=false){$('alert').replaceChildren();if(!s)return;const n=document.createElement('div');n.className='notice'+(isError?' error':'');n.textContent=s;$('alert').append(n)}
+function alertText(s,isError=false){$('alert').replaceChildren();$('alert').setAttribute('role',isError?'alert':'status');if(!s)return;const n=document.createElement('div');n.className='notice'+(isError?' error':'');n.textContent=s;$('alert').append(n)}
 function code(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8)}
 const ACTIVE_ROOM_PATH='roomDirectory/current';
 async function fetchActiveRoomId(){
@@ -284,7 +284,7 @@ function chart(target,i,showAnswer,compact=false){
  }
  const correctItem=add('div',undefined,'pedagogical-item correct-choice');
  correctItem.append(add('strong',`Respuesta correcta · ${'ABCD'[q.correct]} · ${fmtPercent(good,n)} (${good} de ${n})`));
- correctItem.append(add('p',`Es la opción correcta porque ${PEDAGOGY[i].principle}`));
+ correctItem.append(add('p',`Es la opción correcta porque ${PEDAGOGY[i].principle.charAt(0).toLowerCase()+PEDAGOGY[i].principle.slice(1)}`));
  panel.append(correctItem);
  const transfer=add('div',undefined,'pedagogical-transfer');
  transfer.append(add('strong','Cómo explicarlo y trasladarlo a otra investigación'));
@@ -398,14 +398,28 @@ function renderAttendance(){
  const pct=registered?100*ready/registered:0;
  $('readyProgressFill').style.width=pct+'%';
  $('readyProgress').setAttribute('aria-valuenow',String(Math.round(pct)));
+ const nameCount=new Map();people.forEach(p=>{const k=(p.name||'').trim().toLowerCase();nameCount.set(k,(nameCount.get(k)||0)+1)});
+ const canRemove=!simulationMode&&room&&room.owner===uid&&room.status==='lobby';
  people.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'')).forEach(p=>{
-  const isReady=p.ready===true;
-  panel.append(add('span',(isReady?'✓ ':'○ ')+(p.name||'Sin nombre'),isReady?'ready-person':'pending-person'))
+  const isReady=p.ready===true,dup=nameCount.get((p.name||'').trim().toLowerCase())>1;
+  const chip=add('span',(isReady?'✓ ':'○ ')+(p.name||'Sin nombre')+(dup?' · posible duplicado':''),isReady?'ready-person':'pending-person');
+  if(canRemove){
+   const del=add('button','Quitar','btn secondary');del.type='button';del.style.cssText='min-height:26px;padding:2px 8px;margin-left:8px;font-size:12px;width:auto';
+   del.setAttribute('aria-label','Quitar a '+(p.name||'participante sin nombre')+' de la sala');
+   del.onclick=()=>removeParticipant(p);chip.append(del);
+  }
+  panel.append(chip)
  });
  $('attendanceStatus').textContent=simulationMode?'Simulación':attendanceConnection==='error'?'Error de sincronización: '+attendanceError:!loadedPeople?'Consultando Firebase…':attendanceConnection==='live'?'Sincronización en tiempo real activa':attendanceConnection==='server'?'Datos verificados en el servidor':attendanceConnection==='cache'?'Verificando Firebase…':'Actualizando participantes…';
  $('attendanceStatus').style.color=attendanceConnection==='error'?'#aa5140':'';
 }
 $('refreshAttendees').onclick=refreshAttendees;
+async function removeParticipant(p){
+ if(!isHost||simulationMode||!room||room.owner!==uid||room.status!=='lobby')return;
+ if(!confirm('¿Quitar a «'+(p.name||'participante sin nombre')+'» de la sala? Podrá inscribirse de nuevo si sigue conectado.'))return;
+ try{await rref().collection('participants').doc(p.uid).delete();alertText('Participante quitado.')}
+ catch(e){alertText('No se pudo quitar al participante ('+(e.code||e.message)+'). Si el error es de permisos, publica las reglas actualizadas de Firestore o usa «Reiniciar ensayo».',true)}
+}
 function renderHost(){if(!isHost)return;renderAttendance();$('hostCode').textContent='Sala '+roomId;$('hostStatus').textContent=`${'SALA ÚNICA'} · ${room.mode==='survey'?'Encuesta':'Competencia'} · ${room.status==='lobby'?'En espera':room.status==='done'?'Finalizada':'En curso'}`;
 $('showPublicWelcome').disabled=simulationMode||room.publicView==='welcome'||room.publicView===undefined;
  $('showPublicQuestion').disabled=simulationMode||room.status!=='live'||room.publicView==='questions';
@@ -413,11 +427,11 @@ $('showPublicWelcome').disabled=simulationMode||room.publicView==='welcome'||roo
  const ready=!simulationMode&&room.status==='lobby'&&room.mode==='competition'&&empty&&!cleanupInProgress&&['live','server'].includes(attendanceConnection);
  readyEl.className='room-readiness'+(ready?' ready':room.status==='live'||cleanupInProgress?' busy':'');
  readyEl.textContent=simulationMode?'Ensayo simulado · sin QR ni votos reales':cleanupInProgress?'Limpiando datos del ensayo; no permitas nuevos ingresos…':room.status==='done'?'Sesión finalizada · borra los datos si deseas reutilizar el mismo QR':!synced?'Verificando registros y respuestas en Firebase…':ready?'Sala lista y disponible · 0 participantes · 0 respuestas · mismo código QR':room.status==='live'?'Actividad en curso · '+people.length+' participantes': 'Sala en espera · '+people.length+' inscritos y '+nAnswers()+' respuestas';
- $('hostHint').textContent=people.length+(simulationMode?' participantes ficticios':' participantes');$('simulationWarning').classList.toggle('hidden',!simulationMode);$('completedActions').classList.toggle('hidden',room.status!=='done');$('teacherSimulation').style.display=simulationMode?'none':'inline-block';$('openAudienceWindow').disabled=simulationMode;$('presenterAccess').classList.toggle('hidden',simulationMode||room.owner!==uid);$('resetOfficial').classList.toggle('hidden',simulationMode||room.owner!==uid||!['live','done'].includes(room.status));$('resetOfficial').disabled=cleanupInProgress;$('exitSimulation').style.display=simulationMode?'inline-block':'none';
+ $('hostHint').textContent=people.length+(simulationMode?' participantes ficticios':' participantes');$('simulationWarning').classList.toggle('hidden',!simulationMode);$('completedActions').classList.toggle('hidden',room.status!=='done');$('teacherSimulation').style.display=simulationMode?'none':'inline-block';$('openAudienceWindow').disabled=simulationMode;$('presenterAccess').classList.toggle('hidden',simulationMode||room.owner!==uid);$('resetOfficial').classList.toggle('hidden',simulationMode||room.owner!==uid||!['lobby','live','done'].includes(room.status));$('startAnyway').classList.toggle('hidden',simulationMode||room.status!=='lobby'||room.mode!=='competition'||!(people.some(p=>p.ready===true)&&people.some(p=>p.ready!==true)));$('startAnyway').disabled=!loadedPeople||loadedVotes.size!==N;$('resetOfficial').disabled=cleanupInProgress;$('exitSimulation').style.display=simulationMode?'inline-block':'none';
 $('start').textContent=room.mode==='survey'?'Abrir encuesta':'Iniciar competencia';
  const confirmedCount=people.filter(p=>p.ready===true).length;
  const quorumReady=people.length>0&&confirmedCount===people.length;
- $('start').disabled=room.status!=='lobby'||(room.quizVersion===3&&room.mode!=='competition')||(!simulationMode&&(!loadedPeople||loadedVotes.size!==N||!quorumReady));$('next').classList.toggle('hidden',room.mode==='survey'||room.idx>=N-1);$('reveal').classList.toggle('hidden',room.mode==='survey');$('next').disabled=room.status!=='live'||!room.reveal||room.idx>=N-1||(room.quizVersion>=2&&stageNow()<2);$('reveal').disabled=room.status!=='live'||(room.quizVersion!==2&&room.reveal)||(room.quizVersion>=2&&stageNow()>=3);$('reveal').textContent=room.quizVersion>=2?(stageNow()===0?'Mostrar distribución':stageNow()===1?'Revelar respuesta':'Ampliar explicación (opcional)'):'Revelar respuesta';$('stageGuide').textContent=room.status==='lobby'?(people.length===0?'Esperando participantes':confirmedCount+'/'+people.length+' confirmados · '+(quorumReady?'Puedes iniciar':'Faltan '+(people.length-confirmedCount)+' confirmaciones')):room.mode!=='competition'?'':room.status==='done'?'Dinámica finalizada. Puedes revisar resultados o crear otra.':room.idx===N-1&&stageNow()>=2?'Última pregunta: pulsa «Cerrar y mostrar resultados».':stageNow()===0?'Paso 1: mostrar cómo respondió el grupo.':stageNow()===1?'Paso 2: revelar cuál era correcta.':'Ya puedes pulsar «Siguiente pregunta»; la explicación adicional es opcional.';$('finish').disabled=room.status==='done'||room.status==='lobby';
+ $('start').disabled=room.status!=='lobby'||(room.quizVersion===3&&room.mode!=='competition')||(!simulationMode&&(!loadedPeople||loadedVotes.size!==N||!quorumReady));$('next').classList.toggle('hidden',room.mode==='survey'||room.idx>=N-1);$('reveal').classList.toggle('hidden',room.mode==='survey');$('next').disabled=room.status!=='live'||!room.reveal||room.idx>=N-1||(room.quizVersion>=2&&stageNow()<2);$('reveal').disabled=room.status!=='live'||(room.quizVersion!==2&&room.reveal)||(room.quizVersion>=2&&stageNow()>=3);$('reveal').textContent=room.quizVersion>=2?(stageNow()===0?'Mostrar distribución':stageNow()===1?'Revelar respuesta':'Ampliar explicación (opcional)'):'Revelar respuesta';$('stageGuide').textContent=room.status==='lobby'?(people.length===0?'Esperando participantes':confirmedCount+'/'+people.length+' confirmados · '+(quorumReady?'Puedes iniciar':'Faltan '+(people.length-confirmedCount)+' confirmaciones ('+people.filter(p=>p.ready!==true).map(p=>p.name||'sin nombre').slice(0,5).join(', ')+'). Si alguien no responde, usa «Iniciar solo con los listos».')):room.mode!=='competition'?'':room.status==='done'?'Dinámica finalizada. Puedes revisar resultados o crear otra.':room.idx===N-1&&stageNow()>=2?'Última pregunta: pulsa «Cerrar y mostrar resultados».':stageNow()===0?'Paso 1: mostrar cómo respondió el grupo.':stageNow()===1?'Paso 2: revelar cuál era correcta.':'Ya puedes pulsar «Siguiente pregunta»; la explicación adicional es opcional.';$('finish').disabled=room.status==='done'||room.status==='lobby';
 const total=nAnswers(),correct=QUIZ.reduce((v,q,i)=>v+correctFor(i),0),submitted=people.filter(p=>QUIZ.every((q,i)=>votes[i].some(v=>v.uid===p.uid))).length;
 $('metrics').replaceChildren(rowMetric(people.length,'Participantes'),rowMetric(total,'Respuestas registradas'),rowMetric(fmtPercent(correct,total),'Porcentaje de aciertos'),rowMetric(submitted,'Cuestionarios completos'));
 if(room.owner===uid&&!simulationMode)refreshPresenterInvite();renderLearningSummary();if(projecting)renderProjection();const sum=$('summary');sum.replaceChildren();QUIZ.forEach((q,i)=>{const n=votes[i].length,ac=correctFor(i),box=add('div',undefined,'aggregate'),left=add('div');left.append(add('strong',`P${i+1} · ${q.topic}`),add('div',`${ac} aciertos de ${n} respuestas · ${fmtPercent(ac,n)}`,'small'));const prog=add('progress');prog.max=100;prog.value=n?100*ac/n:0;prog.setAttribute('aria-label',`Porcentaje de aciertos en pregunta ${i+1}`);box.append(left,prog);sum.append(box)});
@@ -434,11 +448,12 @@ function renderWaitingConfirmation(){
  $('confirmReady').textContent=readySubmitting?'Confirmando…':'Estoy listo';
  $('waitingReadyStatus').textContent=confirmed?'✓ Preparación confirmada y guardada':readySubmitting?'Guardando confirmación…':'Pendiente de confirmación';
 }
+function withTimeout(promise,ms,message){let t;return Promise.race([promise,new Promise((_,reject)=>{t=setTimeout(()=>reject(Object.assign(Error(message),{code:'client-timeout'})),ms)})]).finally(()=>clearTimeout(t))}
 $('confirmReady').onclick=async()=>{
  if(readySubmitting||isHost||!room||room.status!=='lobby'||myRegistration?.ready===true)return;
  readySubmitting=true;renderWaitingConfirmation();
  try{
-  await anonDb.collection('rooms').doc(roomId).collection('participants').doc(anonUid).update({ready:true,readyAt:firebase.firestore.FieldValue.serverTimestamp()});
+  await withTimeout(anonDb.collection('rooms').doc(roomId).collection('participants').doc(anonUid).update({ready:true,readyAt:firebase.firestore.FieldValue.serverTimestamp()}),12000,'Firebase no respondió en 12 s. Comprueba tu conexión y vuelve a pulsar «Estoy listo».');
   myRegistration={...myRegistration,ready:true};alertText('');
  }catch(e){alertText('No se pudo confirmar tu preparación: '+e.message,true)}
  finally{readySubmitting=false;if(room?.status==='lobby')renderWaitingConfirmation()}
@@ -457,7 +472,7 @@ if(room.mode==='survey'){if(QUIZ.every((q,i)=>hasVoted(i))&&!reviewingSurvey){$(
 if(room.mode==='competition'&&stageNow()===1&&room.status==='live'){
  $('revealPanel').classList.remove('hidden');updatePersonalScore();
  const box=$('personalReveal');box.className='personal-reveal is-unanswered';box.replaceChildren();
- box.append(add('h3','Distribución de respuestas'),add('p','Observa cómo votó el grupo. El moderador aún no ha revelado cuál es la alternativa correcta.'));
+ box.append(add('h3','Distribución de respuestas'),add('p','Mira en la pantalla compartida cómo votó el grupo. El moderador aún no ha revelado cuál es la alternativa correcta.'));
  $('revealTitle').textContent='Resultados · pregunta '+(room.idx+1);
  $('revealChart').replaceChildren();$('revealExplanation').textContent='Respuesta pendiente de revelar.';$('microTransfer').classList.add('hidden');return
  }
@@ -671,7 +686,7 @@ function unsubscribe(){if(attendancePollTimer){clearInterval(attendancePollTimer
 function watchSharedVotes(){sharedVoteStops.forEach(fn=>fn());sharedVoteStops=[];/* Los resultados individuales de terceros nunca se consultan desde el navegador participante. */}
 function subscribe(){
  unsubscribe();loadedPeople=false;loadedVotes=new Set();attendanceConnection='waiting';attendanceError='';sharedVoteStops.forEach(fn=>fn());sharedVoteStops=[];
- if(isHost&&!simulationMode){attendancePollTimer=setInterval(()=>{if(room&&room.status!=='done')refreshAttendees()},12000)}
+ /* Sin sondeo periódico: el listener en tiempo real basta; «Actualizar participantes» queda como lectura manual. */
  if(!isHost){
   stops.push(anonDb.doc(ACTIVE_ROOM_PATH).onSnapshot(snapshot=>{
    if(!snapshot.exists)return;
@@ -747,7 +762,7 @@ async function submit(i,choice){
  pendingVotes.add(i);
  try{
   const shouldAdvance=room.mode==='survey'&&i<N-1&&!hasVoted(i)&&!reviewingSurvey;
-  await voteRef(i).set({choice,submittedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  await withTimeout(voteRef(i).set({choice,submittedAt:firebase.firestore.FieldValue.serverTimestamp()}),12000,'Firebase no confirmó tu respuesta en 12 s. Comprueba tu conexión y vuelve a elegirla.');
   // El aviso de una respuesta anterior fallida no debe mantenerse después de confirmar otra.
   clearVoteProblem();alertText('');
   if(shouldAdvance)surveyAt=i+1;
@@ -771,13 +786,21 @@ async function submit(i,choice){
 }
 $('reviewSurvey').onclick=()=>{reviewingSurvey=true;surveyAt=0;renderParticipant()};
 $('prevSurvey').onclick=()=>{surveyAt=Math.max(0,surveyAt-1);renderParticipant()};$('nextSurvey').onclick=()=>{if(surveyAt===N-1&&QUIZ.every((q,i)=>hasVoted(i))){reviewingSurvey=false;renderParticipant()}else{surveyAt=(surveyAt+1)%N;renderParticipant()}};
-$('start').onclick=async()=>{try{if(!isHost||room.status!=='lobby'||(room.quizVersion===3&&room.mode!=='competition'))return;
- if(!simulationMode&&(!loadedPeople||loadedVotes.size!==N||people.length===0||people.some(p=>p.ready!==true))){alertText('La sala aún tiene participantes pendientes de confirmar.',true);return}
+$('startAnyway').onclick=()=>startCompetition(true);
+$('start').onclick=()=>startCompetition(false);
+async function startCompetition(force){try{if(!isHost||room.status!=='lobby'||(room.quizVersion===3&&room.mode!=='competition'))return;
+ if(!simulationMode&&(!loadedPeople||loadedVotes.size!==N||people.length===0)){alertText('Todavía no se han cargado los participantes de la sala.',true);return}
+ const pendingPeople=people.filter(p=>p.ready!==true);
+ if(!simulationMode&&pendingPeople.length&&!force){alertText('La sala aún tiene participantes pendientes de confirmar.',true);return}
+ if(!simulationMode&&force){
+  if(!people.some(p=>p.ready===true)){alertText('Ningún participante ha confirmado todavía.',true);return}
+  if(!confirm('Iniciar sin '+pendingPeople.length+' participante(s) pendiente(s): '+pendingPeople.map(p=>p.name||'sin nombre').join(', ')+'.\n\nSi están conectados podrán responder igualmente. ¿Iniciar ahora?'))return;
+ }
  const change={status:'live',idx:room.mode==='survey'?-1:0,reveal:false,publicView:'questions',openedAt:firebase.firestore.FieldValue.serverTimestamp()};
  if(room.quizVersion>=2)change.revealStage=0;
  if(simulationMode){Object.assign(room,change,{openedAt:firebase.firestore.Timestamp.fromMillis(Date.now())});render()}
  else await rref().update(change)
- }catch(e){alertText(e.message,true)}};
+ }catch(e){alertText('No se pudo iniciar: '+e.message,true)}}
 $('next').onclick=async()=>{try{
  if(!isHost||room.mode!=='competition'||!room.reveal||room.idx>=N-1||(room.quizVersion>=2&&stageNow()<2))return;
  const change={idx:room.idx+1,reveal:false,openedAt:firebase.firestore.FieldValue.serverTimestamp()};
@@ -826,6 +849,8 @@ function stageNow(){return room?.revealStage??(room?.reveal?2:0)}
 function projectReady(i){return room.status==='done'||(room.mode==='competition'&&(room.idx>i||(room.idx===i&&stageNow()>=1)))}
 let cachedPublicQr=null,cachedPublicQrRoom='';
 let publicIntroUntilWelcome=new URLSearchParams(location.search).get('intro')==='1';
+/* La portada obligatoria solo rige en la primera carga; una recarga posterior (F5) no debe volver a la portada en plena pregunta. */
+if(publicIntroUntilWelcome){try{const u=new URL(location.href);u.searchParams.delete('intro');history.replaceState(null,'',u.toString())}catch{}}
 function renderProjection(){
  if(!projecting||!room||!isHost)return;
  const out=$('projectChart');out.replaceChildren();
@@ -970,8 +995,8 @@ $('removePresenter').onclick=async()=>{
 };
 let resettingOfficial=false;
 $('resetOfficial').onclick=async()=>{
- if(resettingOfficial||!isHost||simulationMode||!room||room.owner!==uid||!['live','done'].includes(room.status)){
-  return alertText('Solo el propietario puede reiniciar el ensayo de una sala abierta o finalizada.',true);
+ if(resettingOfficial||!isHost||simulationMode||!room||room.owner!==uid||!['lobby','live','done'].includes(room.status)){
+  return alertText('Solo el propietario puede reiniciar el ensayo de la sala.',true);
  }
  const typed=prompt('REINICIAR ENSAYO: se eliminarán los '+people.length+' participantes inscritos y TODOS los votos de la sala '+roomId+'. Se conservará el QR y se activará COMPETENCIA DIRIGIDA. Escribe REINICIAR:');
  if(typed!=='REINICIAR')return;
@@ -979,7 +1004,8 @@ $('resetOfficial').onclick=async()=>{
  resettingOfficial=true;cleanupInProgress=true;$('resetOfficial').disabled=true;render();
  try{
   const ref=rref(),currentRoomId=roomId,limit=180;
-  if(room.status==='live')await ref.update({status:'done',reveal:true,revealStage:3});
+  /* Las reglas solo permiten borrar con la sala finalizada: se pasa primero a «done» (también desde la sala de espera) y al terminar vuelve a «lobby». */
+  if(room.status!=='done')await ref.update({status:'done',reveal:true,revealStage:3,publicView:'welcome'});
   let deleted=0;
   async function clearCollection(collectionRef){
    while(true){
