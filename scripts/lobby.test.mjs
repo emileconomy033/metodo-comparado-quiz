@@ -25,4 +25,8 @@ assert.equal(d.getElementById('start').disabled,false);assert(d.getElementById('
 d.getElementById('start').click();await new Promise(r=>setTimeout(r,50));assert.equal(w.eval('globalThis.__written').status,'live');
 // participant not owner sees no Quitar
 w.eval(`room.status='lobby';uid='x';render()`);assert.equal(d.querySelectorAll('#attendanceNames button').length,0);
+// sala finalizada: la pantalla pública no debe aparentar sala de espera con QR
+w.eval("uid='o';room.status='done';room.publicView='welcome';projecting=true;renderProjection()");
+assert(d.getElementById('projectChart').textContent.includes('La sala está cerrada'),'pública cerrada');
+assert(d.getElementById('projectStage').textContent==='Sala cerrada');
 console.log('JSDOM OK');process.exit(0);

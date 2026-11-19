@@ -172,7 +172,7 @@ const $=x=>document.getElementById(x);const IDs=['setup','home','create','modera
 let myRegistration=null,readySubmitting=false;
 let db=null,uid='',anonDb=null,anonUid='',moderatorDb=null,moderatorAuth=null,roomId='',room=null,isHost=false,myName='',myCountry='',people=[],votes=Array.from({length:N},()=>[]),stops=[],activeTab=0,surveyAt=0,ticker=null,authReady=false,reviewingSurvey=false,projecting=false,projectAt=0,projectView='question';
 function section(...names){IDs.forEach(x=>$(x).classList.toggle('hidden',!names.includes(x)))}
-function alertText(s,isError=false){$('alert').replaceChildren();$('alert').setAttribute('role',isError?'alert':'status');if(!s)return;const n=document.createElement('div');n.className='notice'+(isError?' error':'');n.textContent=s;$('alert').append(n)}
+function alertText(s,isError=false){$('alert').replaceChildren();$('alert').setAttribute('role',isError?'alert':'status');if(!s)return;const n=document.createElement('div');n.className='notice'+(isError?' error':'');n.textContent=s;$('alert').append(n);if(isError&&n.scrollIntoView)n.scrollIntoView({block:'nearest'})}
 function code(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8)}
 const ACTIVE_ROOM_PATH='roomDirectory/current';
 async function fetchActiveRoomId(){
@@ -426,7 +426,7 @@ $('showPublicWelcome').disabled=simulationMode||room.publicView==='welcome'||roo
  const readyEl=$('roomReadiness');const synced=simulationMode||(loadedPeople&&loadedVotes.size===N);const empty=synced&&!people.length&&votes.every(arr=>arr.length===0);
  const ready=!simulationMode&&room.status==='lobby'&&room.mode==='competition'&&empty&&!cleanupInProgress&&['live','server'].includes(attendanceConnection);
  readyEl.className='room-readiness'+(ready?' ready':room.status==='live'||cleanupInProgress?' busy':'');
- readyEl.textContent=simulationMode?'Ensayo simulado · sin QR ni votos reales':cleanupInProgress?'Limpiando datos del ensayo; no permitas nuevos ingresos…':room.status==='done'?'Sesión finalizada · borra los datos si deseas reutilizar el mismo QR':!synced?'Verificando registros y respuestas en Firebase…':ready?'Sala lista y disponible · 0 participantes · 0 respuestas · mismo código QR':room.status==='live'?'Actividad en curso · '+people.length+' participantes': 'Sala en espera · '+people.length+' inscritos y '+nAnswers()+' respuestas';
+ readyEl.textContent=simulationMode?'Ensayo simulado · sin QR ni votos reales':cleanupInProgress?'Limpiando datos del ensayo; no permitas nuevos ingresos…':room.status==='done'?'SALA CERRADA: nadie puede inscribirse. Pulsa «Reiniciar ensayo · conservar QR» (abajo) para reabrirla con el mismo QR.':!synced?'Verificando registros y respuestas en Firebase…':ready?'Sala lista y disponible · 0 participantes · 0 respuestas · mismo código QR':room.status==='live'?'Actividad en curso · '+people.length+' participantes': 'Sala en espera · '+people.length+' inscritos y '+nAnswers()+' respuestas';
  $('hostHint').textContent=people.length+(simulationMode?' participantes ficticios':' participantes');$('simulationWarning').classList.toggle('hidden',!simulationMode);$('completedActions').classList.toggle('hidden',room.status!=='done');$('teacherSimulation').style.display=simulationMode?'none':'inline-block';$('openAudienceWindow').disabled=simulationMode;$('presenterAccess').classList.toggle('hidden',simulationMode||room.owner!==uid);$('resetOfficial').classList.toggle('hidden',simulationMode||room.owner!==uid||!['lobby','live','done'].includes(room.status));$('startAnyway').classList.toggle('hidden',simulationMode||room.status!=='lobby'||room.mode!=='competition'||!(people.some(p=>p.ready===true)&&people.some(p=>p.ready!==true)));$('startAnyway').disabled=!loadedPeople||loadedVotes.size!==N;$('resetOfficial').disabled=cleanupInProgress;$('exitSimulation').style.display=simulationMode?'inline-block':'none';
 $('start').textContent=room.mode==='survey'?'Abrir encuesta':'Iniciar competencia';
  const confirmedCount=people.filter(p=>p.ready===true).length;
@@ -460,7 +460,7 @@ $('confirmReady').onclick=async()=>{
 };
 function renderParticipant(){if(isHost){$('participant').classList.add('hidden');return}if($('alert').textContent?.includes('No se pudo completar el ingreso')||$('alert').textContent?.includes('No fue posible ingresar (validación inicial)'))alertText('');$('participant').classList.remove('hidden');['waiting','survey','submittedPanel','competition','revealPanel','donePanel'].forEach(s=>$(s).classList.add('hidden'));
 if(room.status==='lobby'){if(!myRegistration){unsubscribe();room=null;roomId='';section('home');alertText('La sala se reinició. Ingresa nuevamente para participar.',true);return}$('waiting').classList.remove('hidden');renderWaitingConfirmation();return}
-if(room.status==='done'){$('donePanel').classList.remove('hidden');updatePersonalScore();$('myScore').textContent=`Resultado final: ${scoreReleased().correct} respuestas correctas de ${N}.`;drawRankings();return}
+if(room.status==='done'){$('donePanel').classList.remove('hidden');updatePersonalScore();{const c=scoreReleased().correct,msg=c===N?'Resultado sobresaliente: aplicaste con rigor los criterios de comparabilidad.':c>=Math.ceil(N*.75)?'Muy buen resultado: dominas la mayor parte de los criterios.':c>=Math.ceil(N/2)?'Buen punto de partida: revisa los conceptos que fallaste en la discusión.':c>0?'Hay conceptos por reforzar: la discusión del grupo te ayudará a aclararlos.':'Esta vez no acertaste ninguna, pero el aprendizaje está en la discusión de las explicaciones.';$('myScore').textContent=`Resultado final: ${c} respuestas correctas de ${N}. ${msg}`}drawRankings();return}
 if(room.mode==='survey'&&room.quizVersion===3){
  $('waiting').classList.remove('hidden');$('waitTitle').textContent='Ensayo anterior en proceso de reinicio';
  $('waitText').textContent='El propietario debe pulsar «Reiniciar ensayo · conservar QR». Después podrás inscribirte nuevamente.';
@@ -661,7 +661,7 @@ $('join').onclick=async()=>{
   const ref=anonDb.collection('rooms').doc(enteredCode);
   const existing=await ref.get({source:'server'});
   if(!existing.exists)throw Error('La sala no existe.');
-  if(existing.data().status==='done')throw Error('La sesión ya terminó.');
+  if(existing.data().status==='done')throw Error('La sala está cerrada porque la sesión anterior ya finalizó. Avisa al moderador para que la reabra y vuelve a pulsar «Participar».');
   step='comprobar tu inscripción';
   const person=ref.collection('participants').doc(anonUid);
   const saved=await person.get({source:'server'});
@@ -862,6 +862,12 @@ function renderProjection(){
   $('projectHeading').textContent='¿Realmente sabemos comparar?';
   $('projectStage').textContent='Sala de espera';
   $('projectIndicator').textContent='Sala '+roomId;
+  if(room.status==='done'){
+   $('projectStage').textContent='Sala cerrada';
+   const closed=add('div',undefined,'project-hidden');
+   closed.append(add('h3','La sala está cerrada'),add('p','Todavía no se pueden inscribir participantes. El moderador debe reabrirla desde el panel privado.'));
+   out.append(closed);return;
+  }
   const layout=add('div',undefined,'project-welcome');
   if(!cachedPublicQr||cachedPublicQrRoom!==roomId){
    cachedPublicQr=add('div',undefined,'project-qr');cachedPublicQrRoom=roomId;
@@ -998,9 +1004,12 @@ $('resetOfficial').onclick=async()=>{
  if(resettingOfficial||!isHost||simulationMode||!room||room.owner!==uid||!['lobby','live','done'].includes(room.status)){
   return alertText('Solo el propietario puede reiniciar el ensayo de la sala.',true);
  }
+ const nothingToLose=loadedPeople&&loadedVotes.size===N&&people.length===0&&nAnswers()===0;
+ if(!nothingToLose){
  const typed=prompt('REINICIAR ENSAYO: se eliminarán los '+people.length+' participantes inscritos y TODOS los votos de la sala '+roomId+'. Se conservará el QR y se activará COMPETENCIA DIRIGIDA. Escribe REINICIAR:');
  if(typed!=='REINICIAR')return;
  if(!confirm('¿Confirmas que estas son pruebas y deseas vaciar la sala '+roomId+'? Esta acción NO se puede deshacer.'))return;
+ }
  resettingOfficial=true;cleanupInProgress=true;$('resetOfficial').disabled=true;render();
  try{
   const ref=rref(),currentRoomId=roomId,limit=180;
