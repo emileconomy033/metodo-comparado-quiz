@@ -352,28 +352,30 @@ function chart(target,i,showAnswer,compact=false){
   d.append(concise);return
  }
  const panel=add('section',undefined,'insight pedagogical-report'),G=PEDAGOGY[i];
- const item=(title,body,cls)=>{const b=add('div',undefined,'pedagogical-item'+(cls?' '+cls:''));b.append(add('strong',title));(Array.isArray(body)?body:[body]).forEach(t=>b.append(add('p',t)));return b};
- panel.append(add('h3',`Guion pedagógico del expositor · Pregunta ${i+1}`));
+ const lower=t=>t?t.charAt(0).toLowerCase()+t.slice(1):'';
+ const para=(head,body,cls)=>{const b=add('div',undefined,'pedagogical-item'+(cls?' '+cls:''));b.append(add('strong',head));if(body)b.append(add('p',body));return b};
+ panel.append(add('h3',`Análisis de la pregunta ${i+1}`));
+ if(!n){panel.append(add('p','Aún no hay respuestas registradas.','pedagogical-intro'));d.append(panel);return}
  const enrolled=people.length;
- panel.append(add('p',n?`${n} respuesta${n===1?'':'s'}${enrolled?' de '+enrolled+' inscrito'+(enrolled===1?'':'s'):''}. ${fmtPercent(good,n)} acertó y ${fmtPercent(bad,n)} eligió otra alternativa.`:'Aún no hay respuestas registradas.','pedagogical-intro'));
- panel.append(item('Cómo leer estos resultados',readingGuide(i,true)));
- if(G.means)panel.append(item('Qué evalúa esta pregunta',G.means));
- if(G.say)panel.append(item('Qué decir al revelar',G.say,'correct-choice'));
- panel.append(item(`Respuesta correcta · ${'ABCD'[q.correct]}${n?' · '+fmtPercent(good,n)+' ('+good+' de '+n+')':''}`,`${q.a[q.correct]} ${G.principle}`,'correct-choice'));
- const mistakes=q.a.map((_,j)=>({j,count:countFor(i,j)})).filter(x=>x.j!==q.correct).sort((a,b)=>b.count-a.count||a.j-b.j);
- panel.append(add('h3','Por qué fallan las otras alternativas (de más a menos elegida)'));
- mistakes.forEach((x,k)=>{
-  const it=add('div',undefined,'pedagogical-item error-choice');
-  it.append(add('strong',`${k+1}. Alternativa ${'ABCD'[x.j]}${n?': '+fmtPercent(x.count,n)+' ('+x.count+' de '+n+')':''}`));
-  it.append(add('p',q.a[x.j],'small'));
-  it.append(add('p',(G.trap&&G.trap[x.j])||('Esta alternativa no es correcta porque '+normalizeExplanation(G.mis[x.j]))));
-  panel.append(it);
+ panel.append(add('p',`${n} respuesta${n===1?'':'s'}${enrolled?' de '+enrolled+' inscrito'+(enrolled===1?'':'s'):''}.`,'small'));
+ const wrongOnes=q.a.map((_,j)=>({j,count:countFor(i,j)})).filter(x=>x.j!==q.correct&&x.count>0).sort((a,b)=>b.count-a.count||a.j-b.j);
+ wrongOnes.forEach(x=>{
+  const why=(G.trap&&G.trap[x.j])||('esta alternativa no se ajusta al principio evaluado: '+normalizeExplanation(G.mis[x.j]));
+  panel.append(para(`${fmtPercent(x.count,n)} eligió la alternativa ${'ABCD'[x.j]} (${x.count} de ${n}) y falló dado que ${lower(why)}`,`«${q.a[x.j]}»`,'error-choice'));
  });
- if(G.discuss)panel.append(item('Preguntas para conversar con el grupo',G.discuss.map((t,k)=>(k+1)+'. '+t)));
- if(G.example)panel.append(item('Ejemplo para aclarar',G.example));
- panel.append(item('Cómo trasladarlo a otra investigación',[G.transfer,'Pregunta guía: '+G.question]));
- if(G.bridge)panel.append(item('Puente a lo siguiente',G.bridge));
- if(G.time||G.refs)panel.append(add('p',[G.time?'Tiempo sugerido: '+G.time+'.':'',G.refs?'Lecturas de apoyo: '+G.refs:''].filter(Boolean).join(' '),'small'));
+ if(good===n)panel.append(para(`Todos eligieron la alternativa ${'ABCD'[q.correct]}, la correcta (${n} de ${n}).`,`Es la correcta porque ${lower(G.principle)}`,'correct-choice'));
+ else panel.append(para(`${fmtPercent(good,n)} eligió la alternativa ${'ABCD'[q.correct]} (${good} de ${n}) y es la correcta porque ${lower(G.principle)}`,`«${q.a[q.correct]}»`,'correct-choice'));
+ const extra=add('details',undefined,'pedagogical-item');
+ extra.append(add('summary','Material de apoyo para la conversación'));
+ const block=(title,body)=>{const b=add('div');b.append(add('strong',title));(Array.isArray(body)?body:[body]).forEach(t=>b.append(add('p',t)));extra.append(b)};
+ block('Cómo leer estos resultados',readingGuide(i,true));
+ if(G.say)block('Qué decir al revelar',G.say);
+ if(G.discuss)block('Preguntas para conversar con el grupo',G.discuss.map((t,k)=>(k+1)+'. '+t));
+ if(G.example)block('Ejemplo para aclarar',G.example);
+ block('Cómo trasladarlo a otra investigación',[G.transfer,'Pregunta guía: '+G.question]);
+ if(G.bridge)block('Puente a lo siguiente',G.bridge);
+ if(G.time||G.refs)extra.append(add('p',[G.time?'Tiempo sugerido: '+G.time+'.':'',G.refs?'Lecturas de apoyo: '+G.refs:''].filter(Boolean).join(' '),'small'));
+ panel.append(extra);
  d.append(panel);
 }
 function normalizeExplanation(text){

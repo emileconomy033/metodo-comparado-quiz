@@ -250,3 +250,6 @@ Se detectó que abrir la ventana pública mientras la sala anterior estaba en `l
 - «Cómo leer estos resultados» adapta la sugerencia a la distribución real (consenso, distractor dominante, mayoría con dudas, grupo dividido).
 - El resumen final de la pantalla pública y del panel muestra el resultado de cada pregunta con un mensaje.
 - El panel incluye un «Guion de la sesión para los dos expositores» (reparto 2 y 2).
+
+## Análisis de cada pregunta (19 nov 2026)
+Tras revelar la respuesta, el panel muestra párrafos cortos: primero cada alternativa incorrecta con votos (de mayor a menor) con «X % eligió la alternativa B y falló dado que…», luego la correcta con «es la correcta porque…». Si todos acertaron, solo se explica por qué es correcta. El material de apoyo (discusión, ejemplo, puente) queda plegado.
