@@ -70,7 +70,12 @@ const closeSmall=ev('closingScript([{i:0,n:3,c:0}])');assert(closeSmall.paras[0]
 ev(`room.status='done';projecting=true;renderProjection()`);
 const pub=d.getElementById('projectChart').textContent;
 assert(pub.includes('Conclusión de la sesión'),'cierre público');
-assert(!pub.includes('Desambigüemos')&&!pub.includes('Tres ideas para llevarnos')&&!pub.includes('Panebianco')&&!pub.includes('Para decir'),'la pantalla pública debe ser una versión reducida');
+assert(!pub.includes('Desambigüemos')&&!pub.includes('Panebianco')&&!pub.includes('Para decir'),'la pantalla pública debe ser una versión reducida');
+const stripCite=x=>x.replace(/^\d+\. /,'').replace(/ \(Sartori[^)]*\)\.?$/,'').replace(/[ .]+$/,'');
+const pubIdeas=[...d.querySelectorAll('#projectChart .key-idea-row')].map(r=>stripCite(r.textContent));
+const tmp=d.createElement('div');tmp.append(ev('closingNode(false)'));
+const privIdeas=[...tmp.querySelectorAll('ol.takeaways li')].map(r=>stripCite(r.textContent));
+assert.equal(pubIdeas.length,3);assert.deepEqual(pubIdeas,privIdeas,'las ideas de la pantalla pública coinciden con las del panel privado');
 ev('projecting=false');
 
 // 5) Cierre personal

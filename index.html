@@ -670,6 +670,8 @@ function hostCard(i,n,good,q){
  card.append(sup);
  return card;
 }
+/* Las mismas tres ideas para el panel privado y la pantalla pública: las de las preguntas más débiles. */
+function takeawayIdx(rows){const w=[...rows].sort((a,b)=>a.c/a.n-b.c/b.n||a.i-b.i).slice(0,3).map(x=>x.i);[0,1,2,3].forEach(k=>{if(w.length<3&&!w.includes(k)&&PEDAGOGY[k]&&PEDAGOGY[k].take)w.push(k)});return w.sort((a,b)=>a-b)}
 function guionReady(){return PEDAGOGY.length>0&&PEDAGOGY.every(p=>p&&p.key)}
 function closingReady(){return !!room&&guionReady()&&(room.status==='done'||(room.mode==='competition'&&room.status==='live'&&room.idx===N-1&&stageNow()>=2))}
 /* Guion de cierre (60-90 s) según el resultado global. */
@@ -716,9 +718,7 @@ function closingNode(compact){
  box.append(chips);
  const sc=closingScript(rows);box.append(speakBox(sc.paras,sc.seconds,'Para decir en el cierre'));
  box.append(add('h4','Tres ideas para llevarnos'));
- const weakest=[...rows].sort((a,b)=>a.c/a.n-b.c/b.n||a.i-b.i).slice(0,3).map(x=>x.i);
- [0,1,2,3].forEach(k=>{if(weakest.length<3&&!weakest.includes(k)&&PEDAGOGY[k]&&PEDAGOGY[k].take)weakest.push(k)});
- const ul=add('ol',undefined,'takeaways');weakest.sort((a,b)=>a-b).forEach(k=>{const li=add('li');li.append(rich(PEDAGOGY[k].take));ul.append(li)});box.append(ul);
+ const ul=add('ol',undefined,'takeaways');takeawayIdx(rows).forEach(k=>{const li=add('li');li.append(rich(PEDAGOGY[k].take));ul.append(li)});box.append(ul);
  const det=persistOpen(add('details',undefined,'sub'),'closing-detail');
  det.append(add('summary','Detalle por pregunta'));
  rows.forEach(x=>{
@@ -1382,8 +1382,8 @@ function renderProjection(){
    });
    const difficult=[...meaningful].sort((a,b)=>a.correct/a.n-b.correct/b.n)[0];
    if(PEDAGOGY.every(p=>p&&p.key)){
-    const ideas=add('div',undefined,'learning-card key-ideas');ideas.append(add('strong','Ideas fuerza'));
-    meaningful.forEach(x=>{const row=add('p',undefined,'key-idea-row');row.append(add('span',`P${x.i+1} · `,'qtag'),rich(PEDAGOGY[x.i].key));ideas.append(row)});
+    const ideas=add('div',undefined,'learning-card key-ideas');ideas.append(add('strong','Tres ideas para llevarnos'));
+    takeawayIdx(meaningful.map(x=>({i:x.i,n:x.n,c:x.correct}))).forEach((k,r)=>{const row=add('p',undefined,'key-idea-row');row.append(add('span',(r+1)+'. ','qtag'),rich(PEDAGOGY[k].take.replace(/ \(Sartori[^)]*\)\.?$/,'.')));ideas.append(row)});
     panel.append(ideas,closingNode(true));
    }else panel.append(add('p','Idea para recordar: '+PEDAGOGY[difficult.i].principle));
   }
