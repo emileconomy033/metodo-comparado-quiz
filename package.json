@@ -2,6 +2,6 @@
   "name": "metodo-comparado-quiz",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node scripts/verify.mjs && node scripts/lobby.test.mjs" },
+  "scripts": { "test": "node scripts/verify.mjs && node scripts/lobby.test.mjs && node scripts/narrative.test.mjs" },
   "devDependencies": { "jsdom": "^24.1.3" }
 }

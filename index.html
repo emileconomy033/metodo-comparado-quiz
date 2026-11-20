@@ -62,6 +62,27 @@ footer{color:#788692}
 .learning-card{padding:12px 16px;margin:9px 0;border:1px solid #e1e8e6;background:#f7f9f8;border-radius:4px}
 .learning-card strong{display:block;margin-bottom:6px}
 .learning-card p{margin:5px 0}
+mark.hl{background:linear-gradient(transparent 10%,#ffe27a 10%,#ffe27a 90%,transparent 90%);color:inherit;padding:0 3px;border-radius:2px;font-weight:700}
+.theory-callout{margin:14px 0;padding:14px 18px;border-left:5px solid #2b6a8f;background:#eaf3f9;border-radius:4px;line-height:1.6}
+.theory-callout p{margin:0}.theory-callout .kick{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#245a7a;font-weight:800;margin-bottom:6px}
+.theory-callout .cite{display:block;margin-top:8px;font-size:13px;color:#4b6676;font-style:italic}
+.disambig{margin:10px 0 0;padding:10px 14px;background:#fff7e8;border-left:3px solid #c9964f;border-radius:3px;line-height:1.6}
+.narrative-lead{font-size:17px;line-height:1.65;margin:10px 0 14px}
+.strengthen{margin:14px 0;padding:12px 16px;background:#eef8f1;border-left:4px solid #2e7764;border-radius:3px;line-height:1.6}
+.key-idea{margin:10px 0;padding:10px 14px;background:#fffbe5;border:1px solid #f0dc8a;border-radius:4px;line-height:1.6}
+.key-ideas .key-idea-row{margin:8px 0;line-height:1.6}.key-ideas .qtag{font-weight:800;color:#245a7a}
+.badge{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:12px;margin-left:10px;vertical-align:middle}
+.badge.ok{background:#dff3e7;color:#1d6a42}.badge.warn{background:#ffefd2;color:#8a5a10}
+.theory-detail summary{cursor:pointer;color:#245a7a;font-weight:700;margin:8px 0}
+.closing-card{margin:24px 0;padding:22px 26px;border:1px solid #cfe0d8;border-top:5px solid #2e7764;background:#f4faf6;border-radius:6px;line-height:1.65;text-align:left}
+.closing-card h3{font:500 26px Georgia,serif;margin:0 0 12px}.closing-card h4{font:600 18px Georgia,serif;margin:18px 0 6px}
+.closing-card .takeaways{margin:8px 0 12px 20px;padding:0}.closing-card .takeaways li{margin:8px 0}
+.closing-quote{margin-top:14px;padding:12px 16px;border-left:4px solid #2b6a8f;background:#eaf3f9}
+.projection-screen .closing-card{font-size:clamp(16px,1.8vw,23px)}.projection-screen .key-ideas{font-size:clamp(16px,1.8vw,22px)}
+.sound-toggle{position:fixed;right:12px;bottom:12px;z-index:300;padding:8px 14px;border:1px solid #b8c9c4;border-radius:20px;background:#fff;color:#24394a;font:600 13px system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px #0002}
+.sound-toggle:hover{background:#eef6f3}
+.times-panel{margin:12px 0 18px;padding:13px 17px;border:1px solid #d3dfd9;border-radius:5px;background:#fbfdfb}
+.times-panel h4{margin:0 0 6px;font-size:15px}.times-panel .time-grid{margin:8px 0}.times-panel .tp-note{font-size:13px;color:#4f685c;margin:6px 0}
 .projection-screen{position:fixed;inset:0;z-index:80;overflow:auto;padding:clamp(20px,4vw,60px);background:#f5f7f6;color:#24394a}
 .projection-top{display:flex;justify-content:space-between;gap:20px;align-items:center;border-bottom:2px solid #2b554e;padding-bottom:15px;margin-bottom:28px;flex-wrap:wrap}
 .projection-top h2{font:500 clamp(30px,4vw,50px) Georgia,serif;margin:6px 0}
@@ -82,13 +103,14 @@ footer{color:#788692}
 <section id="moderatorLogin" class="card hidden"><h2>Acceso para expositores</h2><label for="moderatorEmail">Correo de expositor</label><input id="moderatorEmail" type="email" autocomplete="username" value="emil.economia@gmail.com" placeholder="correo@ejemplo.com"><label for="moderatorPassword">Contraseña del expositor</label><input id="moderatorPassword" type="password" autocomplete="current-password" placeholder="Contraseña"><div class="row" style="margin-top:16px"><button class="btn" id="moderatorEnter">Acceder</button><button class="btn secondary" id="moderatorBack">Volver</button></div></section>
 <section id="presenterEntry" class="card hidden"><h2>Entrar a la sala existente</h2><label for="presenterRoomCode">Código de la sala única</label><input id="presenterRoomCode" maxlength="8" autocomplete="off" placeholder="Código compartido"><div class="row" style="margin-top:16px"><button class="btn" id="presenterOpen">Abrir panel de exposición</button><button class="btn secondary" id="presenterBack">Volver al inicio</button></div></section>
 <section id="create" class="card hidden"><h2>Mi sala · propietario</h2><input id="mode" type="hidden" value="competition"><div class="mode-locked"><strong>Competencia dirigida</strong><span> El avance de preguntas lo controlan los expositores.</span></div><div id="durationEditor"><h3>Tiempo de respuesta por pregunta</h3><div id="durationFields" class="time-grid"></div><button class="btn secondary" id="sameTime" type="button">Aplicar el tiempo de P1 a todas</button></div><div class="row"><button class="btn" id="createRoom">Abrir mi sala · crear solo si no existe</button><button class="btn secondary" id="cancelCreate">Volver</button></div></section>
-<section id="host" class="hidden"><div class="card"><div class="row between"><div><div class="eyebrow">Panel privado del moderador</div><h2 id="hostCode"></h2></div><span class="pill" id="hostStatus"></span></div><div class="room-readiness" id="roomReadiness" role="status" aria-live="polite"></div><div class="row"><div id="qr" aria-label="Código QR para unirse"></div><div style="flex:1;min-width:200px"><p>Acceso de participantes</p><a id="joinUrl" target="_blank" rel="noopener noreferrer"></a><div class="row" style="margin-top:12px"><button class="btn secondary" id="copyLink">Copiar enlace</button><button class="btn secondary" id="downloadQR">Guardar QR</button><button class="btn secondary" id="hostHome">Volver al inicio</button><button class="btn secondary" id="newActivity">Volver a mi sala</button></div></div></div><div class="attendance-panel"><div class="row between"><strong id="attendanceCount" aria-live="polite">0 inscritos</strong><button class="btn secondary" id="refreshAttendees">Actualizar participantes</button></div><div class="ready-metrics" aria-live="polite"><div><strong id="readyCount">0</strong><span>Listos</span></div><div><strong id="pendingCount">0</strong><span>Pendientes</span></div></div><div class="ready-track" role="progressbar" aria-label="Confirmaciones de preparación" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="readyProgress"><div id="readyProgressFill"></div></div><p id="attendanceStatus" class="small" role="status">Conectando con Firebase…</p><div id="attendanceNames" class="attendance-names" aria-live="polite"></div></div><p id="hostHint" class="small"></p><details id="sessionScript" class="presenter-access"><summary><strong>Guion de la sesión para los dos expositores</strong></summary><ol><li><strong>Antes de empezar (5 min).</strong> Pantalla pública abierta con la portada y el QR. Verificar por voz que todos pudieron entrar. Cuando el contador muestre todos listos, pulsar «Iniciar competencia».</li><li><strong>Apertura (2 min, expositor 1).</strong> «Vamos a responder cuatro preguntas con el teléfono. Cada una tiene un tiempo de respuesta; después veremos cómo respondió el grupo y por qué.»</li><li><strong>Preguntas 1 y 2 (expositor 1, unos 6 min cada una).</strong> Pasos del panel: dejar correr el tiempo → «Mostrar distribución» → pedir que dos personas con respuestas distintas argumenten → «Revelar respuesta» → leer «Qué decir al revelar» → una pregunta de «Para conversar» → «Siguiente pregunta».</li><li><strong>Relevo.</strong> El expositor 2 puede llevar el panel desde su propia cuenta; los controles de avance funcionan igual en ambos paneles.</li><li><strong>Preguntas 3 y 4 (expositor 2, unos 6 min cada una).</strong> Mismo recorrido. En la pregunta 4 usar el «Puente» como cierre y pulsar «Cerrar y mostrar resultados».</li><li><strong>Cierre (3 min, ambos).</strong> La pantalla pública muestra el resultado por pregunta con su mensaje. Cada celular muestra el puntaje personal. Terminar con: «Antes de comparar: ¿qué propiedad, definida cómo, en qué casos y con qué equivalencia?»</li><li><strong>Después de clase.</strong> «Exportar CSV» y «Informe PDF». Para reutilizar la sala: «Reiniciar ensayo · conservar QR» (solo la cuenta propietaria).</li></ol></details><section id="presenterAccess" class="presenter-access"><h3>Segundo expositor autorizado</h3><div class="row"><input id="presenterInviteEmail" type="email" value="gramirezfunes@gmail.com" placeholder="Correo del segundo expositor" style="flex:1;min-width:210px"><button class="btn secondary" id="savePresenter">Autorizar expositor</button><button class="btn secondary" id="removePresenter">Revocar acceso</button></div><p id="presenterInviteStatus" class="small" role="status"></p></section><div id="simulationWarning" class="notice hidden" role="status">SIMULACIÓN · DATOS FICTICIOS</div><div class="row"><button class="btn" id="start">Abrir encuesta</button><button class="btn warning hidden" id="startAnyway" type="button">Iniciar solo con los listos</button><button class="btn secondary" id="next">Siguiente pregunta</button><button class="btn secondary" id="reveal">Revelar respuesta</button><button class="btn warning" id="finish">Cerrar y mostrar resultados</button><button class="btn warning" id="resetOfficial">Reiniciar ensayo · conservar QR</button><span class="small" id="stageGuide" aria-live="polite"></span></div></div><div class="card"><div class="row between"><h2>Estadísticas del grupo</h2><div class="row"><button class="btn" id="openAudienceWindow">Abrir pantalla para compartir</button><button class="btn secondary" id="showPublicWelcome">Mostrar portada y QR</button><button class="btn secondary" id="showPublicQuestion">Mostrar pregunta al público</button><button class="btn secondary" id="exportCSV">Exportar CSV</button><button class="btn secondary" id="printReport">Informe PDF</button></div></div><div id="completedActions" class="card hidden" style="margin:18px 0"><h2>Dinámica finalizada</h2><p></p><div class="row"><button class="btn secondary" id="completedHome">Volver al inicio</button></div></div><div id="metrics" class="grid"></div><h3>Desempeño por pregunta</h3><div id="summary"></div><div class="tabs" id="questionTabs"></div><div class="row" style="margin:15px 0"><button class="btn secondary" id="hostNotesView">Guion privado del expositor</button><button class="btn secondary" id="hostPublicView">Previsualizar vista del público</button></div><div id="hostChart"></div><div id="countries"></div><section id="finalLearning" class="learning-summary" aria-live="polite"></section></div></section>
+<section id="host" class="hidden"><div class="card"><div class="row between"><div><div class="eyebrow">Panel privado del moderador</div><h2 id="hostCode"></h2></div><span class="pill" id="hostStatus"></span></div><div class="room-readiness" id="roomReadiness" role="status" aria-live="polite"></div><div class="times-panel" id="timesPanel"></div><div class="row"><div id="qr" aria-label="Código QR para unirse"></div><div style="flex:1;min-width:200px"><p>Acceso de participantes</p><a id="joinUrl" target="_blank" rel="noopener noreferrer"></a><div class="row" style="margin-top:12px"><button class="btn secondary" id="copyLink">Copiar enlace</button><button class="btn secondary" id="downloadQR">Guardar QR</button><button class="btn secondary" id="hostHome">Volver al inicio</button><button class="btn secondary" id="newActivity">Volver a mi sala</button></div></div></div><div class="attendance-panel"><div class="row between"><strong id="attendanceCount" aria-live="polite">0 inscritos</strong><button class="btn secondary" id="refreshAttendees">Actualizar participantes</button></div><div class="ready-metrics" aria-live="polite"><div><strong id="readyCount">0</strong><span>Listos</span></div><div><strong id="pendingCount">0</strong><span>Pendientes</span></div></div><div class="ready-track" role="progressbar" aria-label="Confirmaciones de preparación" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="readyProgress"><div id="readyProgressFill"></div></div><p id="attendanceStatus" class="small" role="status">Conectando con Firebase…</p><div id="attendanceNames" class="attendance-names" aria-live="polite"></div></div><p id="hostHint" class="small"></p><details id="sessionScript" class="presenter-access"><summary><strong>Guion de la sesión para los dos expositores</strong></summary><ol><li><strong>Antes de empezar (5 min).</strong> Pantalla pública abierta con la portada y el QR. Verificar por voz que todos pudieron entrar. Cuando el contador muestre todos listos, pulsar «Iniciar competencia».</li><li><strong>Apertura (2 min, expositor 1).</strong> «Vamos a responder cuatro preguntas con el teléfono. Cada una tiene un tiempo de respuesta; después veremos cómo respondió el grupo y por qué.»</li><li><strong>Preguntas 1 y 2 (expositor 1, unos 6 min cada una).</strong> Pasos del panel: dejar correr el tiempo → «Mostrar distribución» → pedir que dos personas con respuestas distintas argumenten → «Revelar respuesta» → leer «Qué decir al revelar» → una pregunta de «Para conversar» → «Siguiente pregunta».</li><li><strong>Relevo.</strong> El expositor 2 puede llevar el panel desde su propia cuenta; los controles de avance funcionan igual en ambos paneles.</li><li><strong>Preguntas 3 y 4 (expositor 2, unos 6 min cada una).</strong> Mismo recorrido. En la pregunta 4 usar el «Puente» como cierre y pulsar «Cerrar y mostrar resultados».</li><li><strong>Cierre (3 min, ambos).</strong> La pantalla pública muestra el resultado por pregunta con su mensaje. Cada celular muestra el puntaje personal. Terminar con: «Antes de comparar: ¿qué propiedad, definida cómo, en qué casos y con qué equivalencia?»</li><li><strong>Después de clase.</strong> «Exportar CSV» y «Informe PDF». Para reutilizar la sala: «Reiniciar ensayo · conservar QR» (solo la cuenta propietaria).</li></ol></details><section id="presenterAccess" class="presenter-access"><h3>Segundo expositor autorizado</h3><div class="row"><input id="presenterInviteEmail" type="email" value="gramirezfunes@gmail.com" placeholder="Correo del segundo expositor" style="flex:1;min-width:210px"><button class="btn secondary" id="savePresenter">Autorizar expositor</button><button class="btn secondary" id="removePresenter">Revocar acceso</button></div><p id="presenterInviteStatus" class="small" role="status"></p></section><div id="simulationWarning" class="notice hidden" role="status">SIMULACIÓN · DATOS FICTICIOS</div><div class="row"><button class="btn" id="start">Abrir encuesta</button><button class="btn warning hidden" id="startAnyway" type="button">Iniciar solo con los listos</button><button class="btn secondary" id="next">Siguiente pregunta</button><button class="btn secondary" id="reveal">Revelar respuesta</button><button class="btn warning" id="finish">Cerrar y mostrar resultados</button><button class="btn warning" id="resetOfficial">Reiniciar ensayo · conservar QR</button><span class="small" id="stageGuide" aria-live="polite"></span></div></div><div class="card"><div class="row between"><h2>Estadísticas del grupo</h2><div class="row"><button class="btn" id="openAudienceWindow">Abrir pantalla para compartir</button><button class="btn secondary" id="showPublicWelcome">Mostrar portada y QR</button><button class="btn secondary" id="showPublicQuestion">Mostrar pregunta al público</button><button class="btn secondary" id="exportCSV">Exportar CSV</button><button class="btn secondary" id="printReport">Informe PDF</button></div></div><div id="completedActions" class="card hidden" style="margin:18px 0"><h2>Dinámica finalizada</h2><p></p><div class="row"><button class="btn secondary" id="completedHome">Volver al inicio</button></div></div><div id="metrics" class="grid"></div><h3>Desempeño por pregunta</h3><div id="summary"></div><div class="tabs" id="questionTabs"></div><div class="row" style="margin:15px 0"><button class="btn secondary" id="hostNotesView">Guion privado del expositor</button><button class="btn secondary" id="hostPublicView">Previsualizar vista del público</button></div><div id="hostChart"></div><div id="countries"></div><section id="finalLearning" class="learning-summary" aria-live="polite"></section></div></section>
 <section id="projection" class="hidden projection-screen" aria-label="Presentación de resultados">
 <div class="projection-top"><div><span class="kicker">MÉTODO COMPARADO · GRUPO 1</span><h2 id="projectHeading">¿Realmente sabemos comparar?</h2></div><span class="project-stage" id="projectStage">Sala de espera</span></div>
 <div id="projectChart"></div><div id="projectSimulationWarning" class="notice hidden">SIMULACIÓN DOCENTE · DATOS FICTICIOS</div><div class="projection-foot"><span id="projectIndicator"></span><span id="projectPrivacy"></span></div>
 </section>
 <section id="participant" class="hidden"><div id="waiting" class="card hidden center"><div class="waiting-check" aria-hidden="true">✓</div><h2 id="waitTitle">Inscripción confirmada</h2><p id="waitText"></p><div id="waitingIdentity" class="waiting-identity"></div><button class="btn" id="confirmReady">Confirmar que estoy listo</button><div id="waitingReadyStatus" class="waiting-ready-status" role="status" aria-live="polite"></div></div><div id="submittedPanel" class="card hidden finish-state"><div class="kicker">Respuestas enviadas</div><h2>Has completado el cuestionario</h2><p id="submittedText">Tus respuestas ya quedaron registradas. El moderador presentará los resultados colectivos cuando cierre la sesión.</p><div class="progress-mini"><span style="width:100%"></span></div><button class="btn secondary" id="reviewSurvey">Revisar mis respuestas</button></div><div id="survey" class="card hidden"><div class="row between"><span class="pill" id="surveyProgress"></span><span class="pill" id="surveyRecorded"></span></div><h2 id="surveyQuestion" style="margin-top:16px"></h2><div id="surveyChoices"></div><p id="surveyVoteError" class="vote-error hidden" role="alert"></p><div class="row between" style="margin-top:12px"><button class="btn secondary" id="prevSurvey">Anterior</button><button class="btn" id="nextSurvey">Siguiente</button></div></div><div id="competition" class="card hidden"><div class="scoreline" id="competitionScore" aria-live="polite">Aciertos: 0/4</div><div class="row between"><span class="pill" id="compProgress"></span><span class="timer" id="clock">40 s</span></div><h2 id="compQuestion" style="margin-top:16px"></h2><div id="compChoices"></div><p id="compFeedback" class="small"></p></div><div id="revealPanel" class="card hidden"><div class="scoreline" id="revealScore" aria-live="polite">Aciertos: 0/4</div><div id="personalReveal" class="personal-reveal" aria-live="polite"></div><h2 id="revealTitle"></h2><div id="revealChart"></div><div id="revealExplanation" class="notice"></div><div id="microTransfer" class="micro-transfer hidden" aria-live="polite"></div></div><div id="donePanel" class="card hidden"><h2>Resultados de la sesión</h2><div class="scoreline" id="finalScore">Aciertos: 0/4</div><div id="myScore"></div><div id="ranking"></div></div></section>
 <footer>Actividad académica del Grupo 1.</footer></main>
+<button id="soundToggle" class="sound-toggle" type="button" aria-pressed="true">🔊 Sonido</button>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="firebase-config.js"></script>
 <script>
 'use strict';
@@ -142,6 +164,17 @@ function drawMicroTransfer(){
 /* Guion del expositor. Los arreglos `trap` están en el orden ORIGINAL de las alternativas (igual que `mis`) y se reordenan con el currículo versionado. */
 const GUION=[
 {
+ key:'**Comparable siempre es «respecto de algo»**: lo que debe coincidir es la propiedad relevante para la pregunta, no la identidad de los casos ni sus valores.',
+ recall:'Recordemos a **Sartori**: la pregunta correcta no es «¿son comparables?», sino **«comparable, ¿en qué aspecto?»**. Manzanas y peras son comparables como fruta o como comestibles, y no lo son en cuanto a su forma. Comparar es **asimilar y diferenciar en los límites**: si dos entidades fueran iguales en todo serían la misma, y si fueran diferentes en todo, compararlas sería inútil.',
+ cite:'Sartori (1999, pp. 35-36).',
+ dis:[
+  'Desambigüemos: **comparable no significa idéntico**. Si los casos fueran iguales en todo no habría nada que comparar; la comparación interesa porque comparten atributos y difieren en otros (Sartori, 1999, p. 35).',
+  null,
+  'Desambigüemos: **compartir país no es la característica relevante**. Sartori pide decir en qué aspecto se parecen los casos; el contexto ayuda a justificar la pertinencia, pero no reemplaza la propiedad común.',
+  'Desambigüemos: **no hace falta que los valores coincidan**. Lo que debe ser común es la propiedad; los valores son justamente lo que la comparación permite contrastar (la manzana pesa 150 g y la pera 200 g, y son comparables en peso).'
+ ],
+ strengthen:'Para fortalecer: antes de comparar, responde la pregunta de Sartori en dos mitades. **¿Respecto de qué propiedades los casos son bastante similares y respecto de cuáles son demasiado distintos?**',
+ closing:'Esa dificultad es instructiva: cuando comparar parece exigir casos «iguales», se pierde la pregunta clave de Sartori, **¿comparables en qué aspecto?** (1999, pp. 35-36).',
  means:'La definición de la presentación: son comparables los casos que comparten una característica relevante para la pregunta de investigación, siempre que esa característica tenga el mismo significado en todos ellos. No exige que los casos sean idénticos ni que sus valores coincidan.',
  say:'Son comparables los casos que comparten una característica relevante para nuestra pregunta y cuyo significado se mantiene en todos ellos (Sartori, 1999; Nohlen, 2020). El vínculo no exige que sean idénticos: se establece respecto de una característica común. Por eso siempre hay que precisar en qué aspecto son comparables.',
  trap:[
@@ -157,6 +190,17 @@ const GUION=[
  refs:'Sartori (1999); Nohlen (2020).'
 },
 {
+ key:'Un **mismo nombre no garantiza el mismo significado**: revisa definición, cobertura y período. Y una **diferencia de contexto no impide comparar** una propiedad equivalente.',
+ recall:'Recordemos a **Sartori**: nombrar no es clasificar. Cuando una misma etiqueta cubre cosas distintas nace el **«perro-gato»**, y mal clasificar produce monstruos cada vez más sofisticados (1999, p. 37). Pero Sartori tampoco acepta que el contexto vuelva imposible comparar: comparar **sacrifica parte de la comprensión del contexto a cambio de alcance** (p. 43).',
+ cite:'Sartori (1999, pp. 37 y 43).',
+ dis:[
+  'Desambigüemos: **diferencia de contexto no es incomparabilidad**. Sartori reconoce que comparar cuesta comprensión del contexto, pero lo que se gana es poder contrastar propiedades definidas con el mismo significado (1999, p. 43).',
+  'Desambigüemos: **un mismo nombre no prueba que se mida lo mismo**. Es el riesgo del «perro-gato» de Sartori: nombrar o clasificar mal y comparar como si nada (1999, p. 37). Hay que revisar definición, cobertura y período.',
+  null,
+  'Desambigüemos: **la comparabilidad no exige magnitudes parecidas**. Puede compararse precisamente porque los valores difieren; lo que debe ser equivalente es la propiedad medida.'
+ ],
+ strengthen:'Para fortalecer: ante un indicador con el mismo nombre en dos países, revisa **definición, cobertura institucional, período y contexto** antes de interpretar la cifra.',
+ closing:'Esa dificultad es instructiva: un mismo nombre puede esconder fenómenos distintos, el riesgo del **«perro-gato»** de Sartori (1999, p. 37); y la diferencia de contexto no impide comparar si la propiedad es equivalente (p. 43).',
  means:'Que un indicador con el mismo nombre no garantiza equivalencia y que las diferencias de contexto no anulan por sí mismas la comparabilidad: la propiedad debe conservar su significado entre los casos.',
  say:'Los sistemas políticos pueden ser distintos y aun así comparar el gasto público, si la definición, la cobertura y el período son equivalentes y se considera el contexto. Como dice la presentación, la diferencia contextual no anula por sí misma la comparabilidad: su importancia se justifica según el problema. Y no basta reunir casos por una denominación semejante.',
  trap:[
@@ -172,6 +216,17 @@ const GUION=[
  refs:'Sartori (1999); Nohlen (2020); Gómez Díaz de León y De León de la Garza (2014).'
 },
 {
+ key:'**Ampliar un concepto es legítimo si se declara** qué atributos se sacrifican; el problema es el **alargamiento encubierto** de la etiqueta.',
+ recall:'Recordemos a **Sartori**: los conceptos se mueven en una **escala de abstracción**. Para hacer un concepto más general hay que **reducir sus propiedades**; para hacerlo más específico, aumentarlas (1999, p. 45). El **alargamiento conceptual** (concept stretching) aparece cuando se estira el término sin respetar esos atributos (p. 39).',
+ cite:'Sartori (1999, pp. 39 y 45).',
+ dis:[
+  'Desambigüemos: **ampliar no es lo mismo que alargar**. Subir en la escala de abstracción es legítimo si se declara y justifica qué atributos se sacrifican (Sartori, 1999, p. 45); lo que se critica es estirar el término de forma encubierta.',
+  null,
+  'Desambigüemos: **los conceptos no son inmutables**. Sartori propone desplazarse por escalas de abstracción, ganando o perdiendo propiedades; lo importante es controlar el cambio, no prohibirlo.',
+  'Desambigüemos: **más casos no equivale a más validez**. Al estirar un concepto para que quepan más casos se vacía de significado y se acaban declarando verdaderas generalizaciones que ya no pueden ponerse a prueba (Sartori, 1999, p. 39).'
+ ],
+ strengthen:'Para fortalecer: escribe **qué atributos conserva** la nueva definición, qué casos entran o salen de la categoría y por qué ese nivel de generalidad responde a la pregunta.',
+ closing:'Esa dificultad es instructiva: Sartori distingue **moverse con control por la escala de abstracción** de **estirar** el concepto sin declarar lo que se pierde (1999, pp. 39 y 45).',
  means:'Distinguir la abstracción explícita y justificada del alargamiento conceptual, uno de los cuatro riesgos de Sartori junto con el parroquialismo, la mala clasificación y el gradualismo.',
  say:'Sartori relaciona la connotación y la denotación del concepto: uno más general tiene menos atributos definitorios y abarca más casos; uno más específico, lo contrario. Ajustar el nivel de generalidad es legítimo si se justifica. El problema, el alargamiento conceptual, aparece cuando extendemos la etiqueta a casos que ya no cumplen los atributos de su definición y conservamos el nombre como si nada hubiera cambiado.',
  trap:[
@@ -187,6 +242,17 @@ const GUION=[
  refs:'Sartori (1999); Nohlen (2020).'
 },
 {
+ key:'La **misma unidad no es el mismo indicador**: define evento inicial, evento final, población y período antes de comparar cifras.',
+ recall:'Recordemos a **Sartori**: una misma etiqueta aplicada a cosas distintas recuerda al **«perro-gato»** (1999, p. 37), y un criterio puramente numérico no sustituye al criterio conceptual, como muestra con el «partido único» (p. 38). Antes de contrastar cifras hay que volver a la pregunta: **«comparable, ¿en qué aspecto?»** (p. 36). Aquí: ¿qué intervalo mide cada hospital?',
+ cite:'Sartori (1999, pp. 36-38); Gómez Díaz de León y De León de la Garza (2014).',
+ dis:[
+  'Desambigüemos: **una razón 40/20 supone que ambos números miden lo mismo**. Sartori advierte que un criterio puramente numérico no reemplaza al conceptual (1999, p. 38); aquí falta saber si el intervalo medido es el mismo.',
+  null,
+  'Desambigüemos: **menos minutos no significa más eficiencia** cuando el intervalo es más corto. Un tiempo hasta el triaje no es un tiempo hasta la consulta; sin criterio común, el juicio de desempeño es prematuro.',
+  'Desambigüemos: **la unidad no define el indicador**. Los minutos son la unidad; el indicador exige acordar el evento inicial y el final. Misma palabra, distinto fenómeno: el parecido con el «perro-gato» (Sartori, 1999, p. 37).'
+ ],
+ strengthen:'Para fortalecer: documenta **evento inicial, evento final, población y período** antes de comparar cualquier indicador.',
+ closing:'Esa dificultad es instructiva: «tiempo de espera» nombra dos intervalos distintos, como el «perro-gato» que describe Sartori (1999, p. 37). **Sin criterios comunes no hay comparación posible.**',
  means:'Cómo comparar con criterios comunes: la misma expresión («tiempo de espera») puede observar etapas distintas. Antes de comparar hay que definir el mismo inicio y el mismo final de la medición.',
  say:'Ambos hospitales hablan de tiempo de espera, pero uno cuenta desde el registro hasta el triaje y el otro desde el registro hasta la consulta médica: la misma expresión observa etapas diferentes. Primero definimos el mismo inicio y el mismo final; también el período, el procedimiento de registro y qué pacientes incluimos.',
  trap:[
@@ -250,7 +316,7 @@ function activateQuizVersion(v){
  });
  PEDAGOGY=PEDAGOGY_ORIGINAL.slice(0,count).map((p,i)=>{
   const earlier=ORDER_V2[i].map(j=>p.mis[j]);
-  const earlierTrap=p.trap?ORDER_V2[i].map(j=>p.trap[j]):null,fin=(v===3?ORDER_V3[i]:[0,1,2,3]);return {...p,mis:fin.map(j=>earlier[j]),...(earlierTrap?{trap:fin.map(j=>earlierTrap[j])}:{})};
+  const earlierTrap=p.trap?ORDER_V2[i].map(j=>p.trap[j]):null,earlierDis=p.dis?ORDER_V2[i].map(j=>p.dis[j]):null,fin=(v===3?ORDER_V3[i]:[0,1,2,3]);return {...p,mis:fin.map(j=>earlier[j]),...(earlierTrap?{trap:fin.map(j=>earlierTrap[j])}:{}),...(earlierDis?{dis:fin.map(j=>earlierDis[j])}:{})};
  });
  }
  if(typeof N!=='undefined')N=QUIZ.length;
@@ -351,6 +417,7 @@ function chart(target,i,showAnswer,compact=false){
   if(stageNow()>=3||room.status==='done')concise.append(add('p',PEDAGOGY[i].principle,'public-principle'));
   d.append(concise);return
  }
+ if(PEDAGOGY[i]&&PEDAGOGY[i].recall){d.append(narrativePanel(i,n,good,q));return}
  const panel=add('section',undefined,'insight pedagogical-report'),G=PEDAGOGY[i];
  const lower=t=>t?t.charAt(0).toLowerCase()+t.slice(1):'';
  const para=(head,body,cls)=>{const b=add('div',undefined,'pedagogical-item'+(cls?' '+cls:''));b.append(add('strong',head));if(body)b.append(add('p',body));return b};
@@ -411,6 +478,181 @@ function updatePersonalScore(){
  const value='Aciertos: '+correct+'/'+N+(evaluated<N?' · '+evaluated+' evaluadas':'');
  for(const id of ['competitionScore','revealScore','finalScore'])$(id).textContent=value;
 }
+/* ===== Efectos de sonido sintetizados (sin archivos externos) ===== */
+const SFX=(()=>{
+ let ctx=null,muted=false;const seen=new Set();
+ try{muted=localStorage.getItem('comparacionSonido')==='off'}catch{}
+ const btn=document.getElementById('soundToggle');
+ function label(){if(!btn)return;const blocked=!muted&&ctx&&ctx.state!=='running';btn.textContent=muted?'🔇 Sonido apagado':blocked?'🔈 Toca para activar el sonido':'🔊 Sonido';btn.setAttribute('aria-pressed',String(!muted))}
+ function ensure(){
+  if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;try{ctx=new C();ctx.onstatechange=label}catch{return null}}
+  if(ctx.state==='suspended')ctx.resume().then(label).catch(()=>{});
+  return ctx;
+ }
+ function tone(f,t0,dur,type,vol,to){
+  const o=ctx.createOscillator(),g=ctx.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t0);
+  if(to)o.frequency.exponentialRampToValueAtTime(to,t0+dur);
+  g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol||.16,t0+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(ctx.destination);o.start(t0);o.stop(t0+dur+.05);
+ }
+ const N5={C5:523.25,D5:587.33,E5:659.25,G5:783.99,A5:880,C6:1046.5,E6:1318.5,G4:392,E4:329.63,C4:261.63,A4:440};
+ const bank={
+  select:t=>tone(620,t,.08,'triangle',.1),
+  ready:t=>{tone(N5.G5,t,.12,'sine',.14);tone(N5.C6,t+.1,.2,'sine',.14)},
+  start:t=>{[N5.C5,N5.E5,N5.G5,N5.C6].forEach((f,k)=>tone(f,t+k*.1,.22,'triangle',.15))},
+  next:t=>{tone(330,t,.22,'sine',.12,660);tone(660,t+.12,.16,'triangle',.08)},
+  correct:t=>{[N5.C5,N5.E5,N5.G5,N5.C6,N5.E6].forEach((f,k)=>tone(f,t+k*.075,.3,'triangle',.15));tone(N5.C6,t+.4,.5,'sine',.1)},
+  wrong:t=>{tone(300,t,.3,'sawtooth',.07,170);tone(220,t+.22,.4,'sine',.1,140)},
+  timeup:t=>{tone(260,t,.16,'square',.05);tone(260,t+.22,.2,'square',.05)},
+  tick:t=>tone(1040,t,.05,'square',.04),
+  reveal:t=>{tone(N5.E5,t,.18,'sine',.13);tone(N5.A5,t+.14,.34,'sine',.13)},
+  achievement:t=>{[N5.C5,N5.E5,N5.G5,N5.C6].forEach((f,k)=>tone(f,t+k*.12,.35,'triangle',.15));[N5.G5,N5.C6,N5.E6].forEach((f,k)=>tone(f,t+.55+k*.1,.55,'sine',.12))},
+  finish:t=>{[N5.G4,N5.C5,N5.E5].forEach((f,k)=>tone(f,t+k*.16,.4,'sine',.12))}
+ };
+ function play(name){
+  if(muted)return;const c=ensure();if(!c||c.state==='closed')return;
+  try{bank[name]&&bank[name](c.currentTime+.01)}catch{}
+ }
+ function buzz(p){try{navigator.vibrate&&!muted&&navigator.vibrate(p)}catch{}}
+ function once(key,name){if(seen.has(key))return;seen.add(key);play(name)}
+ function toggle(){muted=!muted;try{localStorage.setItem('comparacionSonido',muted?'off':'on')}catch{}if(!muted){ensure();play('select')}label()}
+ if(btn)btn.onclick=toggle;
+ ['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{if(!muted)ensure()},{passive:true}));
+ label();
+ return {play,once,buzz,toggle};
+})();
+/* ===== Texto enriquecido: **frase** se muestra resaltada ===== */
+function rich(text){
+ const el=document.createElement('span');
+ String(text??'').split('**').forEach((part,k)=>{if(!part)return;if(k%2){const m=document.createElement('mark');m.className='hl';m.textContent=part;el.append(m)}else el.append(document.createTextNode(part))});
+ return el;
+}
+function richBlock(tag,text,cls){const el=add(tag,undefined,cls);el.append(rich(text));return el}
+const LETTER=j=>'ABCD'[j];
+const TAKEAWAYS=[
+ '**Comparable siempre es «respecto de algo»**: la propiedad relevante manda, no la identidad de los casos ni la igualdad de sus valores (Sartori, 1999, pp. 35-36).',
+ '**Nombrar no es medir ni clasificar**: una misma etiqueta o unidad puede esconder fenómenos distintos; antes de comparar cifras hay que fijar definición, inicio, final y cobertura (Sartori, 1999, p. 37).',
+ '**Generalizar tiene un costo que hay que declarar**: subir en la escala de abstracción exige decir qué atributos se sacrifican; si no, se estira el concepto (Sartori, 1999, p. 45).'
+];
+function lowerFirst(t){return t?t.charAt(0).toLowerCase()+t.slice(1):''}
+/* Análisis narrativo de una pregunta (panel del moderador). */
+function narrativePanel(i,n,good,q){
+ const G=PEDAGOGY[i],panel=add('section',undefined,'insight pedagogical-report narrative');
+ panel.append(add('h3',`Análisis de la pregunta ${i+1}`));
+ if(!n){panel.append(add('p','Aún no hay respuestas registradas.','pedagogical-intro'));return panel}
+ const enrolled=people.length;
+ panel.append(add('p',`${n} respuesta${n===1?'':'s'}${enrolled?' de '+enrolled+' inscrito'+(enrolled===1?'':'s'):''}.`,'small'));
+ const wrongOnes=q.a.map((_,j)=>({j,count:countFor(i,j)})).filter(x=>x.j!==q.correct&&x.count>0).sort((a,b)=>b.count-a.count||a.j-b.j);
+ const rate=good/n,top=wrongOnes[0];
+ let lead;
+ if(rate===1)lead=`**Todo el grupo coincidió** (${n} de ${n}) en la alternativa ${LETTER(q.correct)}. No hay un error que desarmar: conviene usar este momento para **explicar por qué** funciona el criterio y llevarlo a otro caso.`;
+ else if(rate>=.8)lead=`**Amplio acuerdo**: ${fmtPercent(good,n)} eligió la alternativa ${LETTER(q.correct)}. Confirmemos el criterio y detengámonos solo en la duda que quedó.`;
+ else if(top&&top.count/n>=.4)lead=`Aquí el grupo **se inclinó hacia la alternativa ${LETTER(top.j)}** (${fmtPercent(top.count,n)}). Esa es la pista más valiosa de la pregunta: nos dice **qué intuición hay que desarmar** antes de dar la respuesta correcta.`;
+ else if(rate>=.55)lead=`La **mayoría acertó** (${fmtPercent(good,n)}), pero quedaron dudas. Conviene dar la palabra a quien eligió la alternativa ${LETTER(top.j)} y **aclarar con la teoría** por qué no se sostiene.`;
+ else lead=`Las respuestas quedaron **divididas**: solo ${fmtPercent(good,n)} acertó. Es una buena ocasión para **reconstruir el criterio desde la teoría**, de a un paso por vez.`;
+ if(n<8)lead+=' Con pocas respuestas, úsalo como punto de partida de la conversación y no como diagnóstico del grupo.';
+ panel.append(richBlock('p',lead,'narrative-lead'));
+ const call=add('div',undefined,'theory-callout');call.append(add('span','Recordemos lo que dice la teoría','kick'),richBlock('p',G.recall));if(G.cite)call.append(add('span',G.cite,'cite'));panel.append(call);
+ wrongOnes.forEach(x=>{
+  const why=(G.trap&&G.trap[x.j])||('esta alternativa no se ajusta al principio evaluado: '+normalizeExplanation(G.mis[x.j]));
+  const item=add('div',undefined,'pedagogical-item error-choice');
+  item.append(add('strong',`${fmtPercent(x.count,n)} eligió la alternativa ${LETTER(x.j)} (${x.count} de ${n}) y falló dado que ${lowerFirst(why)}`),add('p',`«${q.a[x.j]}»`));
+  if(G.dis&&G.dis[x.j])item.append(richBlock('p',G.dis[x.j],'disambig'));
+  panel.append(item);
+ });
+ const ok=add('div',undefined,'pedagogical-item correct-choice');
+ if(good===n)ok.append(add('strong',`Todos eligieron la alternativa ${LETTER(q.correct)}, la correcta (${n} de ${n}).`),add('p',`Es la correcta porque ${lowerFirst(G.principle)}`));
+ else ok.append(add('strong',`${fmtPercent(good,n)} eligió la alternativa ${LETTER(q.correct)} (${good} de ${n}) y es la correcta porque ${lowerFirst(G.principle)}`),add('p',`«${q.a[q.correct]}»`));
+ panel.append(ok);
+ if(G.strengthen)panel.append(richBlock('p',G.strengthen,'strengthen'));
+ const extra=add('details',undefined,'pedagogical-item');
+ extra.append(add('summary','Material de apoyo para la conversación'));
+ const block=(title,body)=>{const b=add('div');b.append(add('strong',title));(Array.isArray(body)?body:[body]).forEach(t=>b.append(add('p',t)));extra.append(b)};
+ block('Cómo leer estos resultados',readingGuide(i,true));
+ if(G.say)block('Qué decir al revelar',G.say);
+ if(G.discuss)block('Preguntas para conversar con el grupo',G.discuss.map((t,k)=>(k+1)+'. '+t));
+ if(G.example)block('Ejemplo para aclarar',G.example);
+ block('Cómo trasladarlo a otra investigación',[G.transfer,'Pregunta guía: '+G.question]);
+ if(G.bridge)block('Puente a lo siguiente',G.bridge);
+ if(G.time||G.refs)extra.append(add('p',[G.time?'Tiempo sugerido: '+G.time+'.':'',G.refs?'Lecturas de apoyo: '+G.refs:''].filter(Boolean).join(' '),'small'));
+ panel.append(extra);
+ return panel;
+}
+/* Conclusión de cierre: combina resultados reales con la teoría del curso. */
+function closingNode(){
+ const box=add('section',undefined,'closing-card');
+ box.append(add('h3','Conclusión de la sesión'));
+ const rows=QUIZ.map((q,i)=>({i,n:votes[i]?.length||0,c:correctFor(i)})).filter(x=>x.n>0);
+ if(!rows.length){box.append(add('p','Aún no hay respuestas para elaborar una conclusión del grupo.'));return box}
+ const total=rows.reduce((a,x)=>a+x.n,0),hit=rows.reduce((a,x)=>a+x.c,0),rate=hit/total,pct=fmtPercent(hit,total);
+ const rank=[...rows].sort((a,b)=>b.c/b.n-a.c/a.n||a.i-b.i),best=rank[0],worst=rank[rank.length-1];
+ let p1;
+ if(rate>=.8)p1=`El grupo mostró un **dominio sólido de los criterios de comparabilidad** (${pct} de aciertos en ${total} respuestas).`;
+ else if(rate>=.6)p1=`El grupo **comparte la mayoría de los criterios** (${pct} de aciertos en ${total} respuestas) y quedan puntos que conviene afinar.`;
+ else if(rate>=.4)p1=`El grupo quedó **dividido** (${pct} de aciertos en ${total} respuestas): la discusión de hoy es la parte más valiosa de la actividad.`;
+ else p1=`Los criterios **todavía no están consolidados** (${pct} de aciertos en ${total} respuestas). No es un fracaso: es el punto de partida del aprendizaje.`;
+ box.append(richBlock('p',p1));
+ if(best.i!==worst.i&&best.c/best.n!==worst.c/worst.n){
+  box.append(richBlock('p',`Lo más firme fue **${QUIZ[best.i].topic}** (${fmtPercent(best.c,best.n)}); lo que más costó fue **${QUIZ[worst.i].topic}** (${fmtPercent(worst.c,worst.n)}).`));
+ }
+ if(worst.c<worst.n){
+  const G=PEDAGOGY[worst.i],q=QUIZ[worst.i];
+  const errs=q.a.map((_,j)=>({j,n:countFor(worst.i,j)})).filter(z=>z.j!==q.correct&&z.n).sort((a,b)=>b.n-a.n);
+  if(errs.length&&G.dis&&G.dis[errs[0].j])box.append(richBlock('p',`Donde más se desvió el grupo (${QUIZ[worst.i].topic}) eligió la alternativa ${LETTER(errs[0].j)} (${fmtPercent(errs[0].n,worst.n)}). ${G.dis[errs[0].j]}`,'disambig'));
+  if(G.closing)box.append(richBlock('p',G.closing));
+ }
+ box.append(richBlock('p','Todas las preguntas giraron alrededor de una misma pregunta que nos deja Sartori: **«comparable, ¿en qué aspecto?»** (1999, p. 36). Comparar es **asimilar y diferenciar en los límites** (p. 35): reconocer qué propiedad comparten los casos, con qué significado y en qué difieren.'));
+ box.append(add('h4','Tres ideas para llevarnos'));
+ const ul=add('ol',undefined,'takeaways');TAKEAWAYS.forEach(t=>{const li=add('li');li.append(rich(t));ul.append(li)});box.append(ul);
+ box.append(richBlock('p','Y una última idea hacia lo que sigue: según Panebianco (1999), la comparación es el principal instrumento de **control de las hipótesis**, y su propósito final es **explicar** mediante mecanismos causales. Comparar bien es el primer paso de esa explicación.','closing-quote'));
+ return box;
+}
+/* Cierre personal (celular del participante). */
+function personalClosing(){
+ const box=add('section',undefined,'closing-card');
+ box.append(add('h3','Para llevarte'));
+ const ul=add('ol',undefined,'takeaways');TAKEAWAYS.forEach(t=>{const li=add('li');li.append(rich(t));ul.append(li)});box.append(ul);
+ box.append(richBlock('p','Como recuerda Sartori, comparar es **asimilar y diferenciar en los límites** (1999, p. 35). La próxima vez que compares, empieza por preguntar: **¿comparable en qué aspecto?**','closing-quote'));
+ return box;
+}
+/* Síntesis del moderador con ideas fuerza resaltadas. */
+function synthesisNodes(){
+ const nodes=[];
+ const rows=QUIZ.map((q,i)=>({i,n:votes[i].length,correct:correctFor(i)})),answered=rows.filter(x=>x.n>0);
+ const overall=answered.reduce((n,x)=>n+x.correct,0),total=answered.reduce((n,x)=>n+x.n,0);
+ const summary=add('div',undefined,'learning-card');
+ summary.append(add('strong',`Resultado agregado: ${fmtPercent(overall,total)} de aciertos sobre ${total} respuestas (${people.length} inscritos).`));
+ const best=[...answered].sort((a,b)=>b.correct/b.n-a.correct/a.n)[0],worst=[...answered].sort((a,b)=>a.correct/a.n-b.correct/b.n)[0];
+ summary.append(add('p',best.i===worst.i?`Solo hay respuestas en P${best.i+1}.`:`Mayor acuerdo: P${best.i+1} · ${QUIZ[best.i].topic} (${fmtPercent(best.correct,best.n)}). Mayor dificultad: P${worst.i+1} · ${QUIZ[worst.i].topic} (${fmtPercent(worst.correct,worst.n)}).`));
+ nodes.push(summary);
+ const ideas=add('div',undefined,'learning-card key-ideas');
+ ideas.append(add('strong','Ideas fuerza de la sesión'));
+ answered.forEach(x=>{const row=add('p',undefined,'key-idea-row');row.append(add('span',`P${x.i+1} · `,'qtag'),rich(PEDAGOGY[x.i].key));ideas.append(row)});
+ nodes.push(ideas);
+ answered.forEach(x=>{
+  const q=QUIZ[x.i],G=PEDAGOGY[x.i],box=add('div',undefined,'learning-card'),rate=x.correct/x.n;
+  const head=add('strong',`P${x.i+1} · ${q.topic}: ${fmtPercent(x.correct,x.n)} de aciertos (${x.correct} de ${x.n})`);
+  head.append(add('span',rate>=.6?'consolidado':'por reforzar','badge '+(rate>=.6?'ok':'warn')));
+  box.append(head);
+  const track=add('div',undefined,'barbg'),bar=add('div',undefined,'bar'+(rate>=.6?' correct':''));bar.style.width=(100*rate)+'%';track.append(bar);box.append(track);
+  box.append(add('p',resultMessage(rate)));
+  const errors=q.a.map((_,j)=>({j,n:countFor(x.i,j)})).filter(z=>z.j!==q.correct&&z.n).sort((a,b)=>b.n-a.n);
+  if(errors.length){
+   const e=errors[0];
+   box.append(richBlock('p',`**Hacia dónde falló el grupo:** alternativa ${LETTER(e.j)} (${fmtPercent(e.n,x.n)}). ${(G.trap&&G.trap[e.j])||G.mis[e.j]}`));
+   if(G.dis&&G.dis[e.j])box.append(richBlock('p',G.dis[e.j],'disambig'));
+  }
+  const idea=add('p',undefined,'key-idea');idea.append(add('strong','Idea para recordar: '),rich(G.key));box.append(idea);
+  const th=add('details',undefined,'theory-detail');th.append(add('summary','Cita de apoyo y cómo trasladarlo'));
+  const call=add('div',undefined,'theory-callout');call.append(richBlock('p',G.recall));if(G.cite)call.append(add('span',G.cite,'cite'));th.append(call);
+  if(G.strengthen)th.append(richBlock('p',G.strengthen,'strengthen'));
+  th.append(add('p','Para trasladarlo a otras investigaciones: '+G.transfer,'small'));
+  box.append(th);
+  nodes.push(box);
+ });
+ nodes.push(closingNode());
+ return nodes;
+}
 let celebratedReveals=new Set();
 let simulationMode=false;let clockOffsetMs=0;let hostReadingView='notes';
 async function synchronizeClock(){try{const t0=Date.now();const response=await fetch(location.pathname,{method:'HEAD',cache:'no-store'});const t1=Date.now();const date=response.headers.get('Date');if(date){const epoch=Date.parse(date);if(Number.isFinite(epoch))clockOffsetMs=epoch-(t0+t1)/2}}catch(e){console.warn('Sin sincronización horaria externa; Firebase valida el cierre real',e)}}
@@ -447,7 +689,11 @@ function drawPersonalReveal(){
  if(answer)box.append(add('p','Tu respuesta: '+ 'ABCD'[answer.choice]+'. '+q.a[answer.choice],'your-choice'));
  box.append(add('p','Respuesta correcta: '+'ABCD'[q.correct]+'. '+q.a[q.correct],'choice-answer'));
  box.append(add('p','Principio metodológico: '+PEDAGOGY[i].principle,'reveal-principle'));
- if(answer&&!correct&&PEDAGOGY[i].mis[answer.choice])box.append(add('p','¿Por qué no?: '+PEDAGOGY[i].mis[answer.choice],'reveal-principle'));
+ const PG=PEDAGOGY[i];
+ if(PG.recall){const t=add('div',undefined,'theory-callout');t.append(add('span','Recordemos','kick'),richBlock('p',PG.recall));if(PG.cite)t.append(add('span',PG.cite,'cite'));box.append(t)}
+ if(answer&&!correct&&PG.dis&&PG.dis[answer.choice])box.append(richBlock('p',PG.dis[answer.choice],'disambig'));
+ else if(answer&&!correct&&PG.mis[answer.choice])box.append(add('p','¿Por qué no?: '+PG.mis[answer.choice],'reveal-principle'));
+ SFX.once('rv:'+roomId+':'+i,correct?'correct':answer?'wrong':'timeup');SFX.buzz(correct?[40,40,80]:answer?120:60);
  if(correct)celebrateCorrect(i);
 }
 function scoreFor(pid){return QUIZ.reduce((total,q,i)=>total+(votes[i].some(v=>v.uid===pid&&v.choice===q.correct)?1:0),0)}
@@ -506,7 +752,32 @@ async function removeParticipant(p){
  try{await rref().collection('participants').doc(p.uid).delete();alertText('Participante quitado.')}
  catch(e){alertText('No se pudo quitar al participante ('+(e.code||e.message)+'). Si el error es de permisos, publica las reglas actualizadas de Firestore o usa «Reiniciar ensayo».',true)}
 }
-function renderHost(){if(!isHost)return;renderAttendance();$('hostCode').textContent='Sala '+roomId;$('hostStatus').textContent=`${'SALA ÚNICA'} · ${room.mode==='survey'?'Encuesta':'Competencia'} · ${room.status==='lobby'?'En espera':room.status==='done'?'Finalizada':'En curso'}`;
+/* Tiempos por pregunta de la sala real: se muestran los valores guardados en Firestore y el propietario puede cambiarlos con la sala en espera. */
+function renderTimesPanel(){
+ const box=$('timesPanel');if(!box||!room)return;
+ const editable=!simulationMode&&room.owner===uid&&room.status==='lobby'&&room.quizVersion===3;
+ if(!box.dataset.built){
+  box.dataset.built='1';
+  box.append(add('h4','Tiempo de respuesta por pregunta (aplicado en esta sala)'));
+  const grid=add('div',undefined,'time-grid');
+  for(let k=0;k<4;k++){const l=add('label','Pregunta '+(k+1)+' (s)');const inp=add('input');inp.type='number';inp.min='10';inp.max='180';inp.step='1';inp.inputMode='numeric';inp.id='roomTime'+k;inp.oninput=()=>{box.dataset.dirty='1'};l.append(inp);grid.append(l)}
+  box.append(grid);
+  const save=add('button','Guardar tiempos','btn secondary');save.id='saveTimes';save.type='button';box.append(save);
+  const note=add('p',undefined,'tp-note');note.id='timesNote';box.append(note);
+  save.onclick=async()=>{
+   const times=Array.from({length:4},(_,k)=>Number($('roomTime'+k).value));
+   if(times.some(x=>!Number.isInteger(x)||x<10||x>180)){alertText('Cada tiempo debe ser un entero entre 10 y 180 segundos.',true);return}
+   save.disabled=true;
+   try{await rref().update({questionTimes:times});delete box.dataset.dirty;alertText('Tiempos guardados en la sala: '+times.map((t,k)=>'P'+(k+1)+' '+t+' s').join(' · ')+'.')}
+   catch(e){alertText('No se pudieron guardar los tiempos ('+(e.code||e.message)+'). Si es un error de permisos, publica las reglas actualizadas de Firestore.',true)}
+   finally{save.disabled=false}
+  };
+ }
+ for(let k=0;k<4;k++){const inp=$('roomTime'+k);inp.disabled=!editable;if(!box.dataset.dirty&&document.activeElement!==inp)inp.value=String(questionSeconds(k))}
+ $('saveTimes').disabled=!editable;
+ $('timesNote').textContent=editable?'Estos son los segundos que Firebase aplica a cada pregunta. Puedes cambiarlos mientras la sala esté en espera.':'Solo se pueden cambiar con la sala en espera. Si ya se inició o cerró, usa «Reiniciar ensayo · conservar QR» y ajústalos antes de comenzar. Tiempos vigentes: '+Array.from({length:N},(_,k)=>'P'+(k+1)+' '+questionSeconds(k)+' s').join(' · ')+'.';
+}
+function renderHost(){if(!isHost)return;renderAttendance();renderTimesPanel();$('hostCode').textContent='Sala '+roomId;$('hostStatus').textContent=`${'SALA ÚNICA'} · ${room.mode==='survey'?'Encuesta':'Competencia'} · ${room.status==='lobby'?'En espera':room.status==='done'?'Finalizada':'En curso'}`;
 $('showPublicWelcome').disabled=simulationMode||room.publicView==='welcome'||room.publicView===undefined;
  $('showPublicQuestion').disabled=simulationMode||room.status!=='live'||room.publicView==='questions';
  const readyEl=$('roomReadiness');const synced=simulationMode||(loadedPeople&&loadedVotes.size===N);const empty=synced&&!people.length&&votes.every(arr=>arr.length===0);
@@ -523,7 +794,7 @@ $('metrics').replaceChildren(rowMetric(people.length,'Participantes'),rowMetric(
 if(room.owner===uid&&!simulationMode)refreshPresenterInvite();renderLearningSummary();if(projecting)renderProjection();const sum=$('summary');sum.replaceChildren();QUIZ.forEach((q,i)=>{const n=votes[i].length,ac=correctFor(i),box=add('div',undefined,'aggregate'),left=add('div');left.append(add('strong',`P${i+1} · ${q.topic}`),add('div',`${ac} aciertos de ${n} respuestas · ${fmtPercent(ac,n)}`,'small'));const prog=add('progress');prog.max=100;prog.value=n?100*ac/n:0;prog.setAttribute('aria-label',`Porcentaje de aciertos en pregunta ${i+1}`);box.append(left,prog);sum.append(box)});
 const tabs=$('questionTabs');tabs.replaceChildren();QUIZ.forEach((q,i)=>{const b=add('button','Pregunta '+(i+1)+(activeTab===i?' ●':''),activeTab===i?'active':'');b.onclick=()=>{activeTab=i;renderHost()};tabs.append(b)});$('hostNotesView').classList.toggle('active',hostReadingView==='notes');$('hostPublicView').classList.toggle('active',hostReadingView==='public');chart('hostChart',activeTab,room.status==='done'||(room.mode==='competition'&&(room.idx>activeTab||(room.idx===activeTab&&stageNow()>=2))),hostReadingView==='public');
 const counts={};people.forEach(p=>{if(p.country)counts[p.country]=(counts[p.country]||0)+1});const co=$('countries');co.replaceChildren();co.append(add('h3','Participantes por país declarado (opcional)'));if(!Object.keys(counts).length)co.append(add('p','Todavía no se han declarado países.'));else Object.entries(counts).sort((a,b)=>b[1]-a[1]).forEach(([name,n])=>co.append(add('div',`${name}: ${n} participantes`,'small')))}
-function optionButtons(target,i,locked,allowSubmit){const el=$(target);el.replaceChildren();QUIZ[i].a.forEach((text,j)=>{const b=add('button',undefined,'choice'+(votes[i].some(v=>v.uid===uid&&v.choice===j)?' selected':''));b.disabled=locked||pendingVotes.has(i);b.append(add('span','ABCD'[j],'letter'),add('span',text));b.onclick=()=>submit(i,j,allowSubmit);el.append(b)})}
+function optionButtons(target,i,locked,allowSubmit){const el=$(target);el.replaceChildren();QUIZ[i].a.forEach((text,j)=>{const b=add('button',undefined,'choice'+(votes[i].some(v=>v.uid===uid&&v.choice===j)?' selected':''));b.disabled=locked||pendingVotes.has(i);b.append(add('span','ABCD'[j],'letter'),add('span',text));b.onclick=()=>{SFX.play('select');SFX.buzz(15);submit(i,j,allowSubmit)};el.append(b)})}
 function renderWaitingConfirmation(){
  const confirmed=myRegistration?.ready===true;
  $('waitTitle').textContent=confirmed?'¡Listo para comenzar!':'Inscripción confirmada';
@@ -540,13 +811,13 @@ $('confirmReady').onclick=async()=>{
  readySubmitting=true;renderWaitingConfirmation();
  try{
   await withTimeout(anonDb.collection('rooms').doc(roomId).collection('participants').doc(anonUid).update({ready:true,readyAt:firebase.firestore.FieldValue.serverTimestamp()}),12000,'Firebase no respondió en 12 s. Comprueba tu conexión y vuelve a pulsar «Estoy listo».');
-  myRegistration={...myRegistration,ready:true};alertText('');
+  myRegistration={...myRegistration,ready:true};alertText('');SFX.play('ready');SFX.buzz(30);
  }catch(e){alertText('No se pudo confirmar tu preparación: '+e.message,true)}
  finally{readySubmitting=false;if(room?.status==='lobby')renderWaitingConfirmation()}
 };
 function renderParticipant(){if(isHost){$('participant').classList.add('hidden');return}if($('alert').textContent?.includes('No se pudo completar el ingreso')||$('alert').textContent?.includes('No fue posible ingresar (validación inicial)'))alertText('');$('participant').classList.remove('hidden');['waiting','survey','submittedPanel','competition','revealPanel','donePanel'].forEach(s=>$(s).classList.add('hidden'));
 if(room.status==='lobby'){if(!myRegistration){unsubscribe();room=null;roomId='';section('home');alertText('La sala se reinició. Ingresa nuevamente para participar.',true);return}$('waiting').classList.remove('hidden');renderWaitingConfirmation();return}
-if(room.status==='done'){$('donePanel').classList.remove('hidden');updatePersonalScore();{const c=scoreReleased().correct,msg=c===N?'Resultado sobresaliente: aplicaste con rigor los criterios de comparabilidad.':c>=Math.ceil(N*.75)?'Muy buen resultado: dominas la mayor parte de los criterios.':c>=Math.ceil(N/2)?'Buen punto de partida: revisa los conceptos que fallaste en la discusión.':c>0?'Hay conceptos por reforzar: la discusión del grupo te ayudará a aclararlos.':'Esta vez no acertaste ninguna, pero el aprendizaje está en la discusión de las explicaciones.';$('myScore').textContent=`Resultado final: ${c} respuestas correctas de ${N}. ${msg}`}drawRankings();return}
+if(room.status==='done'){$('donePanel').classList.remove('hidden');updatePersonalScore();{const c=scoreReleased().correct,msg=c===N?'Resultado sobresaliente: aplicaste con rigor los criterios de comparabilidad.':c>=Math.ceil(N*.75)?'Muy buen resultado: dominas la mayor parte de los criterios.':c>=Math.ceil(N/2)?'Buen punto de partida: revisa los conceptos que fallaste en la discusión.':c>0?'Hay conceptos por reforzar: la discusión del grupo te ayudará a aclararlos.':'Esta vez no acertaste ninguna, pero el aprendizaje está en la discusión de las explicaciones.';$('myScore').textContent=`Resultado final: ${c} respuestas correctas de ${N}. ${msg}`;SFX.once('done:'+roomId,c>=Math.ceil(N/2)?'achievement':'finish')}drawRankings();return}
 if(room.mode==='survey'&&room.quizVersion===3){
  $('waiting').classList.remove('hidden');$('waitTitle').textContent='Ensayo anterior en proceso de reinicio';
  $('waitText').textContent='El propietario debe pulsar «Reiniciar ensayo · conservar QR». Después podrás inscribirte nuevamente.';
@@ -563,8 +834,8 @@ if(room.mode==='competition'&&stageNow()===1&&room.status==='live'){
  $('revealChart').replaceChildren();$('revealExplanation').textContent='Respuesta pendiente de revelar.';$('microTransfer').classList.add('hidden');return
  }
  if(room.reveal){$('revealPanel').classList.remove('hidden');updatePersonalScore();drawPersonalReveal();drawMicroTransfer();$('revealTitle').textContent=`Explicación · pregunta ${room.idx+1}`;$('revealChart').replaceChildren();$('revealChart').append(add('p',`Respuesta correcta: ${'ABCD'[QUIZ[room.idx].correct]}. ${QUIZ[room.idx].a[QUIZ[room.idx].correct]}`));$('revealExplanation').textContent=stageNow()>=3?'Principio metodológico: '+PEDAGOGY[room.idx].principle+' · Para otra investigación: '+PEDAGOGY[room.idx].transfer:'La explicación metodológica se presentará en la siguiente etapa.';return}
-$('competition').classList.remove('hidden');updatePersonalScore();$('compProgress').textContent=`Pregunta ${room.idx+1}/${N}`;$('compQuestion').textContent=QUIZ[room.idx].q;const ready=timingReady(),rem=remaining();$('clock').textContent=ready?rem+' s':'Preparando…';optionButtons('compChoices',room.idx,!ready||rem<=1,true);$('compFeedback').classList.toggle('vote-error',lastVoteProblem?.i===room.idx);$('compFeedback').textContent=lastVoteProblem?.i===room.idx?lastVoteProblem.message:pendingVotes.has(room.idx)?'Enviando respuesta a Firebase…':!ready?'La pregunta se está sincronizando. Podrás responder cuando se confirme la apertura.':hasVoted(room.idx)?'Respuesta guardada. Puedes cambiarla mientras quede tiempo; se conservará la última elección.':rem===0?'Tiempo agotado. Espera al moderador.':'Selecciona una sola respuesta.'}
-function drawRankings(){const el=$('ranking');el.replaceChildren();el.append(add('h3','Tus resultados'));}
+$('competition').classList.remove('hidden');updatePersonalScore();SFX.once('open:'+roomId+':'+room.idx,room.idx===0?'start':'next');$('compProgress').textContent=`Pregunta ${room.idx+1}/${N}`;$('compQuestion').textContent=QUIZ[room.idx].q;const ready=timingReady(),rem=remaining();$('clock').textContent=ready?rem+' s':'Preparando…';optionButtons('compChoices',room.idx,!ready||rem<=1,true);$('compFeedback').classList.toggle('vote-error',lastVoteProblem?.i===room.idx);$('compFeedback').textContent=lastVoteProblem?.i===room.idx?lastVoteProblem.message:pendingVotes.has(room.idx)?'Enviando respuesta a Firebase…':!ready?'La pregunta se está sincronizando. Podrás responder cuando se confirme la apertura.':hasVoted(room.idx)?'Respuesta guardada. Puedes cambiarla mientras quede tiempo; se conservará la última elección.':rem===0?'Tiempo agotado. Espera al moderador.':'Selecciona una sola respuesta.'}
+function drawRankings(){const el=$('ranking');el.replaceChildren();el.append(add('h3','Tus resultados'));if(PEDAGOGY.every(p=>p&&p.key))el.append(personalClosing())}
 function drawQR(){if(simulationMode){$('qr').replaceChildren();$('qr').append(add('p','Sin QR: simulación local'));$('qr').dataset.code='';$('joinUrl').removeAttribute('href');$('joinUrl').textContent='No se comparte un enlace durante el ensayo';return}if($('qr').dataset.code===roomId)return;$('qr').replaceChildren();$('qr').dataset.code=roomId;if(window.QRCode)new QRCode($('qr'),{text:link(),width:160,height:160,correctLevel:QRCode.CorrectLevel.M});else $('qr').textContent='QR no disponible: comparte el enlace';$('joinUrl').href=link();$('joinUrl').textContent=link()}
 /* Si el propietario abre una sala cerrada (o en modo encuesta antiguo) SIN participantes ni votos, se reabre sola con el mismo QR. Nunca borra datos: solo actúa con la sala vacía. */
 const autoReopenTried=new Set();
@@ -577,7 +848,7 @@ function autoReopenIfEmpty(){
  alertText('Sala cerrada y vacía: reabriéndola con el mismo QR…');
  $('resetOfficial').onclick();
 }
-function render(){if(!room)return;section(...(isHost?(projecting?['projection']:['host']):['participant']));clearInterval(ticker);if(isHost){drawQR();renderHost();if(projecting)renderProjection();autoReopenIfEmpty()}else{renderParticipant()}if(room.status==='live'&&room.mode==='competition'&&!room.reveal&&stageNow()===0){ticker=setInterval(()=>{if(isHost)return;if(!timingReady()){$('clock').textContent='Preparando…';return}const rem=remaining();$('clock').textContent=rem+' s';if(rem<=1){clearInterval(ticker);renderParticipant()}},1000)}}
+function render(){if(!room)return;section(...(isHost?(projecting?['projection']:['host']):['participant']));clearInterval(ticker);if(isHost){drawQR();renderHost();if(projecting)renderProjection();autoReopenIfEmpty()}else{renderParticipant()}if(room.status==='live'&&room.mode==='competition'&&!room.reveal&&stageNow()===0){ticker=setInterval(()=>{if(isHost)return;if(!timingReady()){$('clock').textContent='Preparando…';return}const rem=remaining();$('clock').textContent=rem+' s';if(rem>1&&rem<=5)SFX.play('tick');if(rem<=1){SFX.play('timeup');clearInterval(ticker);renderParticipant()}},1000)}}
 async function init(cfg){if(!window.firebase)throw Error('No se pudo cargar Firebase. Comprueba tu conexión a internet.');if(!cfg||!cfg.apiKey||!cfg.projectId||!cfg.appId)throw Error('Faltan apiKey, projectId o appId en la configuración.');if(!firebase.apps.length)firebase.initializeApp(cfg);db=firebase.firestore();await firebase.auth().signInAnonymously();uid=firebase.auth().currentUser.uid;anonDb=db;anonUid=uid;authReady=true;synchronizeClock();let requested=code(new URLSearchParams(location.search).get('room'));
  let roomVerified=false;
  if(requested){
@@ -689,6 +960,7 @@ $('presenterOpen').onclick=async()=>{
 };
 const durations=$('durationFields');for(let i=0;i<4;i++){const l=add('label','Pregunta '+(i+1));const input=add('input');input.id='duration'+i;input.type='number';input.min='10';input.max='180';input.step='1';input.value='40';input.inputMode='numeric';l.append(input);durations.append(l)}
 $('mode').value='competition';
+durations.after(add('p','Estos tiempos solo se usan al crear una sala nueva. En una sala ya creada, cámbialos en el panel «Tiempo de respuesta por pregunta».','small'));
 $('sameTime').onclick=()=>{const v=$('duration0').value;for(let i=1;i<N;i++)$('duration'+i).value=v};$('cancelCreate').onclick=()=>{if(moderatorDb&&db===moderatorDb){db=anonDb;uid=anonUid;isHost=false}section('home');showOwnedRooms()};
 let creatingRoom=false;
 $('createRoom').onclick=async()=>{
@@ -925,6 +1197,7 @@ function renderLearningSummary(){
  out.append(add('h3','Síntesis de aprendizajes del grupo'));
  const rows=QUIZ.map((q,i)=>({i,n:votes[i].length,correct:correctFor(i)}));
  const answered=rows.filter(x=>x.n>0);if(!answered.length){out.append(add('p','Todavía no hay respuestas para elaborar conclusiones.'));return}
+ if(PEDAGOGY.every(p=>p&&p.key)){synthesisNodes().forEach(n=>out.append(n));return}
  const overall=answered.reduce((n,x)=>n+x.correct,0),total=answered.reduce((n,x)=>n+x.n,0);
  const summary=add('div',undefined,'learning-card');
  summary.append(add('strong',`Resultado agregado: ${fmtPercent(overall,total)} de aciertos sobre ${total} respuestas (${people.length} inscritos).`));
@@ -948,8 +1221,17 @@ let cachedPublicQr=null,cachedPublicQrRoom='';
 let publicIntroUntilWelcome=new URLSearchParams(location.search).get('intro')==='1';
 /* La portada obligatoria solo rige en la primera carga; una recarga posterior (F5) no debe volver a la portada en plena pregunta. */
 if(publicIntroUntilWelcome){try{const u=new URL(location.href);u.searchParams.delete('intro');history.replaceState(null,'',u.toString())}catch{}}
+function projectionSound(){
+ if(room.publicView!=='questions')return;
+ if(room.status==='done')return SFX.once('pdone:'+roomId,'achievement');
+ if(room.status!=='live')return;
+ const st=stageNow();
+ if(st===0)SFX.once('pq:'+roomId+':'+room.idx,room.idx===0?'start':'next');
+ else if(st>=2)SFX.once('pr:'+roomId+':'+room.idx,'reveal');
+}
 function renderProjection(){
  if(!projecting||!room||!isHost)return;
+ projectionSound();
  const out=$('projectChart');out.replaceChildren();
  $('projectSimulationWarning').classList.toggle('hidden',!simulationMode);
  $('projectPrivacy').textContent='';
@@ -1004,7 +1286,11 @@ function renderProjection(){
     row.append(head,track,add('p',resultMessage(x.correct/x.n),'small'));panel.append(row);
    });
    const difficult=[...meaningful].sort((a,b)=>a.correct/a.n-b.correct/b.n)[0];
-   panel.append(add('p','Idea para recordar: '+PEDAGOGY[difficult.i].principle));
+   if(PEDAGOGY.every(p=>p&&p.key)){
+    const ideas=add('div',undefined,'learning-card key-ideas');ideas.append(add('strong','Ideas fuerza'));
+    meaningful.forEach(x=>{const row=add('p',undefined,'key-idea-row');row.append(add('span',`P${x.i+1} · `,'qtag'),rich(PEDAGOGY[x.i].key));ideas.append(row)});
+    panel.append(ideas,closingNode());
+   }else panel.append(add('p','Idea para recordar: '+PEDAGOGY[difficult.i].principle));
   }
   out.append(panel);return;
  }

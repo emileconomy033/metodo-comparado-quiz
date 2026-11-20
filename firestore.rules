@@ -57,7 +57,11 @@ service cloud.firestore {
       allow update: if (owner(id) || (coPresenter(id) && (
           (resource.data.status != 'done' && request.resource.data.status != 'lobby' && request.resource.data.idx >= resource.data.idx)
           || (resource.data.status != 'done' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['publicView'])))))
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','idx','reveal','revealStage','openedAt','mode','publicView'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','idx','reveal','revealStage','openedAt','mode','publicView','questionTimes'])
+        // Los segundos por pregunta solo los cambia el propietario mientras la sala está en espera.
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['questionTimes'])
+          || (owner(id) && resource.data.status == 'lobby' && request.resource.data.status == 'lobby'
+            && validTimes(request.resource.data.questionTimes, resource.data.get('quizVersion',1))))
         && request.resource.data.get('publicView','welcome') in ['welcome','questions']
         && (request.resource.data.get('publicView','welcome') != 'questions' || request.resource.data.status in ['live','done'])
         && (request.resource.data.mode == resource.data.mode

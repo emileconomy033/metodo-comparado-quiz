@@ -253,3 +253,11 @@ Se detectó que abrir la ventana pública mientras la sala anterior estaba en `l
 
 ## Análisis de cada pregunta (19 nov 2026)
 Tras revelar la respuesta, el panel muestra párrafos cortos: primero cada alternativa incorrecta con votos (de mayor a menor) con «X % eligió la alternativa B y falló dado que…», luego la correcta con «es la correcta porque…». Si todos acertaron, solo se explica por qué es correcta. El material de apoyo (discusión, ejemplo, puente) queda plegado.
+
+## Cierre pedagógico, sonidos y tiempos (19 nov 2026)
+- **Análisis por pregunta** más narrativo: apertura según el resultado real, recuadro «Recordemos lo que dice la teoría» (Sartori, 1999, con página), «Desambigüemos» para la alternativa en que más falló el grupo y «Para fortalecer». Las ideas fuerza se resaltan en amarillo.
+- **Síntesis del grupo** con «Ideas fuerza de la sesión», indicador consolidado/por reforzar y **Conclusión de la sesión** (también en la pantalla pública). Los participantes ven «Para llevarte» al cerrar.
+- **Sonidos** sintetizados (sin archivos): selección, listo, inicio, siguiente, acierto, desacierto, cuenta regresiva, revelación y logro final. Botón «Sonido» para silenciar; el navegador exige un toque inicial para activar el audio.
+- **Tiempos por pregunta:** el formulario solo se aplicaba al *crear* una sala. Ahora el panel del moderador muestra los segundos guardados en Firestore y el propietario puede cambiarlos con la sala en espera. **Requiere publicar `firestore.rules`.**
+- Pruebas: `npm test` (incluye `scripts/narrative.test.mjs`).
+- Fuentes de las citas: Sartori (1999, pp. 31-47) y Panebianco (1999), de la literatura del curso.
