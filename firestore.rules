@@ -119,7 +119,7 @@ service cloud.firestore {
             || (parent(id).data.mode == 'competition' && int(qid) == parent(id).data.idx
               && parent(id).data.reveal == false && parent(id).data.get('revealStage',0) == 0
               && request.time <= parent(id).data.openedAt + duration.value(parent(id).data.get('questionTimes',[40,40,40,40,40,40])[int(qid)],'s')));
-        allow delete: if owner(id) && parent(id).data.status == 'done';
+        allow delete: if owner(id) && parent(id).data.status in ['lobby','done'];
       }
       match /access/{key} {
         allow get: if key == 'presenter' && (owner(id) || (signed() && request.auth.token.firebase.sign_in_provider == 'password' && resource.data.email == request.auth.token.email));

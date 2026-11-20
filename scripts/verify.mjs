@@ -51,7 +51,7 @@ assert(rules.includes('request.resource.data.quizVersion in [2,3]'));
 assert(rules.includes("resource.data.get('quizVersion',1) == 3 ? 4 : 6"));
 assert(rules.includes('function coPresenter(id)'));
 assert(rules.includes("match /access/{key}"));
-assert(rules.includes("allow delete: if owner(id) && parent(id).data.status == 'done'"));
+assert(rules.includes("allow delete: if owner(id) && parent(id).data.status in ['lobby','done']"));
 assert(rules.includes("parent(id).data.get('revealStage',0) == 0"));
 assert(!rules.includes('if true;'));
 assert(html.includes('id="openAudienceWindow"'),'Falta abrir ventana pública independiente');
@@ -76,7 +76,7 @@ assert(source.includes("lastVoteProblem?.i===surveyAt"),'El rechazo de voto no a
 assert(html.includes('id="surveyVoteError"'),'Falta alerta contextual en móvil');
 assert(source.includes("e.code==='permission-denied'"),'No se diferencia plazo agotado de rechazo por permisos');
 assert(source.includes("if(!timingReady()){$('clock').textContent='Preparando…'"),'Temporizador de móviles durante transición incorrecto');
-assert(source.includes("if(pendingVotes.has(i))return"),'Doble toque puede duplicar envíos de voto');
+assert(source.includes("if(pendingVotes.has(i)){wantedChoice.set(i,choice);return}"),"Doble toque puede duplicar envíos de voto");
 assert(source.includes("onSnapshot({includeMetadataChanges:true},s=>"),'La app debe recibir la confirmación de Firestore');
 assert(source.includes("if(s.metadata?.hasPendingWrites)return"),'Un voto local pendiente no debe considerarse confirmado');
 assert(source.includes("pendingVotes.has(room.idx)?'Enviando respuesta"),'El celular debe indicar envío pendiente');
@@ -184,7 +184,7 @@ assert(source.includes("activeId&&activeId!==codeValue"),'El invitado no puede a
 assert(source.includes("people=[];votes=Array.from({length:N},()=>[]);subscribe()"),'El segundo expositor necesita listeners compatibles con cuatro preguntas');
 assert(!html.includes('Soy moderador: crear sesión'),'No debe persistir el texto ambiguo anterior');
 assert(html.includes('id="resetOfficial">Reiniciar ensayo · conservar QR'),'Debe mostrarse la acción de recuperar una sala antigua activa');
-assert(source.includes("if(room.status!=='done')await ref.update({status:'done',reveal:true,revealStage:3,publicView:'welcome'})"),'El reinicio cierra el ensayo antes de borrar registros');
+assert(source.includes("if(room.status==='live')await ref.update({status:'done',reveal:true,revealStage:3,publicView:'welcome'})"),'Solo una sala en curso se cierra antes de borrar; desde la espera no debe quedar cerrada');
 assert(source.includes("if(typed!=='REINICIAR')return"),'La acción destructiva debe requerir confirmación escrita');
 assert(source.includes("['lobby','live','done'].includes(room.status)"),"El propietario debe poder reiniciar también desde la sala de espera");
 assert(source.includes("if(room.mode==='survey'&&room.quizVersion===3)"),'Una encuesta antigua debe bloquear las respuestas libres');

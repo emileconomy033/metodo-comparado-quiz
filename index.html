@@ -79,8 +79,6 @@ mark.hl{background:linear-gradient(transparent 10%,#ffe27a 10%,#ffe27a 90%,trans
 .closing-card .takeaways{margin:8px 0 12px 20px;padding:0}.closing-card .takeaways li{margin:8px 0}
 .closing-quote{margin-top:14px;padding:12px 16px;border-left:4px solid #2b6a8f;background:#eaf3f9}
 .projection-screen .closing-card{font-size:clamp(16px,1.8vw,23px)}.projection-screen .key-ideas{font-size:clamp(16px,1.8vw,22px)}
-.sound-toggle{position:fixed;right:12px;bottom:12px;z-index:300;padding:8px 14px;border:1px solid #b8c9c4;border-radius:20px;background:#fff;color:#24394a;font:600 13px system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px #0002}
-.sound-toggle:hover{background:#eef6f3}
 .times-panel{margin:12px 0 18px;padding:13px 17px;border:1px solid #d3dfd9;border-radius:5px;background:#fbfdfb}
 .times-panel h4{margin:0 0 6px;font-size:15px}.times-panel .time-grid{margin:8px 0}.times-panel .tp-note{font-size:13px;color:#4f685c;margin:6px 0}
 .projection-screen{position:fixed;inset:0;z-index:80;overflow:auto;padding:clamp(20px,4vw,60px);background:#f5f7f6;color:#24394a}
@@ -103,14 +101,13 @@ mark.hl{background:linear-gradient(transparent 10%,#ffe27a 10%,#ffe27a 90%,trans
 <section id="moderatorLogin" class="card hidden"><h2>Acceso para expositores</h2><label for="moderatorEmail">Correo de expositor</label><input id="moderatorEmail" type="email" autocomplete="username" value="emil.economia@gmail.com" placeholder="correo@ejemplo.com"><label for="moderatorPassword">Contraseña del expositor</label><input id="moderatorPassword" type="password" autocomplete="current-password" placeholder="Contraseña"><div class="row" style="margin-top:16px"><button class="btn" id="moderatorEnter">Acceder</button><button class="btn secondary" id="moderatorBack">Volver</button></div></section>
 <section id="presenterEntry" class="card hidden"><h2>Entrar a la sala existente</h2><label for="presenterRoomCode">Código de la sala única</label><input id="presenterRoomCode" maxlength="8" autocomplete="off" placeholder="Código compartido"><div class="row" style="margin-top:16px"><button class="btn" id="presenterOpen">Abrir panel de exposición</button><button class="btn secondary" id="presenterBack">Volver al inicio</button></div></section>
 <section id="create" class="card hidden"><h2>Mi sala · propietario</h2><input id="mode" type="hidden" value="competition"><div class="mode-locked"><strong>Competencia dirigida</strong><span> El avance de preguntas lo controlan los expositores.</span></div><div id="durationEditor"><h3>Tiempo de respuesta por pregunta</h3><div id="durationFields" class="time-grid"></div><button class="btn secondary" id="sameTime" type="button">Aplicar el tiempo de P1 a todas</button></div><div class="row"><button class="btn" id="createRoom">Abrir mi sala · crear solo si no existe</button><button class="btn secondary" id="cancelCreate">Volver</button></div></section>
-<section id="host" class="hidden"><div class="card"><div class="row between"><div><div class="eyebrow">Panel privado del moderador</div><h2 id="hostCode"></h2></div><span class="pill" id="hostStatus"></span></div><div class="room-readiness" id="roomReadiness" role="status" aria-live="polite"></div><div class="times-panel" id="timesPanel"></div><div class="row"><div id="qr" aria-label="Código QR para unirse"></div><div style="flex:1;min-width:200px"><p>Acceso de participantes</p><a id="joinUrl" target="_blank" rel="noopener noreferrer"></a><div class="row" style="margin-top:12px"><button class="btn secondary" id="copyLink">Copiar enlace</button><button class="btn secondary" id="downloadQR">Guardar QR</button><button class="btn secondary" id="hostHome">Volver al inicio</button><button class="btn secondary" id="newActivity">Volver a mi sala</button></div></div></div><div class="attendance-panel"><div class="row between"><strong id="attendanceCount" aria-live="polite">0 inscritos</strong><button class="btn secondary" id="refreshAttendees">Actualizar participantes</button></div><div class="ready-metrics" aria-live="polite"><div><strong id="readyCount">0</strong><span>Listos</span></div><div><strong id="pendingCount">0</strong><span>Pendientes</span></div></div><div class="ready-track" role="progressbar" aria-label="Confirmaciones de preparación" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="readyProgress"><div id="readyProgressFill"></div></div><p id="attendanceStatus" class="small" role="status">Conectando con Firebase…</p><div id="attendanceNames" class="attendance-names" aria-live="polite"></div></div><p id="hostHint" class="small"></p><details id="sessionScript" class="presenter-access"><summary><strong>Guion de la sesión para los dos expositores</strong></summary><ol><li><strong>Antes de empezar (5 min).</strong> Pantalla pública abierta con la portada y el QR. Verificar por voz que todos pudieron entrar. Cuando el contador muestre todos listos, pulsar «Iniciar competencia».</li><li><strong>Apertura (2 min, expositor 1).</strong> «Vamos a responder cuatro preguntas con el teléfono. Cada una tiene un tiempo de respuesta; después veremos cómo respondió el grupo y por qué.»</li><li><strong>Preguntas 1 y 2 (expositor 1, unos 6 min cada una).</strong> Pasos del panel: dejar correr el tiempo → «Mostrar distribución» → pedir que dos personas con respuestas distintas argumenten → «Revelar respuesta» → leer «Qué decir al revelar» → una pregunta de «Para conversar» → «Siguiente pregunta».</li><li><strong>Relevo.</strong> El expositor 2 puede llevar el panel desde su propia cuenta; los controles de avance funcionan igual en ambos paneles.</li><li><strong>Preguntas 3 y 4 (expositor 2, unos 6 min cada una).</strong> Mismo recorrido. En la pregunta 4 usar el «Puente» como cierre y pulsar «Cerrar y mostrar resultados».</li><li><strong>Cierre (3 min, ambos).</strong> La pantalla pública muestra el resultado por pregunta con su mensaje. Cada celular muestra el puntaje personal. Terminar con: «Antes de comparar: ¿qué propiedad, definida cómo, en qué casos y con qué equivalencia?»</li><li><strong>Después de clase.</strong> «Exportar CSV» y «Informe PDF». Para reutilizar la sala: «Reiniciar ensayo · conservar QR» (solo la cuenta propietaria).</li></ol></details><section id="presenterAccess" class="presenter-access"><h3>Segundo expositor autorizado</h3><div class="row"><input id="presenterInviteEmail" type="email" value="gramirezfunes@gmail.com" placeholder="Correo del segundo expositor" style="flex:1;min-width:210px"><button class="btn secondary" id="savePresenter">Autorizar expositor</button><button class="btn secondary" id="removePresenter">Revocar acceso</button></div><p id="presenterInviteStatus" class="small" role="status"></p></section><div id="simulationWarning" class="notice hidden" role="status">SIMULACIÓN · DATOS FICTICIOS</div><div class="row"><button class="btn" id="start">Abrir encuesta</button><button class="btn warning hidden" id="startAnyway" type="button">Iniciar solo con los listos</button><button class="btn secondary" id="next">Siguiente pregunta</button><button class="btn secondary" id="reveal">Revelar respuesta</button><button class="btn warning" id="finish">Cerrar y mostrar resultados</button><button class="btn warning" id="resetOfficial">Reiniciar ensayo · conservar QR</button><span class="small" id="stageGuide" aria-live="polite"></span></div></div><div class="card"><div class="row between"><h2>Estadísticas del grupo</h2><div class="row"><button class="btn" id="openAudienceWindow">Abrir pantalla para compartir</button><button class="btn secondary" id="showPublicWelcome">Mostrar portada y QR</button><button class="btn secondary" id="showPublicQuestion">Mostrar pregunta al público</button><button class="btn secondary" id="exportCSV">Exportar CSV</button><button class="btn secondary" id="printReport">Informe PDF</button></div></div><div id="completedActions" class="card hidden" style="margin:18px 0"><h2>Dinámica finalizada</h2><p></p><div class="row"><button class="btn secondary" id="completedHome">Volver al inicio</button></div></div><div id="metrics" class="grid"></div><h3>Desempeño por pregunta</h3><div id="summary"></div><div class="tabs" id="questionTabs"></div><div class="row" style="margin:15px 0"><button class="btn secondary" id="hostNotesView">Guion privado del expositor</button><button class="btn secondary" id="hostPublicView">Previsualizar vista del público</button></div><div id="hostChart"></div><div id="countries"></div><section id="finalLearning" class="learning-summary" aria-live="polite"></section></div></section>
+<section id="host" class="hidden"><div class="card"><div class="row between"><div><div class="eyebrow">Panel privado del moderador</div><h2 id="hostCode"></h2></div><span class="pill" id="hostStatus"></span></div><div class="room-readiness" id="roomReadiness" role="status" aria-live="polite"></div><div class="times-panel" id="timesPanel"></div><p class="small" id="ackInfo" aria-live="polite"></p><div class="row"><div id="qr" aria-label="Código QR para unirse"></div><div style="flex:1;min-width:200px"><p>Acceso de participantes</p><a id="joinUrl" target="_blank" rel="noopener noreferrer"></a><div class="row" style="margin-top:12px"><button class="btn secondary" id="copyLink">Copiar enlace</button><button class="btn secondary" id="downloadQR">Guardar QR</button><button class="btn secondary" id="hostHome">Volver al inicio</button><button class="btn secondary" id="newActivity">Volver a mi sala</button></div></div></div><div class="attendance-panel"><div class="row between"><strong id="attendanceCount" aria-live="polite">0 inscritos</strong><button class="btn secondary" id="refreshAttendees">Actualizar participantes</button></div><div class="ready-metrics" aria-live="polite"><div><strong id="readyCount">0</strong><span>Listos</span></div><div><strong id="pendingCount">0</strong><span>Pendientes</span></div></div><div class="ready-track" role="progressbar" aria-label="Confirmaciones de preparación" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="readyProgress"><div id="readyProgressFill"></div></div><p id="attendanceStatus" class="small" role="status">Conectando con Firebase…</p><div id="attendanceNames" class="attendance-names" aria-live="polite"></div></div><p id="hostHint" class="small"></p><details id="sessionScript" class="presenter-access"><summary><strong>Guion de la sesión para los dos expositores</strong></summary><ol><li><strong>Antes de empezar (5 min).</strong> Pantalla pública abierta con la portada y el QR. Verificar por voz que todos pudieron entrar. Cuando el contador muestre todos listos, pulsar «Iniciar competencia».</li><li><strong>Apertura (2 min, expositor 1).</strong> «Vamos a responder cuatro preguntas con el teléfono. Cada una tiene un tiempo de respuesta; después veremos cómo respondió el grupo y por qué.»</li><li><strong>Preguntas 1 y 2 (expositor 1, unos 6 min cada una).</strong> Pasos del panel: dejar correr el tiempo → «Mostrar distribución» → pedir que dos personas con respuestas distintas argumenten → «Revelar respuesta» → leer «Qué decir al revelar» → una pregunta de «Para conversar» → «Siguiente pregunta».</li><li><strong>Relevo.</strong> El expositor 2 puede llevar el panel desde su propia cuenta; los controles de avance funcionan igual en ambos paneles.</li><li><strong>Preguntas 3 y 4 (expositor 2, unos 6 min cada una).</strong> Mismo recorrido. En la pregunta 4 usar el «Puente» como cierre y pulsar «Cerrar y mostrar resultados».</li><li><strong>Cierre (3 min, ambos).</strong> La pantalla pública muestra el resultado por pregunta con su mensaje. Cada celular muestra el puntaje personal. Terminar con: «Antes de comparar: ¿qué propiedad, definida cómo, en qué casos y con qué equivalencia?»</li><li><strong>Después de clase.</strong> «Exportar CSV» y «Informe PDF». Para reutilizar la sala: «Reiniciar ensayo · conservar QR» (solo la cuenta propietaria).</li></ol></details><section id="presenterAccess" class="presenter-access"><h3>Segundo expositor autorizado</h3><div class="row"><input id="presenterInviteEmail" type="email" value="gramirezfunes@gmail.com" placeholder="Correo del segundo expositor" style="flex:1;min-width:210px"><button class="btn secondary" id="savePresenter">Autorizar expositor</button><button class="btn secondary" id="removePresenter">Revocar acceso</button></div><p id="presenterInviteStatus" class="small" role="status"></p></section><div id="simulationWarning" class="notice hidden" role="status">SIMULACIÓN · DATOS FICTICIOS</div><div class="row"><button class="btn" id="start">Abrir encuesta</button><button class="btn warning hidden" id="startAnyway" type="button">Iniciar solo con los listos</button><button class="btn secondary" id="next">Siguiente pregunta</button><button class="btn secondary" id="reveal">Revelar respuesta</button><button class="btn warning" id="finish">Cerrar y mostrar resultados</button><button class="btn warning" id="resetOfficial">Reiniciar ensayo · conservar QR</button><span class="small" id="stageGuide" aria-live="polite"></span></div></div><div class="card"><div class="row between"><h2>Estadísticas del grupo</h2><div class="row"><button class="btn" id="openAudienceWindow">Abrir pantalla para compartir</button><button class="btn secondary" id="showPublicWelcome">Mostrar portada y QR</button><button class="btn secondary" id="showPublicQuestion">Mostrar pregunta al público</button><button class="btn secondary" id="exportCSV">Exportar CSV</button><button class="btn secondary" id="printReport">Informe PDF</button></div></div><div id="completedActions" class="card hidden" style="margin:18px 0"><h2>Dinámica finalizada</h2><p></p><div class="row"><button class="btn secondary" id="completedHome">Volver al inicio</button></div></div><div id="metrics" class="grid"></div><h3>Desempeño por pregunta</h3><div id="summary"></div><div class="tabs" id="questionTabs"></div><div class="row" style="margin:15px 0"><button class="btn secondary" id="hostNotesView">Guion privado del expositor</button><button class="btn secondary" id="hostPublicView">Previsualizar vista del público</button></div><div id="hostChart"></div><div id="countries"></div><section id="finalLearning" class="learning-summary" aria-live="polite"></section></div></section>
 <section id="projection" class="hidden projection-screen" aria-label="Presentación de resultados">
 <div class="projection-top"><div><span class="kicker">MÉTODO COMPARADO · GRUPO 1</span><h2 id="projectHeading">¿Realmente sabemos comparar?</h2></div><span class="project-stage" id="projectStage">Sala de espera</span></div>
 <div id="projectChart"></div><div id="projectSimulationWarning" class="notice hidden">SIMULACIÓN DOCENTE · DATOS FICTICIOS</div><div class="projection-foot"><span id="projectIndicator"></span><span id="projectPrivacy"></span></div>
 </section>
 <section id="participant" class="hidden"><div id="waiting" class="card hidden center"><div class="waiting-check" aria-hidden="true">✓</div><h2 id="waitTitle">Inscripción confirmada</h2><p id="waitText"></p><div id="waitingIdentity" class="waiting-identity"></div><button class="btn" id="confirmReady">Confirmar que estoy listo</button><div id="waitingReadyStatus" class="waiting-ready-status" role="status" aria-live="polite"></div></div><div id="submittedPanel" class="card hidden finish-state"><div class="kicker">Respuestas enviadas</div><h2>Has completado el cuestionario</h2><p id="submittedText">Tus respuestas ya quedaron registradas. El moderador presentará los resultados colectivos cuando cierre la sesión.</p><div class="progress-mini"><span style="width:100%"></span></div><button class="btn secondary" id="reviewSurvey">Revisar mis respuestas</button></div><div id="survey" class="card hidden"><div class="row between"><span class="pill" id="surveyProgress"></span><span class="pill" id="surveyRecorded"></span></div><h2 id="surveyQuestion" style="margin-top:16px"></h2><div id="surveyChoices"></div><p id="surveyVoteError" class="vote-error hidden" role="alert"></p><div class="row between" style="margin-top:12px"><button class="btn secondary" id="prevSurvey">Anterior</button><button class="btn" id="nextSurvey">Siguiente</button></div></div><div id="competition" class="card hidden"><div class="scoreline" id="competitionScore" aria-live="polite">Aciertos: 0/4</div><div class="row between"><span class="pill" id="compProgress"></span><span class="timer" id="clock">40 s</span></div><h2 id="compQuestion" style="margin-top:16px"></h2><div id="compChoices"></div><p id="compFeedback" class="small"></p></div><div id="revealPanel" class="card hidden"><div class="scoreline" id="revealScore" aria-live="polite">Aciertos: 0/4</div><div id="personalReveal" class="personal-reveal" aria-live="polite"></div><h2 id="revealTitle"></h2><div id="revealChart"></div><div id="revealExplanation" class="notice"></div><div id="microTransfer" class="micro-transfer hidden" aria-live="polite"></div></div><div id="donePanel" class="card hidden"><h2>Resultados de la sesión</h2><div class="scoreline" id="finalScore">Aciertos: 0/4</div><div id="myScore"></div><div id="ranking"></div></div></section>
 <footer>Actividad académica del Grupo 1.</footer></main>
-<button id="soundToggle" class="sound-toggle" type="button" aria-pressed="true">🔊 Sonido</button>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="firebase-config.js"></script>
 <script>
 'use strict';
@@ -480,13 +477,11 @@ function updatePersonalScore(){
 }
 /* ===== Efectos de sonido sintetizados (sin archivos externos) ===== */
 const SFX=(()=>{
- let ctx=null,muted=false;const seen=new Set();
- try{muted=localStorage.getItem('comparacionSonido')==='off'}catch{}
- const btn=document.getElementById('soundToggle');
- function label(){if(!btn)return;const blocked=!muted&&ctx&&ctx.state!=='running';btn.textContent=muted?'🔇 Sonido apagado':blocked?'🔈 Toca para activar el sonido':'🔊 Sonido';btn.setAttribute('aria-pressed',String(!muted))}
+ /* Sin botón en pantalla: quien no quiera sonido baja el volumen de su dispositivo. */
+ let ctx=null;const seen=new Set();
  function ensure(){
-  if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;try{ctx=new C();ctx.onstatechange=label}catch{return null}}
-  if(ctx.state==='suspended')ctx.resume().then(label).catch(()=>{});
+  if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;try{ctx=new C()}catch{return null}}
+  if(ctx.state==='suspended')ctx.resume().catch(()=>{});
   return ctx;
  }
  function tone(f,t0,dur,type,vol,to){
@@ -510,16 +505,15 @@ const SFX=(()=>{
   finish:t=>{[N5.G4,N5.C5,N5.E5].forEach((f,k)=>tone(f,t+k*.16,.4,'sine',.12))}
  };
  function play(name){
-  if(muted)return;const c=ensure();if(!c||c.state==='closed')return;
+  const c=ensure();if(!c||c.state==='closed')return;
   try{bank[name]&&bank[name](c.currentTime+.01)}catch{}
  }
- function buzz(p){try{navigator.vibrate&&!muted&&navigator.vibrate(p)}catch{}}
+ function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch{}}
  function once(key,name){if(seen.has(key))return;seen.add(key);play(name)}
- function toggle(){muted=!muted;try{localStorage.setItem('comparacionSonido',muted?'off':'on')}catch{}if(!muted){ensure();play('select')}label()}
- if(btn)btn.onclick=toggle;
- ['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{if(!muted)ensure()},{passive:true}));
- label();
- return {play,once,buzz,toggle};
+ /* El navegador exige un gesto del usuario para activar el audio: se prepara en el primer toque. */
+ let primed=false;
+ ['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{if(primed)return;primed=true;ensure()},{passive:true}));
+ return {play,once,buzz};
 })();
 /* ===== Texto enriquecido: **frase** se muestra resaltada ===== */
 function rich(text){
@@ -579,7 +573,7 @@ function narrativePanel(i,n,good,q){
  return panel;
 }
 /* Conclusión de cierre: combina resultados reales con la teoría del curso. */
-function closingNode(){
+function closingNode(compact){
  const box=add('section',undefined,'closing-card');
  box.append(add('h3','Conclusión de la sesión'));
  const rows=QUIZ.map((q,i)=>({i,n:votes[i]?.length||0,c:correctFor(i)})).filter(x=>x.n>0);
@@ -594,6 +588,11 @@ function closingNode(){
  box.append(richBlock('p',p1));
  if(best.i!==worst.i&&best.c/best.n!==worst.c/worst.n){
   box.append(richBlock('p',`Lo más firme fue **${QUIZ[best.i].topic}** (${fmtPercent(best.c,best.n)}); lo que más costó fue **${QUIZ[worst.i].topic}** (${fmtPercent(worst.c,worst.n)}).`));
+ }
+ if(compact){
+  /* Versión de la pantalla compartida: breve. El desarrollo teórico queda en el panel de los expositores. */
+  box.append(richBlock('p','Seguimos con la pregunta que ordena todo lo anterior: **«comparable, ¿en qué aspecto?»** (Sartori, 1999, p. 36).','closing-quote'));
+  return box;
  }
  if(worst.c<worst.n){
   const G=PEDAGOGY[worst.i],q=QUIZ[worst.i];
@@ -688,11 +687,7 @@ function drawPersonalReveal(){
  box.append(add('p',answer?(correct?'¡Muy bien! Has identificado la mejor alternativa.':'Revisemos el razonamiento y el concepto que debemos reforzar.'):'Se agotó el tiempo o no se registró una selección.'));
  if(answer)box.append(add('p','Tu respuesta: '+ 'ABCD'[answer.choice]+'. '+q.a[answer.choice],'your-choice'));
  box.append(add('p','Respuesta correcta: '+'ABCD'[q.correct]+'. '+q.a[q.correct],'choice-answer'));
- box.append(add('p','Principio metodológico: '+PEDAGOGY[i].principle,'reveal-principle'));
- const PG=PEDAGOGY[i];
- if(PG.recall){const t=add('div',undefined,'theory-callout');t.append(add('span','Recordemos','kick'),richBlock('p',PG.recall));if(PG.cite)t.append(add('span',PG.cite,'cite'));box.append(t)}
- if(answer&&!correct&&PG.dis&&PG.dis[answer.choice])box.append(richBlock('p',PG.dis[answer.choice],'disambig'));
- else if(answer&&!correct&&PG.mis[answer.choice])box.append(add('p','¿Por qué no?: '+PG.mis[answer.choice],'reveal-principle'));
+ /* La explicación teórica (principio, cita, desambiguación) es solo para los expositores: el participante ve únicamente su resultado. */
  SFX.once('rv:'+roomId+':'+i,correct?'correct':answer?'wrong':'timeup');SFX.buzz(correct?[40,40,80]:answer?120:60);
  if(correct)celebrateCorrect(i);
 }
@@ -794,7 +789,10 @@ $('metrics').replaceChildren(rowMetric(people.length,'Participantes'),rowMetric(
 if(room.owner===uid&&!simulationMode)refreshPresenterInvite();renderLearningSummary();if(projecting)renderProjection();const sum=$('summary');sum.replaceChildren();QUIZ.forEach((q,i)=>{const n=votes[i].length,ac=correctFor(i),box=add('div',undefined,'aggregate'),left=add('div');left.append(add('strong',`P${i+1} · ${q.topic}`),add('div',`${ac} aciertos de ${n} respuestas · ${fmtPercent(ac,n)}`,'small'));const prog=add('progress');prog.max=100;prog.value=n?100*ac/n:0;prog.setAttribute('aria-label',`Porcentaje de aciertos en pregunta ${i+1}`);box.append(left,prog);sum.append(box)});
 const tabs=$('questionTabs');tabs.replaceChildren();QUIZ.forEach((q,i)=>{const b=add('button','Pregunta '+(i+1)+(activeTab===i?' ●':''),activeTab===i?'active':'');b.onclick=()=>{activeTab=i;renderHost()};tabs.append(b)});$('hostNotesView').classList.toggle('active',hostReadingView==='notes');$('hostPublicView').classList.toggle('active',hostReadingView==='public');chart('hostChart',activeTab,room.status==='done'||(room.mode==='competition'&&(room.idx>activeTab||(room.idx===activeTab&&stageNow()>=2))),hostReadingView==='public');
 const counts={};people.forEach(p=>{if(p.country)counts[p.country]=(counts[p.country]||0)+1});const co=$('countries');co.replaceChildren();co.append(add('h3','Participantes por país declarado (opcional)'));if(!Object.keys(counts).length)co.append(add('p','Todavía no se han declarado países.'));else Object.entries(counts).sort((a,b)=>b[1]-a[1]).forEach(([name,n])=>co.append(add('div',`${name}: ${n} participantes`,'small')))}
-function optionButtons(target,i,locked,allowSubmit){const el=$(target);el.replaceChildren();QUIZ[i].a.forEach((text,j)=>{const b=add('button',undefined,'choice'+(votes[i].some(v=>v.uid===uid&&v.choice===j)?' selected':''));b.disabled=locked||pendingVotes.has(i);b.append(add('span','ABCD'[j],'letter'),add('span',text));b.onclick=()=>{SFX.play('select');SFX.buzz(15);submit(i,j,allowSubmit)};el.append(b)})}
+/* Selección optimista: la opción tocada se marca al instante y el envío a Firebase sigue en segundo plano (gana siempre el último toque). */
+const localChoice=new Map(),wantedChoice=new Map();
+function chosenNow(i){const k=roomId+':'+i;if(localChoice.has(k))return localChoice.get(k);const v=votes[i]?.find(x=>x.uid===uid);return v?v.choice:-1}
+function optionButtons(target,i,locked,allowSubmit){const el=$(target);el.replaceChildren();const mine=chosenNow(i);QUIZ[i].a.forEach((text,j)=>{const b=add('button',undefined,'choice'+(mine===j?' selected':''));b.disabled=!!locked;b.setAttribute('aria-pressed',String(mine===j));b.append(add('span','ABCD'[j],'letter'),add('span',text));b.onclick=()=>{if(locked)return;SFX.play('select');SFX.buzz(15);localChoice.set(roomId+':'+i,j);renderParticipant();submit(i,j,allowSubmit)};el.append(b)})}
 function renderWaitingConfirmation(){
  const confirmed=myRegistration?.ready===true;
  $('waitTitle').textContent=confirmed?'¡Listo para comenzar!':'Inscripción confirmada';
@@ -803,16 +801,18 @@ function renderWaitingConfirmation(){
  $('confirmReady').classList.toggle('hidden',confirmed);
  $('confirmReady').disabled=readySubmitting||!myRegistration;
  $('confirmReady').textContent=readySubmitting?'Confirmando…':'Estoy listo';
- $('waitingReadyStatus').textContent=confirmed?'✓ Preparación confirmada y guardada':readySubmitting?'Guardando confirmación…':'Pendiente de confirmación';
+ $('waitingReadyStatus').textContent=confirmed?(readySubmitting?'Guardando tu confirmación…':'✓ Preparación confirmada y guardada'):readySubmitting?'Guardando confirmación…':'Pendiente de confirmación';
 }
 function withTimeout(promise,ms,message){let t;return Promise.race([promise,new Promise((_,reject)=>{t=setTimeout(()=>reject(Object.assign(Error(message),{code:'client-timeout'})),ms)})]).finally(()=>clearTimeout(t))}
 $('confirmReady').onclick=async()=>{
  if(readySubmitting||isHost||!room||room.status!=='lobby'||myRegistration?.ready===true)return;
- readySubmitting=true;renderWaitingConfirmation();
+ /* Confirmación optimista: se muestra «listo» al instante y se revierte si Firebase la rechaza. */
+ const before=myRegistration;
+ readySubmitting=true;myRegistration={...myRegistration,ready:true};SFX.play('ready');SFX.buzz(30);renderWaitingConfirmation();
  try{
   await withTimeout(anonDb.collection('rooms').doc(roomId).collection('participants').doc(anonUid).update({ready:true,readyAt:firebase.firestore.FieldValue.serverTimestamp()}),12000,'Firebase no respondió en 12 s. Comprueba tu conexión y vuelve a pulsar «Estoy listo».');
-  myRegistration={...myRegistration,ready:true};alertText('');SFX.play('ready');SFX.buzz(30);
- }catch(e){alertText('No se pudo confirmar tu preparación: '+e.message,true)}
+  alertText('');
+ }catch(e){myRegistration=before;alertText('No se pudo confirmar tu preparación: '+e.message,true)}
  finally{readySubmitting=false;if(room?.status==='lobby')renderWaitingConfirmation()}
 };
 function renderParticipant(){if(isHost){$('participant').classList.add('hidden');return}if($('alert').textContent?.includes('No se pudo completar el ingreso')||$('alert').textContent?.includes('No fue posible ingresar (validación inicial)'))alertText('');$('participant').classList.remove('hidden');['waiting','survey','submittedPanel','competition','revealPanel','donePanel'].forEach(s=>$(s).classList.add('hidden'));
@@ -833,9 +833,9 @@ if(room.mode==='competition'&&stageNow()===1&&room.status==='live'){
  $('revealTitle').textContent='Resultados · pregunta '+(room.idx+1);
  $('revealChart').replaceChildren();$('revealExplanation').textContent='Respuesta pendiente de revelar.';$('microTransfer').classList.add('hidden');return
  }
- if(room.reveal){$('revealPanel').classList.remove('hidden');updatePersonalScore();drawPersonalReveal();drawMicroTransfer();$('revealTitle').textContent=`Explicación · pregunta ${room.idx+1}`;$('revealChart').replaceChildren();$('revealChart').append(add('p',`Respuesta correcta: ${'ABCD'[QUIZ[room.idx].correct]}. ${QUIZ[room.idx].a[QUIZ[room.idx].correct]}`));$('revealExplanation').textContent=stageNow()>=3?'Principio metodológico: '+PEDAGOGY[room.idx].principle+' · Para otra investigación: '+PEDAGOGY[room.idx].transfer:'La explicación metodológica se presentará en la siguiente etapa.';return}
+ if(room.reveal){$('revealPanel').classList.remove('hidden');updatePersonalScore();drawPersonalReveal();drawMicroTransfer();$('revealTitle').textContent=`Explicación · pregunta ${room.idx+1}`;$('revealChart').replaceChildren();$('revealChart').append(add('p',`Respuesta correcta: ${'ABCD'[QUIZ[room.idx].correct]}. ${QUIZ[room.idx].a[QUIZ[room.idx].correct]}`));$('revealExplanation').textContent=stageNow()>=3?'Los expositores están comentando esta pregunta.':'';return}
 $('competition').classList.remove('hidden');updatePersonalScore();SFX.once('open:'+roomId+':'+room.idx,room.idx===0?'start':'next');$('compProgress').textContent=`Pregunta ${room.idx+1}/${N}`;$('compQuestion').textContent=QUIZ[room.idx].q;const ready=timingReady(),rem=remaining();$('clock').textContent=ready?rem+' s':'Preparando…';optionButtons('compChoices',room.idx,!ready||rem<=1,true);$('compFeedback').classList.toggle('vote-error',lastVoteProblem?.i===room.idx);$('compFeedback').textContent=lastVoteProblem?.i===room.idx?lastVoteProblem.message:pendingVotes.has(room.idx)?'Enviando respuesta a Firebase…':!ready?'La pregunta se está sincronizando. Podrás responder cuando se confirme la apertura.':hasVoted(room.idx)?'Respuesta guardada. Puedes cambiarla mientras quede tiempo; se conservará la última elección.':rem===0?'Tiempo agotado. Espera al moderador.':'Selecciona una sola respuesta.'}
-function drawRankings(){const el=$('ranking');el.replaceChildren();el.append(add('h3','Tus resultados'));if(PEDAGOGY.every(p=>p&&p.key))el.append(personalClosing())}
+function drawRankings(){const el=$('ranking');el.replaceChildren();el.append(add('h3','Tus resultados'));el.append(add('p','Gracias por participar. La conclusión de la sesión la presentan los expositores.','small'))}
 function drawQR(){if(simulationMode){$('qr').replaceChildren();$('qr').append(add('p','Sin QR: simulación local'));$('qr').dataset.code='';$('joinUrl').removeAttribute('href');$('joinUrl').textContent='No se comparte un enlace durante el ensayo';return}if($('qr').dataset.code===roomId)return;$('qr').replaceChildren();$('qr').dataset.code=roomId;if(window.QRCode)new QRCode($('qr'),{text:link(),width:160,height:160,correctLevel:QRCode.CorrectLevel.M});else $('qr').textContent='QR no disponible: comparte el enlace';$('joinUrl').href=link();$('joinUrl').textContent=link()}
 /* Si el propietario abre una sala cerrada (o en modo encuesta antiguo) SIN participantes ni votos, se reabre sola con el mismo QR. Nunca borra datos: solo actúa con la sala vacía. */
 const autoReopenTried=new Set();
@@ -849,7 +849,10 @@ function autoReopenIfEmpty(){
  $('resetOfficial').onclick();
 }
 function render(){if(!room)return;section(...(isHost?(projecting?['projection']:['host']):['participant']));clearInterval(ticker);if(isHost){drawQR();renderHost();if(projecting)renderProjection();autoReopenIfEmpty()}else{renderParticipant()}if(room.status==='live'&&room.mode==='competition'&&!room.reveal&&stageNow()===0){ticker=setInterval(()=>{if(isHost)return;if(!timingReady()){$('clock').textContent='Preparando…';return}const rem=remaining();$('clock').textContent=rem+' s';if(rem>1&&rem<=5)SFX.play('tick');if(rem<=1){SFX.play('timeup');clearInterval(ticker);renderParticipant()}},1000)}}
-async function init(cfg){if(!window.firebase)throw Error('No se pudo cargar Firebase. Comprueba tu conexión a internet.');if(!cfg||!cfg.apiKey||!cfg.projectId||!cfg.appId)throw Error('Faltan apiKey, projectId o appId en la configuración.');if(!firebase.apps.length)firebase.initializeApp(cfg);db=firebase.firestore();await firebase.auth().signInAnonymously();uid=firebase.auth().currentUser.uid;anonDb=db;anonUid=uid;authReady=true;synchronizeClock();let requested=code(new URLSearchParams(location.search).get('room'));
+async function init(cfg){if(!window.firebase)throw Error('No se pudo cargar Firebase. Comprueba tu conexión a internet.');if(!cfg||!cfg.apiKey||!cfg.projectId||!cfg.appId)throw Error('Faltan apiKey, projectId o appId en la configuración.');if(!firebase.apps.length)firebase.initializeApp(cfg);
+ /* El formulario aparece al instante con el código del QR; «Participar» se habilita cuando termina la autenticación anónima. */
+ {const qs=new URLSearchParams(location.search),early=code(qs.get('room'));if(qs.get('view')!=='projection'){if(early)$('roomCode').value=early;section('home');$('join').disabled=true}}
+ db=firebase.firestore();await firebase.auth().signInAnonymously();uid=firebase.auth().currentUser.uid;anonDb=db;anonUid=uid;authReady=true;$('join').disabled=false;synchronizeClock();let requested=code(new URLSearchParams(location.search).get('room'));
  let roomVerified=false;
  if(requested){
   try{
@@ -1021,19 +1024,19 @@ $('join').onclick=async()=>{
  joiningInProgress=true;$('join').disabled=true;
  let step='consultar la sala';
  try{
-  const activeId=await fetchActiveRoomId();
+  /* Las tres consultas de ingreso se lanzan a la vez (antes eran tres viajes seguidos al servidor). */
+  const ref=anonDb.collection('rooms').doc(enteredCode);
+  const person=ref.collection('participants').doc(anonUid);
+  const [activeId,existing,savedEarly]=await Promise.all([fetchActiveRoomId(),ref.get({source:'server'}),person.get({source:'server'}).catch(()=>null)]);
   if(!activeId)throw Error('No hay una sala oficial vigente. Pide al moderador que la active.');
   if(enteredCode!==activeId){
    $('roomCode').value=activeId;setRoomLocation(activeId);
    throw Error('El QR o código '+enteredCode+' es antiguo. Actualicé el formulario a la sala vigente '+activeId+'. Pulsa «Participar» nuevamente.');
   }
-  const ref=anonDb.collection('rooms').doc(enteredCode);
-  const existing=await ref.get({source:'server'});
   if(!existing.exists)throw Error('La sala no existe.');
   if(existing.data().status==='done')throw Error('La sala está cerrada porque la sesión anterior ya finalizó. Avisa al moderador para que la reabra y vuelve a pulsar «Participar».');
   step='comprobar tu inscripción';
-  const person=ref.collection('participants').doc(anonUid);
-  const saved=await person.get({source:'server'});
+  const saved=savedEarly||await person.get({source:'server'});
   let registeredName=enteredName,registeredCountry=enteredCountry;
   if(!saved.exists){
    step='registrarte en la sala';
@@ -1042,8 +1045,9 @@ $('join').onclick=async()=>{
   myRegistration=saved.exists?{...saved.data(),name:registeredName}:{name:registeredName,ready:false};
   unsubscribe();sharedVoteStops.forEach(stop=>stop());sharedVoteStops=[];
   db=anonDb;uid=anonUid;roomId=enteredCode;myName=registeredName;myCountry=registeredCountry;
-  room=null;isHost=false;projecting=false;people=[];votes=Array.from({length:N},()=>[]);
-  clearVoteProblem();alertText('');subscribe();
+  /* Se muestra de inmediato la sala ya consultada; el listener en tiempo real la mantiene al día. */
+  room=existing.data();activateQuizVersion(room.quizVersion);isHost=false;projecting=false;people=[];votes=Array.from({length:N},()=>[]);
+  clearVoteProblem();alertText('');subscribe();render();
   const url=new URL(location.href);url.searchParams.set('room',roomId);url.searchParams.delete('view');history.replaceState(null,'',url.toString());
  }catch(e){
   console.error('Error al ingresar',step,e);
@@ -1111,6 +1115,7 @@ function subscribe(){
       // No presentar ese eco como un voto confirmado.
       if(s.metadata?.hasPendingWrites)return;
       votes[i]=s.exists?[{uid,...s.data()}]:[];
+      if(s.exists&&localChoice.get(roomId+':'+i)===s.data().choice&&!pendingVotes.has(i))localChoice.delete(roomId+':'+i);
       if(room)render()
      },e=>alertText('Mi voto P'+(i+1)+': '+e.message,true)));
     }
@@ -1124,8 +1129,9 @@ const pendingVotes=new Set();let lastVoteProblem=null;
 function clearVoteProblem(){lastVoteProblem=null;$('surveyVoteError').classList.add('hidden');$('compFeedback').classList.remove('vote-error')}
 function showVoteProblem(i,message){lastVoteProblem={i,message};alertText(message,true)}
 async function submit(i,choice){
- if(pendingVotes.has(i))return;
+ if(pendingVotes.has(i)){wantedChoice.set(i,choice);return}
  if(!room||room.status!=='live'||(room.mode==='competition'&&(room.idx!==i||room.reveal||stageNow()>0||!timingReady()||remaining()<=1))){
+  localChoice.delete(roomId+':'+i);
   showVoteProblem(i,'Esta pregunta no está abierta o su tiempo terminó. Espera la indicación del moderador.');if(room)renderParticipant();return
  }
  pendingVotes.add(i);
@@ -1150,11 +1156,23 @@ async function submit(i,choice){
    else detail='Firebase rechazó el voto por permisos. Comprueba que las reglas publicadas estén actualizadas y que hayas ingresado a la sala con tu usuario registrado. ';
   }else if(e.code==='unavailable')detail='No hay conexión con Firebase. Comprueba internet y vuelve a intentarlo. ';
   else detail+=e.message||'Intenta otra vez.';
+  localChoice.delete(roomId+':'+i);wantedChoice.delete(i);
   showVoteProblem(i,detail);
- }finally{pendingVotes.delete(i);if(room)renderParticipant()}
+ }finally{
+  pendingVotes.delete(i);
+  const next=wantedChoice.get(i);wantedChoice.delete(i);
+  if(next!==undefined&&next!==choice){submit(i,next);return}
+  if(room)renderParticipant()
+ }
 }
 $('reviewSurvey').onclick=()=>{reviewingSurvey=true;surveyAt=0;renderParticipant()};
 $('prevSurvey').onclick=()=>{surveyAt=Math.max(0,surveyAt-1);renderParticipant()};$('nextSurvey').onclick=()=>{if(surveyAt===N-1&&QUIZ.every((q,i)=>hasVoted(i))){reviewingSurvey=false;renderParticipant()}else{surveyAt=(surveyAt+1)%N;renderParticipant()}};
+/* Mide cuánto tarda Firebase en confirmar cada acción del moderador (ayuda a distinguir red lenta de fallos de la app). */
+async function hostWrite(change){
+ const t=performance.now();await rref().update(change);
+ const ms=Math.round(performance.now()-t),el=$('ackInfo');
+ if(el)el.textContent='Último cambio confirmado por Firebase en '+ms+' ms'+(ms>1500?' · conexión lenta: revisa el internet del equipo del moderador':'');
+}
 $('startAnyway').onclick=()=>startCompetition(true);
 $('start').onclick=()=>startCompetition(false);
 async function startCompetition(force){try{if(!isHost||room.status!=='lobby'||(room.quizVersion===3&&room.mode!=='competition'))return;
@@ -1168,21 +1186,21 @@ async function startCompetition(force){try{if(!isHost||room.status!=='lobby'||(r
  const change={status:'live',idx:room.mode==='survey'?-1:0,reveal:false,publicView:'questions',openedAt:firebase.firestore.FieldValue.serverTimestamp()};
  if(room.quizVersion>=2)change.revealStage=0;
  if(simulationMode){Object.assign(room,change,{openedAt:firebase.firestore.Timestamp.fromMillis(Date.now())});render()}
- else await rref().update(change)
+ else await hostWrite(change)
  }catch(e){alertText('No se pudo iniciar: '+e.message,true)}}
 $('next').onclick=async()=>{try{
  if(!isHost||room.mode!=='competition'||!room.reveal||room.idx>=N-1||(room.quizVersion>=2&&stageNow()<2))return;
  const change={idx:room.idx+1,reveal:false,openedAt:firebase.firestore.FieldValue.serverTimestamp()};
  if(room.quizVersion>=2)change.revealStage=0;
  if(simulationMode){Object.assign(room,change,{openedAt:firebase.firestore.Timestamp.fromMillis(Date.now())});render()}
- else await rref().update(change)
+ else await hostWrite(change)
  }catch(e){alertText(e.message,true)}};
 $('reveal').onclick=async()=>{try{
  if(!isHost||room.mode!=='competition'||room.status!=='live')return;
  if(room.quizVersion>=2){
  const stage=stageNow();if(stage>=3)return;
  const update={revealStage:stage+1,reveal:stage+1>=2};
- if(simulationMode){Object.assign(room,update);render()}else await rref().update(update)
+ if(simulationMode){Object.assign(room,update);render()}else await hostWrite(update)
  }else if(!room.reveal){if(simulationMode){room.reveal=true;render()}else await rref().update({reveal:true})}
  }catch(e){alertText(e.message,true)}};
 $('finish').onclick=async()=>{try{if(isHost&&room.status==='live'&&confirm('¿Cerrar la sesión? Ya no podrán enviar respuestas.')){if(simulationMode){room.status='done';room.reveal=true;room.revealStage=3;render()}else await rref().update({status:'done',reveal:true,...(room.quizVersion>=2?{revealStage:3}:{})})}}catch(e){alertText(e.message,true)}};
@@ -1289,7 +1307,7 @@ function renderProjection(){
    if(PEDAGOGY.every(p=>p&&p.key)){
     const ideas=add('div',undefined,'learning-card key-ideas');ideas.append(add('strong','Ideas fuerza'));
     meaningful.forEach(x=>{const row=add('p',undefined,'key-idea-row');row.append(add('span',`P${x.i+1} · `,'qtag'),rich(PEDAGOGY[x.i].key));ideas.append(row)});
-    panel.append(ideas,closingNode());
+    panel.append(ideas,closingNode(true));
    }else panel.append(add('p','Idea para recordar: '+PEDAGOGY[difficult.i].principle));
   }
   out.append(panel);return;
@@ -1388,7 +1406,7 @@ $('resetOfficial').onclick=async()=>{
  try{
   const ref=rref(),currentRoomId=roomId,limit=180;
   /* Las reglas solo permiten borrar con la sala finalizada: se pasa primero a «done» (también desde la sala de espera) y al terminar vuelve a «lobby». */
-  if(room.status!=='done')await ref.update({status:'done',reveal:true,revealStage:3,publicView:'welcome'});
+  if(room.status==='live')await ref.update({status:'done',reveal:true,revealStage:3,publicView:'welcome'});
   let deleted=0;
   async function clearCollection(collectionRef){
    while(true){

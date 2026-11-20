@@ -45,13 +45,13 @@ assert(syn.querySelectorAll('mark.hl').length>=8,'ideas fuerza resaltadas en la 
 ev(`room.status='done';projecting=true;renderProjection()`);
 const pub=d.getElementById('projectChart').textContent;
 assert(pub.includes('Conclusión de la sesión')&&pub.includes('Ideas fuerza')&&pub.includes('Amplio acuerdo del grupo'),'cierre público');
-assert(!/\bA\b · |Ana/.test(pub.replace(/[A-D]\. /g,'')) || true);
+assert(!pub.includes('Desambigüemos')&&!pub.includes('Tres ideas para llevarnos')&&!pub.includes('Panebianco'),'la pantalla pública debe ser una versión reducida');
 ev('projecting=false');
 
 // 5) Cierre personal
 ev(`isHost=false;uid='a';roomId='NAR001';myRegistration={name:'A',ready:true};room.status='done';render()`);
 const personal=d.getElementById('ranking').textContent;
-assert(personal.includes('Para llevarte')&&personal.includes('asimilar y diferenciar en los límites'),'cierre personal');
+assert(personal.includes('Gracias por participar')&&!personal.includes('Sartori')&&!personal.includes('Para llevarte'),'el participante no ve teoría al cerrar');
 
 // 6) Sonidos: osciladores creados al jugar y silencio al apagar
 let osc=0;
@@ -60,13 +60,27 @@ w.AudioContext=function(){this.state='running';this.currentTime=0;this.destinati
   this.createGain=()=>({gain:{setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){}})};
 for(const n of ['select','ready','start','next','correct','wrong','timeup','tick','reveal','achievement','finish']){const before=osc;ev(`SFX.play('${n}')`);assert(osc>before,'sonido «'+n+'» no genera audio');}
 const beforeOnce=osc;ev(`SFX.once('k1','correct');SFX.once('k1','correct')`);assert(osc>beforeOnce,'once suena una vez');const afterOnce=osc;ev(`SFX.once('k1','correct')`);assert.equal(osc,afterOnce,'once no repite');
-d.getElementById('soundToggle').click();const muted=osc;ev(`SFX.play('correct')`);assert.equal(osc,muted,'silenciado');
-assert(d.getElementById('soundToggle').textContent.includes('apagado'));d.getElementById('soundToggle').click();
+assert(!d.getElementById('soundToggle')&&!html.includes('sound-toggle'),'no debe haber botón de sonido');
 
 // 7) Revelación personal: cita + sonido de acierto/desacierto
 ev(`room.status='live';room.idx=3;room.reveal=true;room.revealStage=3;uid='a';votes[3]=[{uid:'a',choice:0}];drawPersonalReveal()`);
 const pr=d.getElementById('personalReveal').textContent;
-assert(pr.includes('Recordemos')&&pr.includes('Desambigüemos'),'respuesta individual con teoría');
+assert(!pr.includes('Recordemos')&&!pr.includes('Desambigüemos')&&!pr.includes('Principio metodológico')&&!pr.includes('Sartori'),'el participante no ve teoría');
+assert(pr.includes('Respuesta correcta'),'el participante ve su resultado');
+
+// 7b) Selección instantánea: la opción tocada se marca antes de que Firebase confirme
+ev(`room={owner:'z',status:'live',mode:'competition',quizVersion:3,idx:0,reveal:false,revealStage:0,publicView:'questions',questionTimes:[40,40,40,40],openedAt:{toMillis:()=>Date.now()}};
+isHost=false;uid='p1';roomId='SEL001';votes=Array.from({length:N},()=>[]);localChoice.clear();wantedChoice.clear();
+globalThis.__sets=[];voteRef=()=>({set:(v)=>new Promise(r=>setTimeout(()=>{globalThis.__sets.push(v.choice);r()},80))});renderParticipant()`);
+const btn=j=>d.querySelectorAll('#compChoices button')[j];
+btn(2).click();
+assert(btn(2).classList.contains('selected'),'se marca al instante, sin esperar a Firebase');
+btn(3).click();btn(1).click();
+assert(btn(1).classList.contains('selected')&&!btn(2).classList.contains('selected'),'varios toques seguidos: gana el último');
+assert.equal(d.querySelectorAll('#compChoices button:disabled').length,0,'los botones no se bloquean mientras se envía');
+await new Promise(r=>setTimeout(r,400));
+const sent=[...ev('globalThis.__sets')];
+assert.equal(sent[sent.length-1],1,'al servidor llega la última elección: '+sent);
 
 // 8) Tiempos: el panel muestra lo que Firestore aplica y se puede guardar
 ev(`isHost=true;uid='o';roomId='TIM001';people=[];votes=Array.from({length:N},()=>[]);room={owner:'o',status:'lobby',mode:'competition',quizVersion:3,idx:-1,reveal:false,revealStage:0,publicView:'welcome',questionTimes:[25,30,45,60]};loadedPeople=true;loadedVotes=new Set([0,1,2,3]);globalThis.__w=null;rref=()=>({update:async c=>{globalThis.__w=c},collection:()=>({doc:()=>({delete:async()=>{}})})});render()`);
