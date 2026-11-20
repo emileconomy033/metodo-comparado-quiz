@@ -31,21 +31,46 @@ votes[1]=[{uid:'a',choice:1},{uid:'b',choice:1},{uid:'c',choice:1}];
 loadedPeople=true;loadedVotes=new Set([0,1,2,3]);activeTab=3;hostReadingView='notes';rref=()=>({update:async c=>{globalThis.__w=c}});render()`);
 const analysis=d.getElementById('hostChart');
 const at=analysis.textContent;
-for(const s of ['Análisis de la pregunta 4','Recordemos lo que dice la teoría','se inclinó hacia la alternativa A','66.7 % eligió la alternativa A','Desambigüemos','Para fortalecer','Sartori (1999, pp. 36-38)'])
-  assert(at.includes(s),'análisis narrativo: falta «'+s+'»');
-assert(analysis.querySelectorAll('mark.hl').length>=4,'ideas resaltadas');
+for(const s of ['Pregunta 4 · ','Para decir','Respaldo teórico','Error más frecuente: A','pocas respuestas (3)','Sartori (1999, pp. 36-38)'])
+  assert(at.includes(s),'ficha del expositor: falta «'+s+'»');
+assert(analysis.querySelector('details.support')&&!analysis.querySelector('details.support').open,'el respaldo teórico va plegado');
+const sp=analysis.querySelectorAll('.speak mark.hl').length;assert(sp>=1&&sp<=3,'resaltado sobrio en el guion: '+sp);
+assert(!at.includes('Síntesis de aprendizajes')&&d.getElementById('finalLearning').textContent==='','la síntesis ya no sale durante las preguntas');
 
-// 3) Síntesis con ideas fuerza + cierre
-const syn=d.getElementById('finalLearning'),st=syn.textContent;
-for(const s of ['Ideas fuerza de la sesión','Idea para recordar','Hacia dónde falló el grupo','Conclusión de la sesión','Tres ideas para llevarnos','comparable, ¿en qué aspecto?','Panebianco (1999)','por reforzar'])
-  assert(st.includes(s),'síntesis: falta «'+s+'»');
-assert(syn.querySelectorAll('mark.hl').length>=8,'ideas fuerza resaltadas en la síntesis');
+// 2b) El guion cambia según el resultado real
+ev("globalThis.__mk=(i,counts)=>{votes[i]=[];counts.forEach((c,j)=>{for(let k=0;k<c;k++)votes[i].push({uid:'u'+j+'_'+k,choice:j})})}");
+const C=ev('QUIZ[3].correct');const W=[0,1,2,3].filter(j=>j!==C);
+const dist=(c,a,b,e)=>{const x=[0,0,0,0];x[C]=c;x[W[0]]=a;x[W[1]]=b;x[W[2]]=e;return x};
+const kinds={ok:dist(9,1,0,0),most:dist(6,4,0,0),dominant:dist(3,7,0,0),split:dist(4,3,3,0),small:dist(2,1,0,0)};
+const said={};
+for(const [k,x] of Object.entries(kinds)){ev('__mk(3,'+JSON.stringify(x)+')');assert.equal(ev('scenarioFor(3).kind'),k,'escenario '+k);said[k]=ev("speakScript(3).paras.join(' ')");}
+assert.equal(new Set(Object.values(said)).size,5,'cada escenario produce un guion distinto');
+assert(said.ok.includes('Muy buen resultado')||said.ok.includes('Casi todos'),'ok');
+assert(said.dominant.includes('intuición compartida')||said.dominant.includes('se inclinó'),'dominante');
+const hintTop=ev('PEDAGOGY[3].hint['+W[0]+']');assert(hintTop&&said.dominant.includes(hintTop),'el guion usa la explicación de la alternativa dominante');
+ev('__mk(3,[0,0,0,0])');assert.equal(ev('scenarioFor(3).kind'),'none');
+for(const x of Object.values(kinds)){ev('__mk(3,'+JSON.stringify(x)+')');assert(ev('speakScript(3).seconds')<=75,'el guion cabe en tiempo de habla');}
+ev("votes[3]=[{uid:'a',choice:3},{uid:'b',choice:0},{uid:'c',choice:0}]");
+
+// 3) Cierre: solo al terminar, con guion + ideas
+ev('activeTab=4;render()');
+const tabBtns=[...d.querySelectorAll('#questionTabs button')];
+assert.equal(tabBtns.length,5);assert.equal(tabBtns[4].disabled,false,'el cierre se habilita al revelar P4');
+const cl=d.getElementById('hostChart').textContent;
+for(const s of ['Conclusión de la sesión','Para decir en el cierre','Tres ideas para llevarnos','Detalle por pregunta','Sartori','Panebianco'])assert(cl.includes(s),'cierre: falta «'+s+'»');
+assert.equal(d.querySelectorAll('#hostChart ol.takeaways li').length,3);
+ev('room.idx=1;room.revealStage=1;render()');
+assert.equal(ev('activeTab'),3,'sin P4 revelada, el cierre vuelve a la última pregunta');
+assert([...d.querySelectorAll('#questionTabs button')][4].disabled,'cierre bloqueado antes de tiempo');
+ev('room.idx=3;room.revealStage=3;render()');
+const closeSc=ev('closingScript([{i:0,n:20,c:18},{i:1,n:20,c:6}])');assert(closeSc.paras.some(p=>p.includes('Lo más firme')),'cierre menciona lo más firme y lo más difícil');
+const closeSmall=ev('closingScript([{i:0,n:3,c:0}])');assert(closeSmall.paras[0].includes('todavía es pronto'),'cierre neutro con pocas respuestas');
 
 // 4) Cierre en la pantalla pública
 ev(`room.status='done';projecting=true;renderProjection()`);
 const pub=d.getElementById('projectChart').textContent;
-assert(pub.includes('Conclusión de la sesión')&&pub.includes('Ideas fuerza')&&pub.includes('Amplio acuerdo del grupo'),'cierre público');
-assert(!pub.includes('Desambigüemos')&&!pub.includes('Tres ideas para llevarnos')&&!pub.includes('Panebianco'),'la pantalla pública debe ser una versión reducida');
+assert(pub.includes('Conclusión de la sesión'),'cierre público');
+assert(!pub.includes('Desambigüemos')&&!pub.includes('Tres ideas para llevarnos')&&!pub.includes('Panebianco')&&!pub.includes('Para decir'),'la pantalla pública debe ser una versión reducida');
 ev('projecting=false');
 
 // 5) Cierre personal

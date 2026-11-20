@@ -79,6 +79,19 @@ mark.hl{background:linear-gradient(transparent 10%,#ffe27a 10%,#ffe27a 90%,trans
 .closing-card .takeaways{margin:8px 0 12px 20px;padding:0}.closing-card .takeaways li{margin:8px 0}
 .closing-quote{margin-top:14px;padding:12px 16px;border-left:4px solid #2b6a8f;background:#eaf3f9}
 .projection-screen .closing-card{font-size:clamp(16px,1.8vw,23px)}.projection-screen .key-ideas{font-size:clamp(16px,1.8vw,22px)}
+.host-card{margin:6px 0 18px}.host-card h3{font:500 24px Georgia,serif;margin:4px 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}.chip{font-size:13px;font-weight:700;padding:4px 11px;border-radius:14px;background:#edf1f0;color:#33474f}
+.chip.ok{background:#dff3e7;color:#1d6a42}.chip.mid{background:#e6eef7;color:#254f7a}.chip.warn{background:#ffefd2;color:#8a5a10}
+.quick-read{margin:6px 0 12px;color:#3e5058;line-height:1.55}
+.speak{margin:12px 0 16px;padding:16px 20px;border-left:6px solid #2e7764;background:#f1f9f4;border-radius:5px;font-size:17px;line-height:1.7}
+.speak p{margin:8px 0}.speak .kick{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:#1d6a42}
+.support,.sub{margin:10px 0;border:1px solid #dbe5e2;border-radius:5px;background:#fff;padding:2px 14px}
+.support>summary,.sub>summary{cursor:pointer;font-weight:700;color:#245a7a;padding:9px 0}.sub{background:#fafcfb}
+.support mark.hl,.takeaways mark.hl,.disambig mark.hl,.strengthen mark.hl,.theory-callout mark.hl{background:none;padding:0}
+.mini-kick{display:block;margin:12px 0 2px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:#7a5a21}
+.alt-row{margin:4px 0;color:#4c5f66}.alt-row.good{color:#1d6a42;font-weight:700}
+.detail-row{display:grid;grid-template-columns:1fr auto auto;gap:4px 12px;align-items:center;margin:9px 0}.detail-row .barbg{grid-column:1/-1}
+#questionTabs button.locked{opacity:.55;cursor:not-allowed}
 .times-panel{margin:12px 0 18px;padding:13px 17px;border:1px solid #d3dfd9;border-radius:5px;background:#fbfdfb}
 .times-panel h4{margin:0 0 6px;font-size:15px}.times-panel .time-grid{margin:8px 0}.times-panel .tp-note{font-size:13px;color:#4f685c;margin:6px 0}
 .projection-screen{position:fixed;inset:0;z-index:80;overflow:auto;padding:clamp(20px,4vw,60px);background:#f5f7f6;color:#24394a}
@@ -265,6 +278,49 @@ const GUION=[
  refs:'Gómez Díaz de León y De León de la Garza (2014).'
 }
 ];
+/* Guion hablado: `core` (idea para decir), `take` (idea para llevarse) y `hint` (por qué atrae cada alternativa errónea, en el orden ORIGINAL como `dis`). */
+const SPEAK=[
+{
+ core:'Lo que Sartori nos pide es cambiar la pregunta: no «¿son comparables?», sino **«comparable, ¿en qué aspecto?»**.',
+ take:'**Comparable siempre es «respecto de algo»**: la propiedad relevante manda, no la identidad de los casos ni la igualdad de sus valores (Sartori, 1999, pp. 35-36).',
+ hint:[
+  'Es una intuición muy común: pensar que, para comparar, los casos tienen que ser iguales. Pero si fueran idénticos no habría nada que comparar; comparamos justamente porque se parecen en algo y difieren en otra cosa.',
+  null,
+  'Compartir país da cercanía, pero no dice en qué aspecto se parecen los casos. Sin esa propiedad concreta, la cercanía no alcanza.',
+  'Los valores no tienen que coincidir: de hecho, son lo que la comparación contrasta. Lo que debe ser común es la propiedad que se mide.'
+ ]
+},
+{
+ core:'La idea para llevarnos: un **mismo nombre no garantiza el mismo significado**, y una diferencia de contexto no impide comparar una propiedad equivalente.',
+ take:'**Nombrar no es medir ni clasificar**: una misma etiqueta o unidad puede esconder fenómenos distintos; antes de comparar cifras hay que fijar definición, inicio, final y cobertura (Sartori, 1999, p. 37).',
+ hint:[
+  'Se entiende la duda, porque los sistemas políticos son muy distintos. Pero la diferencia de contexto pide cautela, no prohíbe comparar, siempre que la propiedad tenga el mismo significado.',
+  'Es la trampa del mismo nombre: el indicador se llama igual pero puede cubrir cosas distintas, por ejemplo gobierno central frente a gobierno general. Hay que revisar definición, cobertura y período.',
+  null,
+  'Pedir que los niveles de gasto se parezcan confunde comparabilidad con coincidencia de valores: se puede comparar precisamente porque los valores difieren.'
+ ]
+},
+{
+ core:'**Ampliar un concepto es legítimo si declaramos** qué atributos sacrificamos; lo que Sartori critica es el alargamiento encubierto de la etiqueta.',
+ take:'**Generalizar tiene un costo que hay que declarar**: subir en la escala de abstracción exige decir qué atributos se sacrifican; si no, se estira el concepto (Sartori, 1999, p. 45).',
+ hint:[
+  'Esta opción tiene algo de razón, porque estirar un concepto sí es un riesgo. Pero ampliar no equivale siempre a alargar: si se declara qué atributos se sacrifican, es abstracción legítima.',
+  null,
+  'Tratar los conceptos como fijos es entendible, pero Sartori propone moverlos por la escala de abstracción con control, no prohibirlo.',
+  'Sumar casos no valida un concepto. Si los casos ya no cumplen los atributos definitorios, el concepto se vacía.'
+ ]
+},
+{
+ core:'Antes de comparar cifras, preguntémonos: **¿mismo evento inicial, mismo evento final, misma población y período?**',
+ take:'**La misma unidad no es el mismo indicador**: define evento inicial, evento final, población y período antes de comparar cifras (Sartori, 1999, pp. 36-38).',
+ hint:[
+  'La cuenta 40 entre 20 parece directa, pero supone que ambos números miden lo mismo, y aquí uno llega al triaje y el otro a la consulta.',
+  null,
+  'Menos minutos suena a más eficiencia, pero puede ser solo que se mide una etapa más corta. Antes de juzgar hay que saber si miden lo mismo.',
+  'Los minutos son la unidad, no el indicador. Comparten palabra, pero no el evento inicial ni el final.'
+ ]
+}
+];
 function readingGuide(i,revealed){
  const q=QUIZ[i],n=votes[i]?.length||0;
  if(!n)return 'Todavía no hay respuestas. Espera a que termine el tiempo antes de mostrar la distribución.';
@@ -291,7 +347,7 @@ function resultMessage(rate){
 }
 /* Las versiones curriculares son inmutables: v3 = cuatro preguntas nuevas; v1/v2 = seis históricas. */
 const QUIZ_ORIGINAL=QUIZ.map(q=>({...q,a:[...q.a]}));
-const PEDAGOGY_ORIGINAL=PEDAGOGY.map((p,i)=>({...p,...(GUION[i]||{}),mis:[...p.mis]}));
+const PEDAGOGY_ORIGINAL=PEDAGOGY.map((p,i)=>({...p,...(GUION[i]||{}),...(SPEAK[i]||{}),mis:[...p.mis]}));
 const ORDER_V2=[[1,0,2,3],[0,1,2,3],[0,2,3,1],[0,1,2,3],[2,0,1,3],[0,1,2,3]];
 const TEXT_V2=[
  ['Comparten una propiedad relevante con significado equivalente.','Son comparables únicamente cuando sus rasgos son idénticos.','Pertenecen al mismo país y comparten instituciones.','Presentan valores semejantes en todos los indicadores.'],
@@ -313,7 +369,7 @@ function activateQuizVersion(v){
  });
  PEDAGOGY=PEDAGOGY_ORIGINAL.slice(0,count).map((p,i)=>{
   const earlier=ORDER_V2[i].map(j=>p.mis[j]);
-  const earlierTrap=p.trap?ORDER_V2[i].map(j=>p.trap[j]):null,earlierDis=p.dis?ORDER_V2[i].map(j=>p.dis[j]):null,fin=(v===3?ORDER_V3[i]:[0,1,2,3]);return {...p,mis:fin.map(j=>earlier[j]),...(earlierTrap?{trap:fin.map(j=>earlierTrap[j])}:{}),...(earlierDis?{dis:fin.map(j=>earlierDis[j])}:{})};
+  const earlierTrap=p.trap?ORDER_V2[i].map(j=>p.trap[j]):null,earlierDis=p.dis?ORDER_V2[i].map(j=>p.dis[j]):null,earlierHint=p.hint?ORDER_V2[i].map(j=>p.hint[j]):null,fin=(v===3?ORDER_V3[i]:[0,1,2,3]);return {...p,mis:fin.map(j=>earlier[j]),...(earlierTrap?{trap:fin.map(j=>earlierTrap[j])}:{}),...(earlierDis?{dis:fin.map(j=>earlierDis[j])}:{}),...(earlierHint?{hint:fin.map(j=>earlierHint[j])}:{})};
  });
  }
  if(typeof N!=='undefined')N=QUIZ.length;
@@ -414,7 +470,7 @@ function chart(target,i,showAnswer,compact=false){
   if(stageNow()>=3||room.status==='done')concise.append(add('p',PEDAGOGY[i].principle,'public-principle'));
   d.append(concise);return
  }
- if(PEDAGOGY[i]&&PEDAGOGY[i].recall){d.append(narrativePanel(i,n,good,q));return}
+ if(PEDAGOGY[i]&&PEDAGOGY[i].recall){d.append(hostCard(i,n,good,q));return}
  const panel=add('section',undefined,'insight pedagogical-report'),G=PEDAGOGY[i];
  const lower=t=>t?t.charAt(0).toLowerCase()+t.slice(1):'';
  const para=(head,body,cls)=>{const b=add('div',undefined,'pedagogical-item'+(cls?' '+cls:''));b.append(add('strong',head));if(body)b.append(add('p',body));return b};
@@ -529,50 +585,113 @@ const TAKEAWAYS=[
  '**Generalizar tiene un costo que hay que declarar**: subir en la escala de abstracción exige decir qué atributos se sacrifican; si no, se estira el concepto (Sartori, 1999, p. 45).'
 ];
 function lowerFirst(t){return t?t.charAt(0).toLowerCase()+t.slice(1):''}
-/* Análisis narrativo de una pregunta (panel del moderador). */
-function narrativePanel(i,n,good,q){
- const G=PEDAGOGY[i],panel=add('section',undefined,'insight pedagogical-report narrative');
- panel.append(add('h3',`Análisis de la pregunta ${i+1}`));
- if(!n){panel.append(add('p','Aún no hay respuestas registradas.','pedagogical-intro'));return panel}
- const enrolled=people.length;
- panel.append(add('p',`${n} respuesta${n===1?'':'s'}${enrolled?' de '+enrolled+' inscrito'+(enrolled===1?'':'s'):''}.`,'small'));
- const wrongOnes=q.a.map((_,j)=>({j,count:countFor(i,j)})).filter(x=>x.j!==q.correct&&x.count>0).sort((a,b)=>b.count-a.count||a.j-b.j);
- const rate=good/n,top=wrongOnes[0];
- let lead;
- if(rate===1)lead=`**Todo el grupo coincidió** (${n} de ${n}) en la alternativa ${LETTER(q.correct)}. No hay un error que desarmar: conviene usar este momento para **explicar por qué** funciona el criterio y llevarlo a otro caso.`;
- else if(rate>=.8)lead=`**Amplio acuerdo**: ${fmtPercent(good,n)} eligió la alternativa ${LETTER(q.correct)}. Confirmemos el criterio y detengámonos solo en la duda que quedó.`;
- else if(top&&top.count/n>=.4)lead=`Aquí el grupo **se inclinó hacia la alternativa ${LETTER(top.j)}** (${fmtPercent(top.count,n)}). Esa es la pista más valiosa de la pregunta: nos dice **qué intuición hay que desarmar** antes de dar la respuesta correcta.`;
- else if(rate>=.55)lead=`La **mayoría acertó** (${fmtPercent(good,n)}), pero quedaron dudas. Conviene dar la palabra a quien eligió la alternativa ${LETTER(top.j)} y **aclarar con la teoría** por qué no se sostiene.`;
- else lead=`Las respuestas quedaron **divididas**: solo ${fmtPercent(good,n)} acertó. Es una buena ocasión para **reconstruir el criterio desde la teoría**, de a un paso por vez.`;
- if(n<8)lead+=' Con pocas respuestas, úsalo como punto de partida de la conversación y no como diagnóstico del grupo.';
- panel.append(richBlock('p',lead,'narrative-lead'));
- const call=add('div',undefined,'theory-callout');call.append(add('span','Recordemos lo que dice la teoría','kick'),richBlock('p',G.recall));if(G.cite)call.append(add('span',G.cite,'cite'));panel.append(call);
- wrongOnes.forEach(x=>{
-  const why=(G.trap&&G.trap[x.j])||('esta alternativa no se ajusta al principio evaluado: '+normalizeExplanation(G.mis[x.j]));
-  const item=add('div',undefined,'pedagogical-item error-choice');
-  item.append(add('strong',`${fmtPercent(x.count,n)} eligió la alternativa ${LETTER(x.j)} (${x.count} de ${n}) y falló dado que ${lowerFirst(why)}`),add('p',`«${q.a[x.j]}»`));
-  if(G.dis&&G.dis[x.j])item.append(richBlock('p',G.dis[x.j],'disambig'));
-  panel.append(item);
- });
- const ok=add('div',undefined,'pedagogical-item correct-choice');
- if(good===n)ok.append(add('strong',`Todos eligieron la alternativa ${LETTER(q.correct)}, la correcta (${n} de ${n}).`),add('p',`Es la correcta porque ${lowerFirst(G.principle)}`));
- else ok.append(add('strong',`${fmtPercent(good,n)} eligió la alternativa ${LETTER(q.correct)} (${good} de ${n}) y es la correcta porque ${lowerFirst(G.principle)}`),add('p',`«${q.a[q.correct]}»`));
- panel.append(ok);
- if(G.strengthen)panel.append(richBlock('p',G.strengthen,'strengthen'));
- const extra=add('details',undefined,'pedagogical-item');
+/* ===== Guion hablado: se adapta al resultado real del grupo ===== */
+const openKeys=new Set();
+function persistOpen(el,key){if(openKeys.has(key))el.open=true;el.addEventListener('toggle',()=>{if(el.open)openKeys.add(key);else openKeys.delete(key)});return el}
+function chip(text,kind){return add('span',text,'chip'+(kind?' '+kind:''))}
+function scenarioFor(i){
+ const q=QUIZ[i],n=votes[i]?.length||0,good=correctFor(i);
+ if(!n)return {kind:'none',n:0,good:0,rate:0,top:null};
+ const wrong=q.a.map((_,j)=>({j,count:countFor(i,j)})).filter(x=>x.j!==q.correct&&x.count>0).sort((a,b)=>b.count-a.count||a.j-b.j);
+ const top=wrong[0]||null,rate=good/n;
+ let kind;
+ if(n<5)kind='small';
+ else if(rate>=.75)kind='ok';
+ else if(rate>=.55)kind='most';
+ else if(top&&top.count/n>=.4)kind='dominant';
+ else kind='split';
+ return {kind,n,good,rate,top};
+}
+function speakScript(i){
+ const q=QUIZ[i],G=PEDAGOGY[i],s=scenarioFor(i),L=LETTER(q.correct),v=i%2;
+ if(s.kind==='none')return {paras:['Todavía no llegaron respuestas en esta pregunta.'],seconds:5};
+ const pct=fmtPercent(s.good,s.n),hint=j=>G.hint&&G.hint[j]?G.hint[j]:'';
+ const paras=[];
+ const t=s.top,tl=t?LETTER(t.j):'',tp=t?fmtPercent(t.count,s.n):'';
+ if(s.kind==='small'){
+  paras.push(`Tenemos pocas respuestas (${s.n}), así que no sacamos conclusiones sobre el grupo: tomémoslas como punto de partida de la conversación.`);
+  if(t&&hint(t.j))paras.push(`Si alguien eligió la ${tl}: ${hint(t.j)}`);
+ }else if(s.kind==='ok'){
+  paras.push(s.rate===1
+   ?[`Todo el grupo coincidió en la ${L}. No hay una confusión que desarmar; aprovechemos para explicar por qué funciona y llevarlo a otro caso.`,`Unanimidad en la ${L}: **${pct}**. Confirmémoslo en una frase y subamos de nivel.`][v]
+   :[`Muy buen resultado: **${pct}** eligió la ${L}. El criterio está bastante claro, así que lo confirmamos rápido.`,`Casi todos coincidieron: **${pct}** en la ${L}. Solo nos queda aclarar la duda que quedó.`][v]);
+  if(t&&hint(t.j))paras.push(`Para quien dudó con la ${tl}: ${hint(t.j)}`);
+ }else if(s.kind==='most'){
+  paras.push([`La mayoría acertó (**${pct}**), pero una parte del grupo se fue por otro lado. Vale la pena detenernos en esa duda.`,`Buen punto de partida: **${pct}** eligió la ${L} y el resto se repartió. Escuchemos primero qué llevó a otras personas a otra opción.`][v]);
+  if(t&&hint(t.j))paras.push(`Detengámonos en la ${tl} (${tp}). ${hint(t.j)}`);
+ }else if(s.kind==='dominant'){
+  paras.push([`Aquí hubo una intuición compartida: **${tp}** eligió la ${tl}, «${q.a[t.j]}». No es un error tonto; es lo que muchos pensamos al principio.`,`El grupo se inclinó por la ${tl} (**${tp}**). Es una pista valiosa, porque nos muestra qué idea conviene revisar juntos.`][v]);
+  if(hint(t.j))paras.push(hint(t.j));
+  paras.push(`La correcta era la ${L}, con **${pct}**.`);
+ }else{
+  paras.push([`Las respuestas quedaron repartidas: solo **${pct}** eligió la ${L}. Eso nos dice que el criterio todavía no está asentado; construyámoslo paso a paso.`,`Hubo opiniones para todos los gustos y **${pct}** acertó. Pidamos a dos personas con respuestas distintas que defiendan su razonamiento.`][v]);
+  if(t&&hint(t.j))paras.push(`Una de las opciones más elegidas fue la ${tl}. ${hint(t.j)}`);
+ }
+ if(G.core)paras.push(G.core);
+ const words=paras.join(' ').replace(/\*\*/g,'').split(/\s+/).length;
+ return {paras,seconds:Math.max(10,Math.round(words/2.3/5)*5)};
+}
+function speakBox(paras,seconds,label){
+ const box=add('div',undefined,'speak');
+ box.append(add('span',`${label||'Para decir'} · unos ${seconds} segundos`,'kick'));
+ paras.forEach(p=>box.append(richBlock('p',p)));
+ return box;
+}
+/* Ficha del expositor por pregunta: lectura rápida → guion → respaldo plegado. */
+function hostCard(i,n,good,q){
+ const G=PEDAGOGY[i],s=scenarioFor(i),card=add('section',undefined,'host-card');
+ card.append(add('h3',`Pregunta ${i+1} · ${q.topic}`));
+ if(!n){card.append(add('p','Aún no hay respuestas registradas.','pedagogical-intro'));return card}
+ const enrolled=people.length,chips=add('div',undefined,'chips');
+ chips.append(chip(`${fmtPercent(good,n)} acertó`,s.rate>=.75?'ok':s.rate>=.55?'mid':'warn'),chip(`${n} respuesta${n===1?'':'s'}${enrolled?' de '+enrolled+' inscrito'+(enrolled===1?'':'s'):''}`));
+ if(s.top)chips.append(chip(`Error más frecuente: ${LETTER(s.top.j)} (${fmtPercent(s.top.count,n)})`,'warn'));
+ card.append(chips);
+ card.append(add('p',readingGuide(i,true),'quick-read'));
+ const sc=speakScript(i);card.append(speakBox(sc.paras,sc.seconds));
+ const sup=persistOpen(add('details',undefined,'support'),'sup'+i);
+ sup.append(add('summary','Respaldo teórico y alternativas'));
+ const call=add('div',undefined,'theory-callout');call.append(add('span','Qué dice la teoría','kick'),richBlock('p',G.recall));if(G.cite)call.append(add('span',G.cite,'cite'));sup.append(call);
+ if(s.top&&G.dis&&G.dis[s.top.j]){sup.append(add('span',`Sobre la alternativa ${LETTER(s.top.j)}`,'mini-kick'),richBlock('p',G.dis[s.top.j],'disambig'))}
+ sup.append(add('span',`Por qué la ${LETTER(q.correct)} es la correcta`,'mini-kick'),add('p',G.principle));
+ if(G.strengthen)sup.append(richBlock('p',G.strengthen,'strengthen'));
+ const alts=persistOpen(add('details',undefined,'sub'),'alts'+i);
+ alts.append(add('summary','Ver todas las alternativas'));
+ q.a.forEach((t,j)=>{const c=countFor(i,j);alts.append(add('p',`${LETTER(j)}. ${t} — ${c} · ${fmtPercent(c,n)}${j===q.correct?' ✓ correcta':''}`,'alt-row'+(j===q.correct?' good':'')))});
+ sup.append(alts);
+ const extra=persistOpen(add('details',undefined,'sub'),'more'+i);
  extra.append(add('summary','Material de apoyo para la conversación'));
  const block=(title,body)=>{const b=add('div');b.append(add('strong',title));(Array.isArray(body)?body:[body]).forEach(t=>b.append(add('p',t)));extra.append(b)};
- block('Cómo leer estos resultados',readingGuide(i,true));
- if(G.say)block('Qué decir al revelar',G.say);
  if(G.discuss)block('Preguntas para conversar con el grupo',G.discuss.map((t,k)=>(k+1)+'. '+t));
  if(G.example)block('Ejemplo para aclarar',G.example);
  block('Cómo trasladarlo a otra investigación',[G.transfer,'Pregunta guía: '+G.question]);
  if(G.bridge)block('Puente a lo siguiente',G.bridge);
  if(G.time||G.refs)extra.append(add('p',[G.time?'Tiempo sugerido: '+G.time+'.':'',G.refs?'Lecturas de apoyo: '+G.refs:''].filter(Boolean).join(' '),'small'));
- panel.append(extra);
- return panel;
+ sup.append(extra);
+ card.append(sup);
+ return card;
 }
-/* Conclusión de cierre: combina resultados reales con la teoría del curso. */
+function guionReady(){return PEDAGOGY.length>0&&PEDAGOGY.every(p=>p&&p.key)}
+function closingReady(){return !!room&&guionReady()&&(room.status==='done'||(room.mode==='competition'&&room.status==='live'&&room.idx===N-1&&stageNow()>=2))}
+/* Guion de cierre (60-90 s) según el resultado global. */
+function closingScript(rows){
+ const total=rows.reduce((a,x)=>a+x.n,0),hit=rows.reduce((a,x)=>a+x.c,0),rate=hit/total,pct=fmtPercent(hit,total);
+ const paras=[];
+ if(total<8)paras.push(`Con ${total} respuesta${total===1?'':'s'} todavía es pronto para hablar del grupo, pero la conversación deja un hilo conductor.`);
+ else if(rate>=.75)paras.push(`Cerramos con un grupo que maneja bien los criterios: **${pct}** de aciertos. Más que celebrar el número, quedémonos con lo que sostiene esas respuestas.`);
+ else if(rate>=.55)paras.push(`El grupo comparte la mayoría de los criterios (**${pct}** de aciertos) y quedan matices por afinar, que es justo lo que queríamos ver.`);
+ else if(rate>=.35)paras.push(`El grupo quedó dividido (**${pct}** de aciertos). No es mala noticia: la conversación de hoy sirvió para poner a prueba las intuiciones.`);
+ else paras.push(`Los criterios todavía no están asentados (**${pct}** de aciertos), y está bien: estas preguntas están hechas para romper intuiciones, y de eso se trata aprender.`);
+ const rank=[...rows].sort((a,b)=>b.c/b.n-a.c/a.n||a.i-b.i),best=rank[0],worst=rank[rank.length-1];
+ if(total>=8&&best.i!==worst.i&&best.c/best.n!==worst.c/worst.n)paras.push(`Lo más firme fue **${QUIZ[best.i].topic}** (${fmtPercent(best.c,best.n)}); lo que más costó, ${QUIZ[worst.i].topic} (${fmtPercent(worst.c,worst.n)}).`);
+ if(worst.c<worst.n){
+  const q=QUIZ[worst.i],G=PEDAGOGY[worst.i],e=q.a.map((_,j)=>({j,n:countFor(worst.i,j)})).filter(z=>z.j!==q.correct&&z.n).sort((a,b)=>b.n-a.n)[0];
+  if(e&&G.hint&&G.hint[e.j])paras.push(`Donde más se desvió el grupo fue en ${q.topic}, con la ${LETTER(e.j)}. ${G.hint[e.j]}`);
+ }
+ paras.push('Todo gira alrededor de una pregunta de Sartori: **«comparable, ¿en qué aspecto?»** (1999, p. 36). Y esto es solo el primer paso: según Panebianco (1999), comparar sirve para controlar hipótesis y, en última instancia, para explicar.');
+ const words=paras.join(' ').replace(/\*\*/g,'').split(/\s+/).length;
+ return {paras,seconds:Math.round(words/2.3/5)*5,rate,total};
+}
+/* Conclusión de cierre. compact = versión breve de la pantalla compartida. */
 function closingNode(compact){
  const box=add('section',undefined,'closing-card');
  box.append(add('h3','Conclusión de la sesión'));
@@ -580,77 +699,35 @@ function closingNode(compact){
  if(!rows.length){box.append(add('p','Aún no hay respuestas para elaborar una conclusión del grupo.'));return box}
  const total=rows.reduce((a,x)=>a+x.n,0),hit=rows.reduce((a,x)=>a+x.c,0),rate=hit/total,pct=fmtPercent(hit,total);
  const rank=[...rows].sort((a,b)=>b.c/b.n-a.c/a.n||a.i-b.i),best=rank[0],worst=rank[rank.length-1];
- let p1;
- if(rate>=.8)p1=`El grupo mostró un **dominio sólido de los criterios de comparabilidad** (${pct} de aciertos en ${total} respuestas).`;
- else if(rate>=.6)p1=`El grupo **comparte la mayoría de los criterios** (${pct} de aciertos en ${total} respuestas) y quedan puntos que conviene afinar.`;
- else if(rate>=.4)p1=`El grupo quedó **dividido** (${pct} de aciertos en ${total} respuestas): la discusión de hoy es la parte más valiosa de la actividad.`;
- else p1=`Los criterios **todavía no están consolidados** (${pct} de aciertos en ${total} respuestas). No es un fracaso: es el punto de partida del aprendizaje.`;
- box.append(richBlock('p',p1));
- if(best.i!==worst.i&&best.c/best.n!==worst.c/worst.n){
-  box.append(richBlock('p',`Lo más firme fue **${QUIZ[best.i].topic}** (${fmtPercent(best.c,best.n)}); lo que más costó fue **${QUIZ[worst.i].topic}** (${fmtPercent(worst.c,worst.n)}).`));
- }
  if(compact){
-  /* Versión de la pantalla compartida: breve. El desarrollo teórico queda en el panel de los expositores. */
+  let p1;
+  if(total<8)p1=`Con ${total} respuesta${total===1?'':'s'} es pronto para sacar conclusiones del grupo.`;
+  else if(rate>=.75)p1=`El grupo mostró un **dominio sólido de los criterios de comparabilidad** (${pct} de aciertos en ${total} respuestas).`;
+  else if(rate>=.55)p1=`El grupo **comparte la mayoría de los criterios** (${pct} de aciertos en ${total} respuestas) y quedan puntos que afinar.`;
+  else if(rate>=.35)p1=`El grupo quedó **dividido** (${pct} de aciertos en ${total} respuestas): la discusión fue la parte más valiosa.`;
+  else p1=`Los criterios **todavía no están consolidados** (${pct} de aciertos en ${total} respuestas). Es el punto de partida del aprendizaje.`;
+  box.append(richBlock('p',p1));
+  if(total>=8&&best.i!==worst.i&&best.c/best.n!==worst.c/worst.n)box.append(richBlock('p',`Lo más firme fue **${QUIZ[best.i].topic}** (${fmtPercent(best.c,best.n)}); lo que más costó fue **${QUIZ[worst.i].topic}** (${fmtPercent(worst.c,worst.n)}).`));
   box.append(richBlock('p','Seguimos con la pregunta que ordena todo lo anterior: **«comparable, ¿en qué aspecto?»** (Sartori, 1999, p. 36).','closing-quote'));
   return box;
  }
- if(worst.c<worst.n){
-  const G=PEDAGOGY[worst.i],q=QUIZ[worst.i];
-  const errs=q.a.map((_,j)=>({j,n:countFor(worst.i,j)})).filter(z=>z.j!==q.correct&&z.n).sort((a,b)=>b.n-a.n);
-  if(errs.length&&G.dis&&G.dis[errs[0].j])box.append(richBlock('p',`Donde más se desvió el grupo (${QUIZ[worst.i].topic}) eligió la alternativa ${LETTER(errs[0].j)} (${fmtPercent(errs[0].n,worst.n)}). ${G.dis[errs[0].j]}`,'disambig'));
-  if(G.closing)box.append(richBlock('p',G.closing));
- }
- box.append(richBlock('p','Todas las preguntas giraron alrededor de una misma pregunta que nos deja Sartori: **«comparable, ¿en qué aspecto?»** (1999, p. 36). Comparar es **asimilar y diferenciar en los límites** (p. 35): reconocer qué propiedad comparten los casos, con qué significado y en qué difieren.'));
+ const chips=add('div',undefined,'chips');
+ chips.append(chip(`${pct} de aciertos`,rate>=.75?'ok':rate>=.55?'mid':'warn'),chip(`${total} respuestas · ${people.length} inscrito${people.length===1?'':'s'}`));
+ box.append(chips);
+ const sc=closingScript(rows);box.append(speakBox(sc.paras,sc.seconds,'Para decir en el cierre'));
  box.append(add('h4','Tres ideas para llevarnos'));
- const ul=add('ol',undefined,'takeaways');TAKEAWAYS.forEach(t=>{const li=add('li');li.append(rich(t));ul.append(li)});box.append(ul);
- box.append(richBlock('p','Y una última idea hacia lo que sigue: según Panebianco (1999), la comparación es el principal instrumento de **control de las hipótesis**, y su propósito final es **explicar** mediante mecanismos causales. Comparar bien es el primer paso de esa explicación.','closing-quote'));
- return box;
-}
-/* Cierre personal (celular del participante). */
-function personalClosing(){
- const box=add('section',undefined,'closing-card');
- box.append(add('h3','Para llevarte'));
- const ul=add('ol',undefined,'takeaways');TAKEAWAYS.forEach(t=>{const li=add('li');li.append(rich(t));ul.append(li)});box.append(ul);
- box.append(richBlock('p','Como recuerda Sartori, comparar es **asimilar y diferenciar en los límites** (1999, p. 35). La próxima vez que compares, empieza por preguntar: **¿comparable en qué aspecto?**','closing-quote'));
- return box;
-}
-/* Síntesis del moderador con ideas fuerza resaltadas. */
-function synthesisNodes(){
- const nodes=[];
- const rows=QUIZ.map((q,i)=>({i,n:votes[i].length,correct:correctFor(i)})),answered=rows.filter(x=>x.n>0);
- const overall=answered.reduce((n,x)=>n+x.correct,0),total=answered.reduce((n,x)=>n+x.n,0);
- const summary=add('div',undefined,'learning-card');
- summary.append(add('strong',`Resultado agregado: ${fmtPercent(overall,total)} de aciertos sobre ${total} respuestas (${people.length} inscritos).`));
- const best=[...answered].sort((a,b)=>b.correct/b.n-a.correct/a.n)[0],worst=[...answered].sort((a,b)=>a.correct/a.n-b.correct/b.n)[0];
- summary.append(add('p',best.i===worst.i?`Solo hay respuestas en P${best.i+1}.`:`Mayor acuerdo: P${best.i+1} · ${QUIZ[best.i].topic} (${fmtPercent(best.correct,best.n)}). Mayor dificultad: P${worst.i+1} · ${QUIZ[worst.i].topic} (${fmtPercent(worst.correct,worst.n)}).`));
- nodes.push(summary);
- const ideas=add('div',undefined,'learning-card key-ideas');
- ideas.append(add('strong','Ideas fuerza de la sesión'));
- answered.forEach(x=>{const row=add('p',undefined,'key-idea-row');row.append(add('span',`P${x.i+1} · `,'qtag'),rich(PEDAGOGY[x.i].key));ideas.append(row)});
- nodes.push(ideas);
- answered.forEach(x=>{
-  const q=QUIZ[x.i],G=PEDAGOGY[x.i],box=add('div',undefined,'learning-card'),rate=x.correct/x.n;
-  const head=add('strong',`P${x.i+1} · ${q.topic}: ${fmtPercent(x.correct,x.n)} de aciertos (${x.correct} de ${x.n})`);
-  head.append(add('span',rate>=.6?'consolidado':'por reforzar','badge '+(rate>=.6?'ok':'warn')));
-  box.append(head);
-  const track=add('div',undefined,'barbg'),bar=add('div',undefined,'bar'+(rate>=.6?' correct':''));bar.style.width=(100*rate)+'%';track.append(bar);box.append(track);
-  box.append(add('p',resultMessage(rate)));
-  const errors=q.a.map((_,j)=>({j,n:countFor(x.i,j)})).filter(z=>z.j!==q.correct&&z.n).sort((a,b)=>b.n-a.n);
-  if(errors.length){
-   const e=errors[0];
-   box.append(richBlock('p',`**Hacia dónde falló el grupo:** alternativa ${LETTER(e.j)} (${fmtPercent(e.n,x.n)}). ${(G.trap&&G.trap[e.j])||G.mis[e.j]}`));
-   if(G.dis&&G.dis[e.j])box.append(richBlock('p',G.dis[e.j],'disambig'));
-  }
-  const idea=add('p',undefined,'key-idea');idea.append(add('strong','Idea para recordar: '),rich(G.key));box.append(idea);
-  const th=add('details',undefined,'theory-detail');th.append(add('summary','Cita de apoyo y cómo trasladarlo'));
-  const call=add('div',undefined,'theory-callout');call.append(richBlock('p',G.recall));if(G.cite)call.append(add('span',G.cite,'cite'));th.append(call);
-  if(G.strengthen)th.append(richBlock('p',G.strengthen,'strengthen'));
-  th.append(add('p','Para trasladarlo a otras investigaciones: '+G.transfer,'small'));
-  box.append(th);
-  nodes.push(box);
+ const weakest=[...rows].sort((a,b)=>a.c/a.n-b.c/b.n||a.i-b.i).slice(0,3).map(x=>x.i);
+ [0,1,2,3].forEach(k=>{if(weakest.length<3&&!weakest.includes(k)&&PEDAGOGY[k]&&PEDAGOGY[k].take)weakest.push(k)});
+ const ul=add('ol',undefined,'takeaways');weakest.sort((a,b)=>a-b).forEach(k=>{const li=add('li');li.append(rich(PEDAGOGY[k].take));ul.append(li)});box.append(ul);
+ const det=persistOpen(add('details',undefined,'sub'),'closing-detail');
+ det.append(add('summary','Detalle por pregunta'));
+ rows.forEach(x=>{
+  const r=x.c/x.n,line=add('div',undefined,'detail-row');
+  line.append(add('strong',`P${x.i+1} · ${QUIZ[x.i].topic}`),add('span',`${x.c} de ${x.n} · ${fmtPercent(x.c,x.n)}`,'small'),add('span',r>=.75?'consolidado':r>=.55?'casi':'por reforzar','badge '+(r>=.75?'ok':'warn')));
+  const track=add('div',undefined,'barbg'),bar=add('div',undefined,'bar'+(r>=.55?' correct':''));bar.style.width=(100*r)+'%';track.append(bar);line.append(track);det.append(line);
  });
- nodes.push(closingNode());
- return nodes;
+ box.append(det);
+ return box;
 }
 let celebratedReveals=new Set();
 let simulationMode=false;let clockOffsetMs=0;let hostReadingView='notes';
@@ -787,7 +864,7 @@ $('start').textContent=room.mode==='survey'?'Abrir encuesta':'Iniciar competenci
 const total=nAnswers(),correct=QUIZ.reduce((v,q,i)=>v+correctFor(i),0),submitted=people.filter(p=>QUIZ.every((q,i)=>votes[i].some(v=>v.uid===p.uid))).length;
 $('metrics').replaceChildren(rowMetric(people.length,'Participantes'),rowMetric(total,'Respuestas registradas'),rowMetric(fmtPercent(correct,total),'Porcentaje de aciertos'),rowMetric(submitted,'Cuestionarios completos'));
 if(room.owner===uid&&!simulationMode)refreshPresenterInvite();renderLearningSummary();if(projecting)renderProjection();const sum=$('summary');sum.replaceChildren();QUIZ.forEach((q,i)=>{const n=votes[i].length,ac=correctFor(i),box=add('div',undefined,'aggregate'),left=add('div');left.append(add('strong',`P${i+1} · ${q.topic}`),add('div',`${ac} aciertos de ${n} respuestas · ${fmtPercent(ac,n)}`,'small'));const prog=add('progress');prog.max=100;prog.value=n?100*ac/n:0;prog.setAttribute('aria-label',`Porcentaje de aciertos en pregunta ${i+1}`);box.append(left,prog);sum.append(box)});
-const tabs=$('questionTabs');tabs.replaceChildren();QUIZ.forEach((q,i)=>{const b=add('button','Pregunta '+(i+1)+(activeTab===i?' ●':''),activeTab===i?'active':'');b.onclick=()=>{activeTab=i;renderHost()};tabs.append(b)});$('hostNotesView').classList.toggle('active',hostReadingView==='notes');$('hostPublicView').classList.toggle('active',hostReadingView==='public');chart('hostChart',activeTab,room.status==='done'||(room.mode==='competition'&&(room.idx>activeTab||(room.idx===activeTab&&stageNow()>=2))),hostReadingView==='public');
+const tabs=$('questionTabs');tabs.replaceChildren();if(activeTab>=N&&!closingReady())activeTab=N-1;QUIZ.forEach((q,i)=>{const b=add('button','Pregunta '+(i+1)+(activeTab===i?' ●':''),activeTab===i?'active':'');b.onclick=()=>{activeTab=i;renderHost()};tabs.append(b)});if(guionReady()){const ready=closingReady(),cb=add('button',ready?'Cierre'+(activeTab===N?' ●':''):'Cierre 🔒',(activeTab===N?'active':'')+(ready?'':' locked'));cb.disabled=!ready;cb.title=ready?'Conclusión de la sesión':'Disponible al terminar la última pregunta';cb.onclick=()=>{activeTab=N;renderHost()};tabs.append(cb)}$('hostNotesView').classList.toggle('active',hostReadingView==='notes');$('hostPublicView').classList.toggle('active',hostReadingView==='public');if(activeTab>=N){const hc=$('hostChart');hc.replaceChildren();hc.append(closingNode(hostReadingView==='public'))}else chart('hostChart',activeTab,room.status==='done'||(room.mode==='competition'&&(room.idx>activeTab||(room.idx===activeTab&&stageNow()>=2))),hostReadingView==='public');
 const counts={};people.forEach(p=>{if(p.country)counts[p.country]=(counts[p.country]||0)+1});const co=$('countries');co.replaceChildren();co.append(add('h3','Participantes por país declarado (opcional)'));if(!Object.keys(counts).length)co.append(add('p','Todavía no se han declarado países.'));else Object.entries(counts).sort((a,b)=>b[1]-a[1]).forEach(([name,n])=>co.append(add('div',`${name}: ${n} participantes`,'small')))}
 /* Selección optimista: la opción tocada se marca al instante y el envío a Firebase sigue en segundo plano (gana siempre el último toque). */
 const localChoice=new Map(),wantedChoice=new Map();
@@ -1215,7 +1292,7 @@ function renderLearningSummary(){
  out.append(add('h3','Síntesis de aprendizajes del grupo'));
  const rows=QUIZ.map((q,i)=>({i,n:votes[i].length,correct:correctFor(i)}));
  const answered=rows.filter(x=>x.n>0);if(!answered.length){out.append(add('p','Todavía no hay respuestas para elaborar conclusiones.'));return}
- if(PEDAGOGY.every(p=>p&&p.key)){synthesisNodes().forEach(n=>out.append(n));return}
+ if(guionReady()){out.replaceChildren();out.classList.add('hidden');return}
  const overall=answered.reduce((n,x)=>n+x.correct,0),total=answered.reduce((n,x)=>n+x.n,0);
  const summary=add('div',undefined,'learning-card');
  summary.append(add('strong',`Resultado agregado: ${fmtPercent(overall,total)} de aciertos sobre ${total} respuestas (${people.length} inscritos).`));

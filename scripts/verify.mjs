@@ -36,7 +36,7 @@ for(const id of ['moderatorEmail','moderatorPassword','presenterEntry','presente
  assert(html.includes('id="'+id+'"'),'Falta control '+id);
 assert(source.includes('signInWithEmailAndPassword'));
 assert(source.includes('function normalizeExplanation('));
-assert(source.includes('Análisis de la pregunta'));
+assert(source.includes('Para decir')&&source.includes('function hostCard'));
 assert(source.includes("hostReadingView==='public'"));
 assert(source.includes("const wrongOnes=q.a.map"));
 assert(source.includes("sort((a,b)=>b.count-a.count"));

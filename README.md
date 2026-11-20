@@ -261,3 +261,10 @@ Tras revelar la respuesta, el panel muestra párrafos cortos: primero cada alter
 - **Tiempos por pregunta:** el formulario solo se aplicaba al *crear* una sala. Ahora el panel del moderador muestra los segundos guardados en Firestore y el propietario puede cambiarlos con la sala en espera. **Requiere publicar `firestore.rules`.**
 - Pruebas: `npm test` (incluye `scripts/narrative.test.mjs`).
 - Fuentes de las citas: Sartori (1999, pp. 31-47) y Panebianco (1999), de la literatura del curso.
+
+## Ficha del expositor y cierre (20 nov 2026)
+
+- Cada pregunta muestra, en el panel privado: lectura rápida, un guion **«Para decir»** (3 frases, ~30 s) que cambia según el resultado real (consenso, mayoría con dudas, error dominante, dividido, pocas respuestas) y un **respaldo teórico plegado** (cita con página, «Desambigüemos» de la alternativa dominante, pregunta para fortalecer, todas las alternativas, material de apoyo).
+- La pestaña **Cierre** está bloqueada hasta revelar la última pregunta o cerrar la sesión; contiene el guion de cierre (~60 s), tres ideas para llevarse (priorizando las preguntas más débiles) y el detalle por pregunta plegado.
+- La pantalla pública mantiene su versión reducida. Los participantes no ven teoría.
+- Los textos hablados viven en `SPEAK` (`core`, `take`, `hint`) dentro de `index.html`; ajústalos ahí para cambiar la voz.
